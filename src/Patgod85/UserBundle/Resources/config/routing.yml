@@ -1,0 +1,3 @@
+patgod85_user_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: Patgod85UserBundle:Default:index }

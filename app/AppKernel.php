@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new AppBundle\AppBundle(),
+            new Patgod85\UserBundle\Patgod85UserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true))

@@ -1,8 +1,22 @@
-app_user_api:
-    resource: "@AppBundle/Controller/UserRESTController.php"
+patgod85_user_user_api:
+    resource: "@Patgod85UserBundle/Controller/UserRESTController.php"
     type:   rest
     prefix:   /api
+
+patgod85_user:
+    resource: "@Patgod85UserBundle/Resources/config/routing.yml"
+    prefix:   /
 
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+
+access_denied:
+    path: /error403
+    defaults :
+        _controller: FrameworkBundle:Template:template
+        template: '::error403.html.twig'

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form;
+namespace Patgod85\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,7 +31,7 @@ class UserType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\User'
+            'data_class' => 'Patgod85\UserBundle\Entity\User'
         ));
     }
 
@@ -40,6 +40,6 @@ class UserType extends AbstractType
      */
     public function getName()
     {
-        return 'appbundle_user';
+        return 'patgod85_userbundle_user';
     }
 }

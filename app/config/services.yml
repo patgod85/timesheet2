@@ -4,6 +4,8 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    ajax.authentication.listener:
+        class: AppBundle\EventListener\AuthListener
+        tags:
+          - { name: kernel.event_listener, event: kernel.exception, method: onCoreException, priority: 1000 }
+

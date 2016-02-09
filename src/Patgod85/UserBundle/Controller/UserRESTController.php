@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace Patgod85\UserBundle\Controller;
 
-use AppBundle\Entity\User;
-use AppBundle\Form\UserType;
+use Patgod85\UserBundle\Entity\User;
+use Patgod85\UserBundle\Form\UserType;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -60,7 +60,7 @@ class UserRESTController extends VoryxController
             $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
 
             $em = $this->getDoctrine()->getManager();
-            $entities = $em->getRepository('AppBundle:User')->findBy($filters, $order_by, $limit, $offset);
+            $entities = $em->getRepository('Patgod85UserBundle:User')->findBy($filters, $order_by, $limit, $offset);
             if ($entities) {
                 return $entities;
             }

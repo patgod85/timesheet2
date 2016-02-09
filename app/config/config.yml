@@ -29,7 +29,7 @@ framework:
         handler_id:  ~
     fragments:       ~
     http_method_override: true
-    csrf_protection: false #only use for public API
+    csrf_protection: ~ #only use for public API
 
 # Twig Configuration
 twig:
@@ -109,3 +109,12 @@ sensio_framework_extra:
     request: { converters: true }
     view:    { annotations: false }
     router:  { annotations: true }
+
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Patgod85\UserBundle\Entity\User
+
+services:
+    fos_user.doctrine_registry:
+        alias: doctrine
