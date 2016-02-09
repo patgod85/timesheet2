@@ -1,0 +1,50 @@
+AppBundle\Entity\Employee:
+    type: entity
+    table: employee
+    uniqueConstraints:
+        id:
+            columns:
+                - id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        surname:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        workStart:
+            type: datetime
+            nullable: true
+            column: work_start
+        workEnd:
+            type: datetime
+            nullable: true
+            column: work_end
+        teamId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: team_id
+        position:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+    lifecycleCallbacks: {  }

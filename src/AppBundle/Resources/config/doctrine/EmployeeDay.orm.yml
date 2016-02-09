@@ -1,0 +1,33 @@
+AppBundle\Entity\EmployeeDay:
+    type: entity
+    table: employee_day
+    uniqueConstraints:
+        id:
+            columns:
+                - id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        employeeId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: employee_id
+        date:
+            type: datetime
+            nullable: false
+        dayTypeId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: day_type_id
+    lifecycleCallbacks: {  }

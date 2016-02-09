@@ -1,0 +1,38 @@
+AppBundle\Entity\CompensatoryLeave:
+    type: entity
+    table: compensatory_leave
+    uniqueConstraints:
+        id:
+            columns:
+                - id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        employeeId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: employee_id
+        date:
+            type: datetime
+            nullable: false
+        description:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        value:
+            type: float
+            nullable: false
+            precision: 10
+            scale: 0
+    lifecycleCallbacks: {  }

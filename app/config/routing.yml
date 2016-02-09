@@ -1,0 +1,8 @@
+app_user_api:
+    resource: "@AppBundle/Controller/UserRESTController.php"
+    type:   rest
+    prefix:   /api
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation

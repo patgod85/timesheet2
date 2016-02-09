@@ -1,0 +1,63 @@
+AppBundle\Entity\User:
+    type: entity
+    table: user
+    uniqueConstraints:
+        id:
+            columns:
+                - id
+        email:
+            columns:
+                - email
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        email:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        password:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        surname:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        teamId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            column: team_id
+        isSuper:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_super
+        isEnabled:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_enabled
+    lifecycleCallbacks: {  }

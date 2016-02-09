@@ -1,0 +1,22 @@
+AppBundle\Entity\PublicHoliday:
+    type: entity
+    table: public_holiday
+    uniqueConstraints:
+        date:
+            columns:
+                - date
+    id:
+        date:
+            type: datetime
+            nullable: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        description:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+    lifecycleCallbacks: {  }

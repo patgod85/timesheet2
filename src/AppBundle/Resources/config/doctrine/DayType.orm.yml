@@ -1,0 +1,40 @@
+AppBundle\Entity\DayType:
+    type: entity
+    table: day_type
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        title:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        backgroundColor:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+            column: background_color
+        color:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+                default: '000000'
+    lifecycleCallbacks: {  }
