@@ -1,0 +1,20 @@
+.menu {
+  list-style-type: none; }
+  .menu li {
+    float: left;
+    padding: 2px 10px;
+    font-size: 16pt; }
+    .menu li:hover {
+      background-color: #ab462b; }
+      .menu li:hover a {
+        color: white; }
+
+.clearfix {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0; }
+
+/*# sourceMappingURL=app.css.map */

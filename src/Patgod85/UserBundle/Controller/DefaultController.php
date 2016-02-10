@@ -2,12 +2,20 @@
 
 namespace Patgod85\UserBundle\Controller;
 
+use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
-    public function indexAction($name)
+    public function whoamiAction()
     {
-        return $this->render('Patgod85UserBundle:Default:index.html.twig', array('name' => $name));
+        /** @var Serializer $serializer */
+        $serializer = $this->container->get('serializer');
+
+        $response  = new Response($serializer->serialize($this->getUser(), 'json'));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }
