@@ -1,7 +1,26 @@
 {{bread-crumbs}}
 
-<ol>
-    {{#each model as |user|}}
-        {{users-item user=user}}
-    {{/each}}
-</ol>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>username</th>
+            <th>name</th>
+            <th>roles</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each model as |user id|}}
+            <tr>
+                <td>{{sum id 1}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.name}} {{user.surname}}</td>
+                <td>
+                    {{#each user.roles as |role|}}
+                        {{role}}
+                    {{/each}}
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

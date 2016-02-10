@@ -118,3 +118,10 @@ fos_user:
 services:
     fos_user.doctrine_registry:
         alias: doctrine
+
+jms_serializer:
+    metadata:
+        directories:
+            FOSUB:
+                namespace_prefix: "FOS\\UserBundle"
+                path: "%kernel.root_dir%/serializer/FOSUB"

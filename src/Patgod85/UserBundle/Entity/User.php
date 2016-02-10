@@ -5,12 +5,14 @@ namespace Patgod85\UserBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * User
  *
  * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="id", columns={"id"}), @ORM\UniqueConstraint(name="email", columns={"email"})})
  * @ORM\Entity
+ * @Serializer\ExclusionPolicy("all")
  */
 class User extends BaseUser
 {
@@ -20,6 +22,8 @@ class User extends BaseUser
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     protected $id;
 
@@ -34,6 +38,8 @@ class User extends BaseUser
      *     groups={"Registration", "Profile"}
      * )
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $name;
 
@@ -48,6 +54,8 @@ class User extends BaseUser
      *     groups={"Registration", "Profile"}
      * )
      * @ORM\Column(name="surname", type="string", length=255, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $surname;
 
@@ -55,24 +63,30 @@ class User extends BaseUser
      * @var integer
      *
      * @ORM\Column(name="team_id", type="integer", nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     private $teamId;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_super", type="boolean", nullable=false)
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("username")
+     * @return string
      */
-    private $isSuper = '0';
+    public function getUsername()
+    {
+        return parent::getUsername();
+    }
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_enabled", type="boolean", nullable=false)
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("roles")
+     * @return array
      */
-    private $isEnabled = '0';
-
-
+    public function getRoles()
+    {
+        return parent::getRoles();
+    }
 
     /**
      * Get id
@@ -178,54 +192,6 @@ class User extends BaseUser
     public function getTeamId()
     {
         return $this->teamId;
-    }
-
-    /**
-     * Set isSuper
-     *
-     * @param boolean $isSuper
-     *
-     * @return User
-     */
-    public function setIsSuper($isSuper)
-    {
-        $this->isSuper = $isSuper;
-
-        return $this;
-    }
-
-    /**
-     * Get isSuper
-     *
-     * @return boolean
-     */
-    public function getIsSuper()
-    {
-        return $this->isSuper;
-    }
-
-    /**
-     * Set isEnabled
-     *
-     * @param boolean $isEnabled
-     *
-     * @return User
-     */
-    public function setIsEnabled($isEnabled)
-    {
-        $this->isEnabled = $isEnabled;
-
-        return $this;
-    }
-
-    /**
-     * Get isEnabled
-     *
-     * @return boolean
-     */
-    public function getIsEnabled()
-    {
-        return $this->isEnabled;
     }
 
 }
