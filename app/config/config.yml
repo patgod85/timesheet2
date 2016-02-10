@@ -29,7 +29,7 @@ framework:
         handler_id:  ~
     fragments:       ~
     http_method_override: true
-    csrf_protection: ~ #only use for public API
+    csrf_protection: false #only use for public API
 
 # Twig Configuration
 twig:

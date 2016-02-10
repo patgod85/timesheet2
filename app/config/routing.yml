@@ -8,15 +8,9 @@ patgod85_user:
     prefix:   /
 
 app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
+    resource: "@AppBundle/Resources/config/routing.yml"
+    prefix:   /
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
-
-access_denied:
-    path: /error403
-    defaults :
-        _controller: FrameworkBundle:Template:template
-        template: '::error403.html.twig'
