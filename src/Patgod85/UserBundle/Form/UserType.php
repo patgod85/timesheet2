@@ -20,8 +20,6 @@ class UserType extends AbstractType
             ->add('name')
             ->add('surname')
             ->add('teamId')
-            ->add('isSuper')
-            ->add('isEnabled')
         ;
     }
     

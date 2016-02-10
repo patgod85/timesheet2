@@ -13,7 +13,7 @@
         {{#each model as |user id|}}
             <tr>
                 <td>{{sum id 1}}</td>
-                <td>{{user.username}}</td>
+                <td>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</td>
                 <td>{{user.name}} {{user.surname}}</td>
                 <td>
                     {{#each user.roles as |role|}}
@@ -24,3 +24,5 @@
         {{/each}}
     </tbody>
 </table>
+
+{{outlet}}

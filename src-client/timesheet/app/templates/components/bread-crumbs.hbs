@@ -1,1 +1,9 @@
-<h2>{{#link-to "index"}}Home{{/link-to}} >  {{currentPath}}</h2>
+<h2>
+    {{#each crumbs as |crumb|}}
+        {{#if crumb.pathName }}
+            {{#link-to crumb.pathName}}{{crumb.title}}{{/link-to}} >
+        {{else}}
+            {{ crumb.title }}
+        {{/if}}
+    {{/each}}
+</h2>
