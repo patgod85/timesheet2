@@ -1,0 +1,25 @@
+{{bread-crumbs}}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>name</th>
+        <th>code</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each model as |team number|}}
+        <tr>
+            <td>{{sum number 1}}</td>
+            <td>{{ team.id }}</td>
+            <td>{{#link-to "team" team.id}}{{team.name}}{{/link-to}}</td>
+            <td>{{team.code}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+{{outlet}}
+

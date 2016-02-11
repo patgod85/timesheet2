@@ -4,6 +4,7 @@ namespace Patgod85\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
+use Patgod85\TeamBundle\Entity\Team;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -69,6 +70,13 @@ class User extends BaseUser
     private $teamId;
 
     /**
+     * @var Team
+     * @ORM\ManyToOne(targetEntity="\Patgod85\TeamBundle\Entity\Team", inversedBy="users")
+     * @ORM\JoinColumn(name="team_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $team;
+
+    /**
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("username")
      * @return string
@@ -86,6 +94,14 @@ class User extends BaseUser
     public function getRoles()
     {
         return parent::getRoles();
+    }
+
+    /**
+     * @return Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
     }
 
     /**

@@ -2,13 +2,17 @@
 
 namespace Patgod85\TeamBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use Patgod85\UserBundle\Entity\User;
 
 /**
  * Team
  *
  * @ORM\Table(name="team", uniqueConstraints={@ORM\UniqueConstraint(name="id", columns={"id"}), @ORM\UniqueConstraint(name="code", columns={"code"})})
  * @ORM\Entity
+ * @Serializer\ExclusionPolicy("all")
  */
 class Team
 {
@@ -18,6 +22,8 @@ class Team
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     private $id;
 
@@ -25,6 +31,8 @@ class Team
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $name;
 
@@ -32,8 +40,39 @@ class Team
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=255, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $code;
+
+    /**
+     * @ORM\OneToMany(targetEntity="\Patgod85\UserBundle\Entity\User", mappedBy="team", cascade={"merge"})
+     * @ORM\OrderBy({"username" = "ASC"})
+     */
+    private $users;
+
+    /**
+     * Team constructor.
+     */
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+
+    /**
+     * @return array
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("users")
+     */
+    public function getUsersIds()
+    {
+        return array_map(
+            function(User $user){
+                return $user->getId();
+            },
+            $this->users->toArray()
+        );
+    }
 
 
 

@@ -13,6 +13,7 @@ test('it renders', function (assert) {
 
     this.render(hbs`
 <ul>
+    <li>Teams</li>
     <li>Users</li>
     <li>About</li>
     <li>Contact us.</li>

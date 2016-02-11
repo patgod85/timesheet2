@@ -5,5 +5,7 @@ export default DS.Model.extend({
     username: DS.attr(),
     name: DS.attr(),
     surname: DS.attr(),
-    roles: DS.attr()
+    roles: DS.attr(),
+    team_id: DS.attr(),
+    team: DS.belongsTo('team', {inverse: 'users'})
 });

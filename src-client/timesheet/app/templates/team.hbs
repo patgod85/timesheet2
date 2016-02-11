@@ -1,0 +1,12 @@
+{{bread-crumbs}}
+
+<p>Name: {{input value=model.name}}</p>
+<p>Code: {{input value=model.code}}</p>
+
+<h4>Users:</h4>
+
+<ul>
+    {{#each model.users as |user|}}
+        <li>{{user.username}}</li>
+    {{/each}}
+</ul>
