@@ -1,25 +1,38 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
 
-moduleForComponent('bread-crumbs', 'Integration | Component | bread crumbs', {
-  integration: true
+const routerStub = Ember.Service.extend({
+    currentPath: 'user',
+    url: '/users/1'
 });
 
-test('it renders', function(assert) {
-  
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
+function strip(str) {
+    return str.replace(/\s/g, "");
+}
 
-  this.render(hbs`{{bread-crumbs}}`);
+moduleForComponent('bread-crumbs', 'Integration | Component | bread crumbs', {
+    integration: true,
+    beforeEach: function () {
+        this.register('service:router', routerStub);
+        this.inject.service('router', {as: 'router'});
+    }
+});
 
-  assert.equal(this.$().text().trim(), '');
+test('it renders', function (assert) {
 
-  // Template block usage:" + EOL +
-  this.render(hbs`
+    this.render(hbs`{{bread-crumbs}}`);
+
+    var expected = 'Home>users>user(1)';
+
+    assert.equal(strip(this.$().text()), expected);
+
+    // Template block usage:" + EOL +
+    this.render(hbs`
     {{#bread-crumbs}}
       template block text
     {{/bread-crumbs}}
   `);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    assert.equal(strip(this.$().text()), expected);
 });

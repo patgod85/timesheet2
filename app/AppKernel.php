@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new AppBundle\AppBundle(),
             new Patgod85\UserBundle\Patgod85UserBundle(),
+            new Patgod85\TeamBundle\Patgod85TeamBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true))

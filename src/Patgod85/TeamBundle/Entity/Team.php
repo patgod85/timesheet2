@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace Patgod85\TeamBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

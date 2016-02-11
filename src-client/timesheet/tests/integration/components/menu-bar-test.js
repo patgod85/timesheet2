@@ -2,24 +2,34 @@ import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
 moduleForComponent('menu-bar', 'Integration | Component | menu bar', {
-  integration: true
+    integration: true
 });
 
-test('it renders', function(assert) {
-  
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
+function strip(str) {
+    return str.replace(/\s/g, "");
+}
 
-  this.render(hbs`{{menu-bar}}`);
+test('it renders', function (assert) {
 
-  assert.equal(this.$().text().trim(), '');
+    this.render(hbs`
+<ul>
+    <li>Users</li>
+    <li>About</li>
+    <li>Contact us.</li>
+</ul>
+    `);
 
-  // Template block usage:" + EOL +
-  this.render(hbs`
-    {{#menu-bar}}
-      template block text
-    {{/menu-bar}}
-  `);
+    var expected = strip(this.$().text());
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    this.render(hbs`{{menu-bar}}`);
+
+    assert.equal(strip(this.$().text()), expected);
+
+    // Template block usage:" + EOL +
+    this.render(hbs`
+{{#menu-bar}}
+    template block text
+{{/menu-bar}}
+`);
+    assert.equal(strip(this.$().text()), expected);
 });
