@@ -7,9 +7,7 @@ const routerStub = Ember.Service.extend({
     url: '/users/1'
 });
 
-function strip(str) {
-    return str.replace(/\s/g, "");
-}
+import strip from "../../helpers/strip";
 
 moduleForComponent('bread-crumbs', 'Integration | Component | bread crumbs', {
     integration: true,

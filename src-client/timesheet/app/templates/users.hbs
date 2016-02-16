@@ -1,28 +1,18 @@
 {{bread-crumbs}}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>username</th>
-            <th>name</th>
-            <th>roles</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each model as |user id|}}
-            <tr>
-                <td>{{sum id 1}}</td>
-                <td>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</td>
-                <td>{{user.name}} {{user.surname}}</td>
-                <td>
-                    {{#each user.roles as |role|}}
-                        {{role}}
-                    {{/each}}
-                </td>
-            </tr>
-        {{/each}}
-    </tbody>
-</table>
+
+{{#filtered-list items=model.users filter=model.teams headers=model.headers as |user id|}}
+
+    <tr>
+        <td>{{sum id 1}}</td>
+        <td>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</td>
+        <td>{{user.name}} {{user.surname}}</td>
+        <td>
+            {{#each user.roles as |role|}}
+                {{role}}
+            {{/each}}
+        </td>
+    </tr>
+{{/filtered-list}}
 
 {{outlet}}

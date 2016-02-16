@@ -22,6 +22,7 @@ module.exports = function (environment) {
     ENV['ember-cli-mirage'] = {
         enabled: false
     };
+    ENV.ENABLE_DS_FILTER = true;
 
     if (environment === 'development') {
         // ENV.APP.LOG_RESOLVER = true;

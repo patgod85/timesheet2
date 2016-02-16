@@ -5,9 +5,7 @@ moduleForComponent('menu-bar', 'Integration | Component | menu bar', {
     integration: true
 });
 
-function strip(str) {
-    return str.replace(/\s/g, "");
-}
+import strip from "../../helpers/strip";
 
 test('it renders', function (assert) {
 

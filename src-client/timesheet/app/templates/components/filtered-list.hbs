@@ -1,0 +1,23 @@
+
+<p>
+    Filter:
+    {{drop-down content=filter onChange=(action "select") }}
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        {{#each headers as |header|}}
+            <th>{{header}}</th>
+        {{/each}}
+    </tr>
+    </thead>
+    <tbody>
+    {{#each filteredItems as |user id|}}
+        {{yield user id}}
+    {{/each}}
+    </tbody>
+</table>
+
+
+
