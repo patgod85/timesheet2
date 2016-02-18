@@ -1,7 +1,7 @@
 
 <p>
     Filter:
-    {{drop-down content=filter onChange=(action "select") }}
+    {{drop-down content=filterWithAll onChange=(action "select") }}
 </p>
 
 <table class="table">
@@ -13,8 +13,8 @@
     </tr>
     </thead>
     <tbody>
-    {{#each filteredItems as |user id|}}
-        {{yield user id}}
+    {{#each filteredItems as |item id|}}
+        {{yield item id}}
     {{/each}}
     </tbody>
 </table>

@@ -1,3 +1,12 @@
+patgod85_employee_employee_api:
+    resource: "@Patgod85EmployeeBundle/Controller/EmployeeRESTController.php"
+    type:   rest
+    prefix:   /api
+
+patgod85_employee:
+    resource: "@Patgod85EmployeeBundle/Resources/config/routing.yml"
+    prefix:   /
+
 patgod85_team_team_api:
     resource: "@Patgod85TeamBundle/Controller/TeamRESTController.php"
     type:   rest

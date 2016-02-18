@@ -1,5 +1,6 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
 
 moduleForComponent('filtered-list', 'Integration | Component | filtered list', {
     integration: true
@@ -7,21 +8,15 @@ moduleForComponent('filtered-list', 'Integration | Component | filtered list', {
 
 import strip from "../../helpers/strip";
 
-test('it renders', function (assert) {
-
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
-
-    this.render(hbs`{{filtered-list}}`);
-
-    assert.equal(this.$().text().trim(), 'Filter:');
-
-});
-
 test('it renders a table', function (assert) {
 
     this.render(hbs`
 <label>Filter:</label>
+<select>
+    <option value="all">All</option>
+    <option value="1">F1</option>
+    <option value="2">F2</option>
+</select>
 <table>
 <thead>
     <tr>
@@ -31,12 +26,8 @@ test('it renders a table', function (assert) {
 </thead>
 <tbody>
     <tr>
-        <td>One1</td>
-        <td>Two1</td>
-    </tr>
-    <tr>
-        <td>One2</td>
-        <td>Two2</td>
+        <td>Anna</td>
+        <td>Lee</td>
     </tr>
 </tbody>
 </table>
@@ -45,16 +36,32 @@ test('it renders a table', function (assert) {
     var expected = strip(this.$().text());
 
     this.set('headers', ['Header1', 'Header2']);
-    this.set('list', [{prop1: 'One1', prop2: 'Two1'}, {prop1: "One2", prop2: 'Two2'}]);
+    this.set('filter', [{id: 1, title: 'F1'}, {id: 2, title: 'F2'}]);
+
+    this.set('list', [
+        Ember.Object.extend({
+            name: Ember.computed(() => 'Anna'),
+            surname: Ember.computed(() => 'Lee'),
+            team_id: Ember.computed(() => 1)
+        }).create(),
+        Ember.Object.extend({
+            name: Ember.computed(() => 'Derek'),
+            surname: Ember.computed(() => 'Blue'),
+            team_id: Ember.computed(() => 2)
+        }).create()
+    ]);
 
     this.render(hbs`
-    {{#filtered-list items=list headers=headers as |item|}}
+    {{#filtered-list items=list headers=headers filter=filter id="team_id" as |item|}}
     <tr>
-        <td>{{item.prop1}}</td>
-        <td>{{item.prop2}}</td>
+        <td>{{item.name}}</td>
+        <td>{{item.surname}}</td>
     </tr>
     {{/filtered-list}}
   `);
+
+    this.$('select').val(1);
+    this.$('select').change();
 
     assert.equal(strip(this.$().text()), expected);
 });

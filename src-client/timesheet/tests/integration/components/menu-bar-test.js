@@ -13,6 +13,7 @@ test('it renders', function (assert) {
 <ul>
     <li>Teams</li>
     <li>Users</li>
+    <li>Employees</li>
     <li>About</li>
     <li>Contact us.</li>
 </ul>

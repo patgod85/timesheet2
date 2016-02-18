@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new Patgod85\UserBundle\Patgod85UserBundle(),
             new Patgod85\TeamBundle\Patgod85TeamBundle(),
+            new Patgod85\EmployeeBundle\Patgod85EmployeeBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true))

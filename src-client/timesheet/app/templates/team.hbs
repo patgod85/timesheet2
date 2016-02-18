@@ -7,6 +7,14 @@
 
 <ul>
     {{#each model.users as |user|}}
-        <li>{{user.username}}</li>
+        <li>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</li>
+    {{/each}}
+</ul>
+
+<h4>Employees:</h4>
+
+<ul>
+    {{#each model.employees as |employee|}}
+        <li>{{employee.name}} {{employee.surname}} </li>
     {{/each}}
 </ul>

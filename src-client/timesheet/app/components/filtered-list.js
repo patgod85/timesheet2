@@ -12,15 +12,24 @@ export default Ember.Component.extend({
         }
     },
 
+    filterWithAll: Ember.computed('filter', function(){
+        var filter = this.get('filter');
+
+        filter.unshift({id: 'all', title: 'All'});
+
+        return filter;
+    }),
+
     filteredItems: Ember.computed('filterToken', function(){
         var filterToken = this.get('filterToken');
 
-        if(!filterToken){
+        if(!filterToken || filterToken.id === 'all'){
             return this.get('items');
         }
 
-        return this.get('items').filter(item => {
-            return item.get('team_id') === filterToken.id;
+        var index = this.get('id');
+        return this.get('items').filter(function(item) {
+            return item.get(index) == filterToken.id;// jshint ignore:line
         });
 
     })

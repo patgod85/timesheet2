@@ -1,0 +1,16 @@
+{{bread-crumbs}}
+
+
+{{#filtered-list items=model.employees filter=model.teams headers=model.headers id="team_id" as |employee id|}}
+
+    <tr>
+        <td>{{sum id 1}}</td>
+        <td>{{employee.name}} {{employee.surname}}</td>
+        <td>{{employee.position}}</td>
+        <td>{{employee.work_start}}</td>
+        <td>{{employee.work_end}}</td>
+    </tr>
+{{/filtered-list}}
+
+{{outlet}}
+

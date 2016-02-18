@@ -3,7 +3,7 @@ import Ember from "ember";
 
 moduleForModel('team', 'Unit | Model | team', {
     // Specify the other units that are required for this test.
-    needs: ['model:user']
+    needs: ['model:user', 'model:employee']
 });
 
 test('should own a profile', function (assert) {

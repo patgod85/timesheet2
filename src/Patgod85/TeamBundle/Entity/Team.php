@@ -5,6 +5,7 @@ namespace Patgod85\TeamBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Patgod85\EmployeeBundle\Entity\Employee;
 use Patgod85\UserBundle\Entity\User;
 
 /**
@@ -52,11 +53,33 @@ class Team
     private $users;
 
     /**
+     * @ORM\OneToMany(targetEntity="\Patgod85\EmployeeBundle\Entity\Employee", mappedBy="team", cascade={"merge"})
+     * @ORM\OrderBy({"surname" = "ASC"})
+     */
+    private $employees;
+
+    /**
      * Team constructor.
      */
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->employees = new ArrayCollection();
+    }
+
+    /**
+     * @return array
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("employees")
+     */
+    public function getEmployeesIds()
+    {
+        return array_map(
+            function(Employee $employee){
+                return $employee->getId();
+            },
+            $this->employees->toArray()
+        );
     }
 
     /**

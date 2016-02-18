@@ -1,14 +1,17 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace Patgod85\EmployeeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Patgod85\TeamBundle\Entity\Team;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Employee
  *
  * @ORM\Table(name="employee", uniqueConstraints={@ORM\UniqueConstraint(name="id", columns={"id"})})
  * @ORM\Entity
+ * @Serializer\ExclusionPolicy("all")
  */
 class Employee
 {
@@ -18,6 +21,8 @@ class Employee
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     private $id;
 
@@ -25,6 +30,8 @@ class Employee
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $name;
 
@@ -32,6 +39,8 @@ class Employee
      * @var string
      *
      * @ORM\Column(name="surname", type="string", length=255, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $surname;
 
@@ -39,6 +48,8 @@ class Employee
      * @var \DateTime
      *
      * @ORM\Column(name="work_start", type="datetime", nullable=true)
+     * @Serializer\Expose
+     * @Serializer\Type("DateTime")
      */
     private $workStart;
 
@@ -46,6 +57,8 @@ class Employee
      * @var \DateTime
      *
      * @ORM\Column(name="work_end", type="datetime", nullable=true)
+     * @Serializer\Expose
+     * @Serializer\Type("DateTime")
      */
     private $workEnd;
 
@@ -53,16 +66,25 @@ class Employee
      * @var integer
      *
      * @ORM\Column(name="team_id", type="integer", nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     private $teamId;
 
     /**
      * @var string
-     *
      * @ORM\Column(name="position", type="string", length=255, nullable=true)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $position;
 
+    /**
+     * @var Team
+     * @ORM\ManyToOne(targetEntity="\Patgod85\TeamBundle\Entity\Team", inversedBy="employees")
+     * @ORM\JoinColumn(name="team_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $team;
 
 
     /**
@@ -217,5 +239,13 @@ class Employee
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * @return Team
+     */
+    public function getTeam()
+    {
+        return $this->team;
     }
 }

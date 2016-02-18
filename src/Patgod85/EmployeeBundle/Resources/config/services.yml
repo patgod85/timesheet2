@@ -1,0 +1,4 @@
+services:
+#    patgod85_employee.example:
+#        class: Patgod85\EmployeeBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
