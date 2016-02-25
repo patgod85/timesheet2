@@ -1,0 +1,10 @@
+{{bread-crumbs}}
+
+{{input value=model.name}}
+{{input value=model.surname}}
+{{input value=model.position}}
+
+{{bootstrap-datepicker value=model.work_start format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1}}
+
+<button type="button" {{ action "submit" model on="click" }}>Save</button>
+
