@@ -9,6 +9,26 @@
       .menu li:hover a {
         color: white; }
 
+.calendar-month {
+  width: 350px;
+  margin: 5px 10px;
+  float: left; }
+  .calendar-month caption {
+    font-size: 18pt;
+    color: brown;
+    font-weight: bold;
+    text-align: center; }
+  .calendar-month th {
+    font-weight: bold;
+    text-align: center; }
+  .calendar-month td, .calendar-month th {
+    padding: 1px !important; }
+    .calendar-month td div, .calendar-month th div {
+      cursor: pointer;
+      padding: 7px; }
+      .calendar-month td div:hover, .calendar-month th div:hover {
+        background-color: lightyellow; }
+
 .clearfix {
   clear: both;
   display: block;

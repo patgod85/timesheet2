@@ -14,7 +14,36 @@
         }
     }
 }
+.calendar-month{
 
+    width: 350px;
+    margin: 5px 10px;
+    float: left;
+
+    caption {
+        font-size: 18pt;
+        color: brown;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    th {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    td, th {
+        padding: 1px !important;
+        div {
+            cursor: pointer;
+            padding: 7px;
+
+            &:hover {
+                background-color: lightyellow;
+            }
+        }
+    }
+}
 .clearfix {
     clear: both;
     display: block;

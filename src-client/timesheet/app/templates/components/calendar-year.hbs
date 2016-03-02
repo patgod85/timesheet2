@@ -1,0 +1,9 @@
+<p>
+    <strong>Selected dates:</strong>
+    {{#each selectedDatesPlain as |d|}}
+        {{d}}
+    {{/each}}
+</p>
+{{#each monthNumbers as |m|}}
+    {{calendar-month m=m y=y selectDateAction=(action 'selectDate') selectedDates=selectedDatesPlain}}
+{{/each}}

@@ -1,0 +1,28 @@
+<table class="table table-responsive table-bordered  table-striped calendar-month">
+    <caption>{{monthName}}</caption>
+    <thead>
+        <tr>
+            <th>Mo</th>
+            <th>Tu</th>
+            <th>We</th>
+            <th>Th</th>
+            <th>Fr</th>
+            <th>Sa</th>
+            <th>Su</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#each weeks as |week|}}
+        <tr>
+            {{#each week as |day|}}
+                <td class={{day.className}}>
+                    <div {{action "click" day.date}}>
+                        {{day.title}}
+                    </div>
+                </td>
+            {{/each}}
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+
