@@ -18,6 +18,9 @@
                 <td class={{day.className}}>
                     <div {{action "click" day.date}}>
                         {{day.title}}
+                        {{#each day.events as |event|}}
+                            &bull;
+                        {{/each}}
                     </div>
                 </td>
             {{/each}}

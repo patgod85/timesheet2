@@ -17,7 +17,8 @@ MarchMoTuWeThFrSaSu2901020304050607080910111213141516171819202122232425262728293
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
 
-    this.render(hbs`{{calendar-month y=2016 m=3}}`);
+    this.set('events', {events: {}, diapasons: []});
+    this.render(hbs`{{calendar-month y=2016 m=3 events=events}}`);
 
     assert.equal(strip(this.$().text()), expected);
 

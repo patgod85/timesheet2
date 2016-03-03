@@ -9,10 +9,11 @@ export default Ember.Component.extend({
 
     clicked: 0,
 
-    weeks: Ember.computed('y', 'm', 'clicked', function () {
+    weeks: Ember.computed('y', 'm', 'clicked', 'events', function () {
 
         var firstDay = moment().year(this.get('y')).month(this.get('m') - 1).date(1);
         var selectedDates = this.get('selectedDates') || [];
+        var events = this.get('events');
         var weeks = [];
 
         var isLastWeek = false;
@@ -37,11 +38,13 @@ export default Ember.Component.extend({
                     className += ' bg-success';
                 }
 
+                var index = moment(firstDay).format('YYYY-MM-DD');
                 week.push({
                     title: firstDay.format('DD'),
                     isPublicHoliday: false,
                     className,
-                    date: moment(firstDay).format('YYYY-MM-DD')
+                    date: index,
+                    events: events.events.hasOwnProperty(index) ? events.events[index] : []
                 });
 
                 if (w > 0 && date < prevDate) {
