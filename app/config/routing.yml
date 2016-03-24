@@ -1,3 +1,7 @@
+patgod85_event:
+    resource: "@Patgod85EventBundle/Resources/config/routing.yml"
+    prefix:   /
+
 patgod85_employee_employee_api:
     resource: "@Patgod85EmployeeBundle/Controller/EmployeeRESTController.php"
     type:   rest

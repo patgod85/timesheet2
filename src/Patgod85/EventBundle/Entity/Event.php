@@ -1,16 +1,14 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace Patgod85\EventBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * DayType
- *
- * @ORM\Table(name="day_type")
+ * @ORM\Table(name="event")
  * @ORM\Entity
  */
-class DayType
+class Event
 {
     /**
      * @var integer
@@ -34,6 +32,20 @@ class DayType
      * @ORM\Column(name="title", type="string", length=255, nullable=true)
      */
     private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=255, nullable=false, unique=true)
+     */
+    private $code;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_diapason", type="boolean", nullable=false, options={"default": 0})
+     */
+    private $isDiapason;
 
     /**
      * @var string
@@ -66,7 +78,7 @@ class DayType
      *
      * @param string $name
      *
-     * @return DayType
+     * @return Event
      */
     public function setName($name)
     {
@@ -90,7 +102,7 @@ class DayType
      *
      * @param string $title
      *
-     * @return DayType
+     * @return Event
      */
     public function setTitle($title)
     {
@@ -114,7 +126,7 @@ class DayType
      *
      * @param string $backgroundColor
      *
-     * @return DayType
+     * @return Event
      */
     public function setBackgroundColor($backgroundColor)
     {
@@ -138,7 +150,7 @@ class DayType
      *
      * @param string $color
      *
-     * @return DayType
+     * @return Event
      */
     public function setColor($color)
     {
@@ -155,5 +167,37 @@ class DayType
     public function getColor()
     {
         return $this->color;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isIsDiapason()
+    {
+        return $this->isDiapason;
+    }
+
+    /**
+     * @param boolean $isDiapason
+     */
+    public function setIsDiapason($isDiapason)
+    {
+        $this->isDiapason = $isDiapason;
     }
 }
