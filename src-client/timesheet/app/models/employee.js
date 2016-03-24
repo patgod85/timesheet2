@@ -7,6 +7,6 @@ export default DS.Model.extend({
     work_end: DS.attr(),
     position: DS.attr(),
     team_id: DS.attr('number'),
-    team: DS.belongsTo('team', {inverse: 'employees'})
-
+    team: DS.belongsTo('team', {inverse: 'employees'}),
+    calendar: DS.attr()
 });

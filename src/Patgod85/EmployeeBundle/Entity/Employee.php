@@ -86,6 +86,13 @@ class Employee
      */
     private $team;
 
+    /**
+     * @var string
+     * @ORM\Column(name="calendar", type="text", nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
+     */
+    private $calendar;
 
     /**
      * Get id
@@ -248,4 +255,21 @@ class Employee
     {
         return $this->team;
     }
+
+    /**
+     * @return string
+     */
+    public function getCalendar()
+    {
+        return $this->calendar;
+    }
+
+    /**
+     * @param string $calendar
+     */
+    public function setCalendar($calendar)
+    {
+        $this->calendar = $calendar;
+    }
+
 }

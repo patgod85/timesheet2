@@ -1,10 +1,18 @@
-<p>
-    <strong>Selected dates:</strong>
-    {{#each selectedDatesPlain as |d|}}
-        {{d}}
-    {{/each}}
-</p>
 {{#each monthNumbers as |m|}}
     {{calendar-month m=m y=y selectDateAction=(action 'selectDate') selectedDates=selectedDatesPlain events=events}}
 {{/each}}
 
+<div class="clearfix"></div>
+{{#if showButtons}}
+    <div>
+        <button type="button" {{ action "setVacations" selectedDates on="click" }}>Set vacations</button>
+    </div>
+{{/if}}
+<div>
+    <strong>Selected dates:</strong>
+    <ul>
+    {{#each selectedDates as |day|}}
+        <li>{{day.date}} - {{#each day.events as |event|}}{{event}}{{/each}}</li>
+    {{/each}}
+    </ul>
+</div>

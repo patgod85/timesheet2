@@ -21,6 +21,7 @@ class EmployeeType extends AbstractType
             ->add('workEnd')
             ->add('teamId')
             ->add('position')
+            ->add('calendar')
         ;
     }
     

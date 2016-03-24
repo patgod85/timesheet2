@@ -69,8 +69,8 @@ export default Ember.Component.extend({
     }),
 
     actions: {
-        click(date){
-            this.get('selectDateAction')(date);
+        click(day){
+            this.get('selectDateAction')(day);
             this.set('clicked', (new Date()).getTime());
         }
 

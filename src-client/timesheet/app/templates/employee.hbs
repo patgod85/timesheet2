@@ -8,3 +8,5 @@
 
 <button type="button" {{ action "submit" model on="click" }}>Save</button>
 
+{{calendar-year y=2016 cal="/cal/default.ics" calendars=model.calendars updateDaysAction="updateDays" model=model showButtons=true}}
+
