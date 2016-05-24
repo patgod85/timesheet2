@@ -15,6 +15,7 @@ test('it renders', function (assert) {
     <li>Users</li>
     <li>Employees</li>
     <li>Calendar</li>
+    <li>Events</li>
 </ul>
     `);
 

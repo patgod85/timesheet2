@@ -28,6 +28,11 @@
       padding: 7px; }
       .calendar-month td div:hover, .calendar-month th div:hover {
         background-color: lightyellow; }
+    .calendar-month td.holiday, .calendar-month th.holiday {
+      background-color: red;
+      color: yellow; }
+      .calendar-month td.holiday.bg-success, .calendar-month th.holiday.bg-success {
+        background-color: blue; }
 
 .clearfix {
   clear: both;
@@ -39,14 +44,17 @@
 
 .events_agenda {
   list-style-type: none; }
-  .events_agenda .event {
-    width: 40px;
-    height: 23px;
-    display: inline-block;
-    font-weight: bold;
-    padding: 3px 5px;
-    text-align: center;
-    border: 1px solid #ccc9c9;
-    line-height: 16px; }
+
+.event {
+  width: 40px;
+  height: 23px;
+  display: inline-block;
+  font-weight: bold;
+  padding: 3px 5px;
+  text-align: center;
+  border: 1px solid #ccc9c9;
+  line-height: 16px; }
+  .event.event_ph, .event.event_we {
+    background-color: red; }
 
 /*# sourceMappingURL=app.css.map */

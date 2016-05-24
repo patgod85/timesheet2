@@ -21,6 +21,7 @@
                         {{#each day.events as |event|}}
                             {{#if event.d }}
                                 <div class="event event_{{event.d}}"></div>
+                            {{else if event.n}}
                             {{else}}
                                 &bull;
                             {{/if}}

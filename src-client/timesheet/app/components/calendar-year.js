@@ -34,10 +34,14 @@ export default Ember.Component.extend({
 
         var calendars = this.get('calendars');
 
-        var eIndex = {events: [], diapasons: []};
+        var eIndex = {events: [], diapasons: [], holidays: []};
 
         if(!calendars){
             return eIndex;
+        }
+
+        if(!Array.isArray(calendars)){
+            calendars = [calendars];
         }
 
         calendars.map(iCalData => {
@@ -54,7 +58,9 @@ export default Ember.Component.extend({
             var endOfYear = moment().year(this.get('y')).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
 
             var dateRegExp = new RegExp(/d:(\d)/);
+            var holidayRegExp = new RegExp(/n:(ph|we)/);
 
+            var isHoliday = false;
             for(var i = 0; i < vevents.length; i++){
 
                 var summary = vevents[i].getFirstPropertyValue("summary");
@@ -63,6 +69,14 @@ export default Ember.Component.extend({
                 if(match && match.length > 1){
                     summary = {d: match[1]};
                 }
+                else{
+                    match = summary.match(holidayRegExp);
+                    if(match && match.length > 1){
+                        summary = {n: match[1]};
+                        isHoliday = true;
+                    }
+                }
+
                 var event = new ICAL.Event(vevents[i]);
                 var eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
                 var eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
@@ -73,8 +87,8 @@ export default Ember.Component.extend({
                     (eEnd.isAfter(beginOfYear, 'day')) &&
                     (eEnd.isBefore(endOfYear, 'day') || eEnd.isSame(endOfYear, 'day'))
                 ) {
+                    let index = eBegin.format('YYYY-MM-DD');
                     if(eBegin.isSame(eEnd, 'day') || event.duration.toICALString() === 'P1D' && eBegin.format('HHmm') === '0000'){
-                        let index = eBegin.format('YYYY-MM-DD');
                         if(!eIndex.events.hasOwnProperty(index)){
                             eIndex.events[index] = [];
                         }
@@ -87,12 +101,19 @@ export default Ember.Component.extend({
                             summary
                         });
                         for(let d = eBegin; d.isBefore(eEnd, 'hour'); d.add(1, 'd')){
-                            let index = eBegin.format('YYYY-MM-DD');
                             if(!eIndex.events.hasOwnProperty(index)){
                                 eIndex.events[index] = [];
                             }
                             eIndex.events[index].push(summary);
                         }
+                    }
+
+                    if(isHoliday){
+                        if(!eIndex.holidays.hasOwnProperty(index)){
+                            eIndex.holidays[index] = [];
+                        }
+                        eIndex.holidays[index].push(true);
+
                     }
                 }
             }
@@ -115,7 +136,14 @@ export default Ember.Component.extend({
         },
 
         setVacations(selectedDates, eventId){
-            this.sendAction('updateDaysAction', selectedDates, 'd:' + eventId, this.get('model'));
+            var code;
+            if(['we', 'ph'].indexOf(eventId) !== -1){
+                code = 'n:' + eventId;
+            }
+            else{
+                code = 'd:' + eventId;
+            }
+            this.sendAction('updateDaysAction', selectedDates, code, this.get('model'));
         }
 
     }

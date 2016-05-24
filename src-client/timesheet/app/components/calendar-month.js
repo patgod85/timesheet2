@@ -29,19 +29,25 @@ export default Ember.Component.extend({
 
                 let date = firstDay.date();
                 let className = '';
+                var index = moment(firstDay).format('YYYY-MM-DD');
+                var isHoliday = events.holidays.hasOwnProperty(index) && events.holidays[index];
 
                 if(firstDay.month() + 1 !== this.get('m')){
                     className += ' bg-danger';
+                }
+
+                if(isHoliday){
+//console.log(events.holidays, index);
+                    className += ' holiday';
                 }
 
                 if(selectedDates.indexOf(firstDay.format('YYYY-MM-DD')) !== -1){
                     className += ' bg-success';
                 }
 
-                var index = moment(firstDay).format('YYYY-MM-DD');
                 week.push({
                     title: firstDay.format('DD'),
-                    isPublicHoliday: false,
+                    isHoliday,
                     className,
                     date: index,
                     events: events.events.hasOwnProperty(index) ? events.events[index] : []

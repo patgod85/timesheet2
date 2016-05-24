@@ -3,29 +3,40 @@
 {{/each}}
 
 <div class="clearfix"></div>
-{{#if showButtons}}
-    <!--<div>-->
-        <!--<button type="button" {{ action "setVacations" selectedDates on="click" }}>Set vacations</button>-->
-    <!--</div>-->
-    <ul class="events_agenda">
-        {{#each event_types as |event|}}
-            <li><div class="event event_{{event.id}}"></div> - <button type="button" {{ action "setVacations" selectedDates event.id on="click" }}>{{event.name}}</button></li>
-        {{/each}}
-    </ul>
-    <style type="text/css">
-
-        {{#each event_types as |event|}}
-            .event_{{event.id}} {
-                background-color: #{{ event.background_color }};
-                color: #{{ event.color }};
-            }
-            .event_{{event.id}}:before {
-                content: "{{ event.title }}";
-            }
-        {{/each}}
-
-    </style>
-{{/if}}
+    {{#if showButtons}}
+        <style type="text/css">
+            {{#each event_types as |event|}}
+                .event_{{event.id}} {
+                    background-color: #{{ event.background_color }};
+                    color: #{{ event.color }};
+                }
+                .event_{{event.id}}:before {
+                    content: "{{ event.title }}";
+                }
+            {{/each}}
+        </style>
+    {{/if}}
+    <table>
+        <tbody>
+        <tr>
+            <td>
+                {{#if showButtons}}
+                    <ul class="events_agenda">
+                        {{#each event_types as |event|}}
+                            <li><div class="event event_{{event.id}}"></div> - <button type="button" {{ action "setVacations" selectedDates event.id on="click" }}>{{event.name}}</button></li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
+            </td>
+            <td>
+                <ul class="events_agenda ">
+                    <li><div class="event event_we"></div> - <button type="button" {{ action "setVacations" selectedDates "we" on="click" }}>Weekend</button></li>
+                    <li><div class="event event_ph"></div> - <button type="button" {{ action "setVacations" selectedDates "ph" on="click" }}>Public holiday</button></li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 <div>
     <strong>Selected dates:</strong>
     <ul>
