@@ -53,9 +53,16 @@ export default Ember.Component.extend({
             var beginOfYear = moment().year(this.get('y')).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
             var endOfYear = moment().year(this.get('y')).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
 
+            var dateRegExp = new RegExp(/d:(\d)/);
+
             for(var i = 0; i < vevents.length; i++){
 
                 var summary = vevents[i].getFirstPropertyValue("summary");
+
+                var match = summary.match(dateRegExp);
+                if(match && match.length > 1){
+                    summary = {d: match[1]};
+                }
                 var event = new ICAL.Event(vevents[i]);
                 var eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
                 var eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
@@ -107,8 +114,8 @@ export default Ember.Component.extend({
             }
         },
 
-        setVacations(selectedDates){
-            this.sendAction('updateDaysAction', selectedDates, 'dVac', this.get('model'));
+        setVacations(selectedDates, eventId){
+            this.sendAction('updateDaysAction', selectedDates, 'd:' + eventId, this.get('model'));
         }
 
     }

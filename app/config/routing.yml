@@ -1,3 +1,17 @@
+patgod85_calendar_calendar_api:
+    resource: "@Patgod85CalendarBundle/Controller/CalendarRESTController.php"
+    type:   rest
+    prefix:   /api
+
+patgod85_calendar:
+    resource: "@Patgod85CalendarBundle/Resources/config/routing.yml"
+    prefix:   /
+
+patgod85_event_event_api:
+    resource: "@Patgod85EventBundle/Controller/EventRESTController.php"
+    type:   rest
+    prefix:   /api
+
 patgod85_event:
     resource: "@Patgod85EventBundle/Resources/config/routing.yml"
     prefix:   /

@@ -52,3 +52,17 @@
     width: 0;
     height: 0;
 }
+
+.events_agenda {
+    list-style-type: none;
+    .event {
+        width: 40px;
+        height: 23px;
+        display: inline-block;
+        font-weight: bold;
+        padding: 3px 5px;
+        text-align: center;
+        border: 1px solid #ccc9c9;
+        line-height: 16px;
+    }
+}

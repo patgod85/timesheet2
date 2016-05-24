@@ -4,18 +4,21 @@ import ICAL from 'npm:ical.js';
 
 export default Ember.Route.extend({
     model(params) {
-        var employee;
-        return this.store.findRecord('employee', params.employee_id)
+        var employee,
+            self = this;
+
+        return Ember.RSVP.hash({
+            employee: this.store.findRecord('employee', params.employee_id)
             .then(_employee => {
                 employee = _employee;
-                return Ember.$.ajax({
-                    url: '/cal/default.ics'
-                });
+                return self.store.findRecord('calendar', 1);
             })
             .then(defaultCalendar => {
-                employee.set('calendars', [defaultCalendar, employee.get('calendar')]);
+                employee.set('calendars', [defaultCalendar.get('ical'), employee.get('calendar')]);
                 return employee;
-            });
+            }),
+            events: this.store.findAll('event')
+        });
     },
     actions: {
         submit(model){

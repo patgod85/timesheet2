@@ -1,0 +1,25 @@
+{{bread-crumbs}}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>name</th>
+        <th>title</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each model as |event number|}}
+        <tr>
+            <td>{{sum number 1}}</td>
+            <td>{{event.id}}</td>
+            <td>{{#link-to "event" event.id}}{{event.name}}{{/link-to}}</td>
+            <td>{{event.title}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+{{outlet}}
+

@@ -1,12 +1,13 @@
 {{bread-crumbs}}
 
-{{input value=model.name}}
-{{input value=model.surname}}
-{{input value=model.position}}
+{{input value=model.employee.name}}
+{{input value=model.employee.surname}}
+{{input value=model.employee.position}}
 
-{{bootstrap-datepicker value=model.work_start format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1}}
+{{bootstrap-datepicker value=model.employee.work_start format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1}}
 
-<button type="button" {{ action "submit" model on="click" }}>Save</button>
+<button type="button" {{ action "submit" model.employee on="click" }}>Save</button>
 
-{{calendar-year y=2016 cal="/cal/default.ics" calendars=model.calendars updateDaysAction="updateDays" model=model showButtons=true}}
+{{calendar-year y=2016 calendars=model.employee.calendars updateDaysAction="updateDays" model=model.employee showButtons=true event_types=model.events}}
+
 

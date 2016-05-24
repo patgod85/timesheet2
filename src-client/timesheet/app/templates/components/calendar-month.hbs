@@ -19,7 +19,11 @@
                     <div {{action "click" day}}>
                         {{day.title}}
                         {{#each day.events as |event|}}
-                            &bull;
+                            {{#if event.d }}
+                                <div class="event event_{{event.d}}"></div>
+                            {{else}}
+                                &bull;
+                            {{/if}}
                         {{/each}}
                     </div>
                 </td>

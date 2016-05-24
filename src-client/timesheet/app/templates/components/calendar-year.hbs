@@ -4,9 +4,27 @@
 
 <div class="clearfix"></div>
 {{#if showButtons}}
-    <div>
-        <button type="button" {{ action "setVacations" selectedDates on="click" }}>Set vacations</button>
-    </div>
+    <!--<div>-->
+        <!--<button type="button" {{ action "setVacations" selectedDates on="click" }}>Set vacations</button>-->
+    <!--</div>-->
+    <ul class="events_agenda">
+        {{#each event_types as |event|}}
+            <li><div class="event event_{{event.id}}"></div> - <button type="button" {{ action "setVacations" selectedDates event.id on="click" }}>{{event.name}}</button></li>
+        {{/each}}
+    </ul>
+    <style type="text/css">
+
+        {{#each event_types as |event|}}
+            .event_{{event.id}} {
+                background-color: #{{ event.background_color }};
+                color: #{{ event.color }};
+            }
+            .event_{{event.id}}:before {
+                content: "{{ event.title }}";
+            }
+        {{/each}}
+
+    </style>
 {{/if}}
 <div>
     <strong>Selected dates:</strong>

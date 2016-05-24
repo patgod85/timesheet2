@@ -15,6 +15,8 @@ Router.map(function () {
   this.route('employees');
   this.route('employee', {path: 'employees/:employee_id'});
   this.route('calendar');
+  this.route('events');
+  this.route('event', {path: 'events/:event_id'});
 });
 
 export default Router;
