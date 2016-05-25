@@ -135,15 +135,17 @@ export default Ember.Component.extend({
             }
         },
 
-        setVacations(selectedDates, eventId){
-            var code;
-            if(['we', 'ph'].indexOf(eventId) !== -1){
-                code = 'n:' + eventId;
-            }
-            else{
-                code = 'd:' + eventId;
-            }
-            this.sendAction('updateDaysAction', selectedDates, code, this.get('model'));
+        setValue(selectedDates){
+            var value = this.get('value');
+            this.sendAction('updateDaysAction', selectedDates, 'v:' + value, this.get('model'), this.get('events'));
+        },
+
+        setNonworkingDay(selectedDates, eventId){
+            this.sendAction('updateDaysAction', selectedDates, 'n:' + eventId, this.get('model'), this.get('events'));
+        },
+
+        setEvent(selectedDates, eventId){
+            this.sendAction('updateDaysAction', selectedDates, 'd:' + eventId, this.get('model'), this.get('events'));
         }
 
     }

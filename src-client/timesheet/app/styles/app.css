@@ -57,4 +57,10 @@
   .event.event_ph, .event.event_we {
     background-color: red; }
 
+table {
+  border-collapse: collapse; }
+  table th, table td {
+    border: 1px solid #c6c6c6;
+    padding: 3px 10px; }
+
 /*# sourceMappingURL=app.css.map */
