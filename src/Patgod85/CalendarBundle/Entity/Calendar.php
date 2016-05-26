@@ -29,9 +29,9 @@ class Calendar
     /**
      * @var string
      *
-     * @ORM\Column(name="ical", type="text", nullable=false)
+     * @ORM\Column(name="calendar", type="text", nullable=false)
      */
-    private $ical;
+    private $calendar;
 
     /**
      * @return int
@@ -68,17 +68,17 @@ class Calendar
     /**
      * @return string
      */
-    public function getIcal()
+    public function getCalendar()
     {
-        return $this->ical;
+        return $this->calendar;
     }
 
     /**
-     * @param string $ical
+     * @param string $calendar
      */
-    public function setIcal($ical)
+    public function setCalendar($calendar)
     {
-        $this->ical = $ical;
+        $this->calendar = $calendar;
     }
 
 }

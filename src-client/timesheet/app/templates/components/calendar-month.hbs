@@ -16,14 +16,17 @@
         <tr>
             {{#each week as |day|}}
                 <td class={{day.className}}>
-                    <div {{action "click" day}}>
+                    <div {{action "click" day}} class="date_event_container">
                         {{day.title}}
                         {{#each day.events as |event|}}
-                            {{#if event.d }}
-                                <div class="event event_{{event.d}}"></div>
-                            {{else if event.n}}
+                            {{#if event.summary.d }}
+                                <div class="event event_{{event.summary.d}}"></div>
+                            {{else if event.summary.n}}
                             {{else}}
                                 &bull;
+                            {{/if}}
+                            {{#if event.summary.v }}
+                                <div class="event_value">{{event.summary.v}}</div>
                             {{/if}}
                         {{/each}}
                     </div>

@@ -23,6 +23,7 @@
                 <th>Day value</th>
                 <th>Shifts</th>
                 <th>Nonworking days</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -54,6 +55,14 @@
                         <li><div class="event event_ph"></div> - <button type="button" {{ action "setNonworkingDay" selectedDates "ph" on="click" }}>Public holiday</button></li>
                     </ul>
                 </td>
+                <td>
+                    <p>
+                        <button type="button" {{ action "unpickDates" selectedDates on="click" }}>Unpick dates</button>
+                    </p>
+                    <p>
+                        <button type="button" {{ action "clearAll" selectedDates on="click" }} class="danger_button">&otimes; Clear data</button>
+                    </p>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -61,7 +70,7 @@
     <strong>Selected dates:</strong>
     <ul>
     {{#each selectedDates as |day|}}
-        <li>{{day.date}} - {{#each day.events as |event|}}{{event}}{{/each}}</li>
+        <li>{{day.date}} - {{#each day.events as |event|}}{{json event.summary}}{{/each}}</li>
     {{/each}}
     </ul>
 </div>

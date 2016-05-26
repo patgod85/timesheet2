@@ -16,7 +16,7 @@ class CalendarType extends AbstractType
     {
         $builder
             ->add('isDefault')
-            ->add('ical')
+            ->add('calendar')
         ;
     }
     

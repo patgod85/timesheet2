@@ -8,6 +8,6 @@
 
 <button type="button" {{ action "submit" model.employee on="click" }}>Save</button>
 
-{{calendar-year y=2016 calendars=model.employee.calendars updateDaysAction="updateDays" model=model.employee showButtons=true event_types=model.events}}
+{{calendar-year y=2016 calendars=model.employee.calendars refreshAction="refresh" model=model.employee showButtons=true event_types=model.events}}
 
 

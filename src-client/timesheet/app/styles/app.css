@@ -57,10 +57,33 @@
   .event.event_ph, .event.event_we {
     background-color: red; }
 
+.date_event_container {
+  position: relative; }
+  .date_event_container .event_value {
+    font-size: 8pt;
+    color: black;
+    padding: 1px;
+    border: 1px solid grey;
+    position: absolute;
+    right: 1px;
+    top: 1px; }
+  .date_event_container .event {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 20px;
+    height: 15px;
+    font-size: 6pt;
+    padding: 0; }
+
 table {
   border-collapse: collapse; }
   table th, table td {
     border: 1px solid #c6c6c6;
     padding: 3px 10px; }
+
+.danger_button {
+  color: red;
+  font-weight: bold; }
 
 /*# sourceMappingURL=app.css.map */
