@@ -1,9 +1,17 @@
+<div class="calendar_options">
+    {{drop-down content=years onChange=(action "changeYear") selectedValue=selectedYear }}
+    {{drop-down content=months onChange=(action "changeMonth") }}
+</div>
+
+<div class="clearfix"></div>
+
 {{#each monthNumbers as |m|}}
-    {{calendar-month m=m y=y selectDateAction=(action 'selectDate') selectedDates=selectedDatesPlain events=events}}
+    {{calendar-month m=m y=selectedYear selectDateAction=(action 'selectDate') selectedDates=selectedDatesPlain events=events}}
 {{/each}}
 
 <div class="clearfix"></div>
     {{#if showButtons}}
+        <!--suppress CssUnusedSymbol -->
         <style type="text/css">
             {{#each event_types as |event|}}
                 .event_{{event.id}} {

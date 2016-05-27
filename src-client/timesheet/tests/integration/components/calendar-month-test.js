@@ -10,7 +10,7 @@ import strip from "../../helpers/strip";
 test('it renders', function (assert) {
 
     this.render(hbs`
-MarchMoTuWeThFrSaSu2901020304050607080910111213141516171819202122232425262728293031010203
+March2016MoTuWeThFrSaSu2901020304050607080910111213141516171819202122232425262728293031010203
     `);
 
     var expected = strip(this.$().text());

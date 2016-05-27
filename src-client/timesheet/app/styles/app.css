@@ -18,6 +18,9 @@
     color: brown;
     font-weight: bold;
     text-align: center; }
+    .calendar-month caption small {
+      font-size: 8pt;
+      color: grey; }
   .calendar-month th {
     font-weight: bold;
     text-align: center; }
@@ -85,5 +88,15 @@ table {
 .danger_button {
   color: red;
   font-weight: bold; }
+
+.calendar_options {
+  color: orange;
+  background-color: #d0d0d0;
+  padding: 4px 20px;
+  min-height: 30px; }
+  .calendar_options div {
+    float: left; }
+    .calendar_options div select {
+      background-color: black; }
 
 /*# sourceMappingURL=app.css.map */

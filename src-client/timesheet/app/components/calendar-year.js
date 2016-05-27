@@ -6,15 +6,23 @@ import moment from 'npm:moment-timezone';
 import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
+
     selectedDates: [],
 
-    monthNumbers: [1,2],//[1,2,3,4,5,6,7,8,9,10,11,12],
+    selectedYear: 0,
+
+    monthNumbers: [1,2,3],
+
+    init() {
+        this._super(...arguments);
+        this.set('selectedYear', this.get('y'));
+    },
 
     selectedDatesPlain: Ember.computed.map('selectedDates', function(o){
         return o.date;
     }),
 
-    events: Ember.computed('calendars', 'selectedDates', function(){
+    events: Ember.computed('calendars', 'selectedDates', 'selectedYear', 'selectedMonth', function(){
 
         var calendars = this.get('calendars');
 
@@ -38,8 +46,8 @@ export default Ember.Component.extend({
             var vtz = comp.getFirstSubcomponent('vtimezone');
             var tz = new ICAL.Timezone(vtz);
 
-            var beginOfYear = moment().year(this.get('y')).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
-            var endOfYear = moment().year(this.get('y')).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
+            var beginOfYear = moment().year(this.get('selectedYear')).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
+            var endOfYear = moment().year(this.get('selectedYear')).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
 
             var dateRegExp = new RegExp(/d:(\d);/);
             var holidayRegExp = new RegExp(/n:(ph|we);/);
@@ -148,9 +156,53 @@ export default Ember.Component.extend({
 
         unpickDates(){
             this.set('selectedDates', []);
+        },
+
+        changeYear(selected){
+            this.set('selectedYear', selected.id);
+        },
+
+        changeMonth(selected){
+            this.set('monthNumbers', [selected.id, selected.id + 1, selected.id + 2]);
+        }
+    },
+
+    months: Ember.computed(function(){
+
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        function getName(i){
+            if(i === -1){
+                return monthNames[11];
+            }
+            if(i === 12){
+                return monthNames[0];
+            }
+            return monthNames[i];
         }
 
-    },
+        var months = [];
+
+        for(var i = 0; i < 12; i++){
+            months.push({
+                id: i,
+                title: getName(i-1) + ' - ' + getName(i) + ' - ' + getName(i+1)
+            });
+        }
+
+        return months;
+    }),
+
+    years: Ember.computed(function(){
+        return [
+            {id: 2014, title: 2014},
+            {id: 2015, title: 2015},
+            {id: 2016, title: 2016},
+            {id: 2017, title: 2017},
+            {id: 2018, title: 2018}
+        ];
+    }),
 
     updateDays(days, value, model, events){
         var iCalData = model.get('calendar');
@@ -175,5 +227,6 @@ export default Ember.Component.extend({
             this.sendAction('refreshAction');
         });
     }
+
 
 });

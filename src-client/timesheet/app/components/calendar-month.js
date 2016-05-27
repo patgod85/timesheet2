@@ -2,6 +2,19 @@ import Ember from 'ember';
 import moment from 'moment';
 
 export default Ember.Component.extend({
+
+    init() {
+        this._super(...arguments);
+        if(this.get('m') === 0){
+            this.set('y', this.get('y') - 1);
+            this.set('m', 12);
+        }
+        if(this.get('m') === 13){
+            this.set('y', this.get('y') + 1);
+            this.set('m', 1);
+        }
+    },
+
     monthName: Ember.computed(['m'], function () {
 
         return moment().month(this.get('m') - 1).format('MMMM');

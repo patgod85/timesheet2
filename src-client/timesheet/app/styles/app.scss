@@ -25,6 +25,11 @@
         color: brown;
         font-weight: bold;
         text-align: center;
+
+        small {
+            font-size: 8pt;
+            color: grey;
+        }
     }
 
     th {
@@ -116,4 +121,19 @@ table {
 .danger_button {
     color: red;
     font-weight: bold;
+}
+
+.calendar_options {
+
+    color: orange;
+    background-color: #d0d0d0;
+    padding: 4px 20px;
+    min-height: 30px;
+
+    div {
+        select {
+            background-color: black;
+        }
+        float: left;
+    }
 }
