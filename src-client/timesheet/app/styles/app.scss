@@ -1,3 +1,7 @@
+ul {
+    list-style-type: none;
+}
+
 .menu {
     list-style-type: none;
 
@@ -161,4 +165,37 @@ table {
         }
         float: left;
     }
+}
+
+.ivy-tabs{
+    .ivy-tab-list {
+        list-style-type: none;
+        .ivy-tab {
+            float: left;
+            margin-right: 2px;
+            line-height: 1.42857143;
+            border: 1px solid transparent;
+            border-radius: 4px 4px 0 0;
+            display: block;
+            position: relative;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-bottom: -1px;
+
+            &.active {
+                color: #555;
+                cursor: default;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-bottom-color: white;
+            }
+        }
+
+    }
+    .ivy-tab-panel {
+        clear: both;
+        border: 1px solid #ddd;
+        padding: 10px 30px;
+    }
+
 }

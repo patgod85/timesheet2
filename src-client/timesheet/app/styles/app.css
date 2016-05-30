@@ -1,3 +1,6 @@
+ul {
+  list-style-type: none; }
+
 .menu {
   list-style-type: none; }
   .menu li {
@@ -118,5 +121,29 @@ table {
     float: left; }
     .calendar_options div select {
       background-color: black; }
+
+.ivy-tabs .ivy-tab-list {
+  list-style-type: none; }
+  .ivy-tabs .ivy-tab-list .ivy-tab {
+    float: left;
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    display: block;
+    position: relative;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-bottom: -1px; }
+    .ivy-tabs .ivy-tab-list .ivy-tab.active {
+      color: #555;
+      cursor: default;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-bottom-color: white; }
+.ivy-tabs .ivy-tab-panel {
+  clear: both;
+  border: 1px solid #ddd;
+  padding: 10px 30px; }
 
 /*# sourceMappingURL=app.css.map */
