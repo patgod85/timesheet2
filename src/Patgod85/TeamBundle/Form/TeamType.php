@@ -17,6 +17,8 @@ class TeamType extends AbstractType
         $builder
             ->add('name')
             ->add('code')
+            ->add('calendar')
+            ->add('isGeneralCalendarEnabled')
         ;
     }
     

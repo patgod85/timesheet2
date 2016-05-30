@@ -1,12 +1,15 @@
 {{bread-crumbs}}
 
-<p>Name: {{input value=model.name}}</p>
-<p>Code: {{input value=model.code}}</p>
+<p>Name: {{input value=model.team.name}}</p>
+<p>Code: {{input value=model.team.code}}</p>
+<p>Is general calendar enabled: {{input type="checkbox" checked=model.team.is_general_calendar_enabled}}</p>
+
+{{calendar-year y=2016 calendars=model.team.calendars refreshAction="refresh" model=model.team showButtons=false event_types=model.events}}
 
 <h4>Users:</h4>
 
 <ul>
-    {{#each model.users as |user|}}
+    {{#each model.team.users as |user|}}
         <li>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</li>
     {{/each}}
 </ul>
@@ -14,7 +17,7 @@
 <h4>Employees:</h4>
 
 <ul>
-    {{#each model.employees as |employee|}}
+    {{#each model.team.employees as |employee|}}
         <li>{{employee.name}} {{employee.surname}} </li>
     {{/each}}
 </ul>

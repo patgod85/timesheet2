@@ -59,6 +59,23 @@ class Team
     private $employees;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="calendar", type="text", nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
+     */
+    private $calendar;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="is_general_calendar_enabled", type="boolean", nullable=false, options={"default": 1})
+     * @Serializer\Expose
+     * @Serializer\Type("boolean")
+     */
+    private $isGeneralCalendarEnabled;
+
+    /**
      * Team constructor.
      */
     public function __construct()
@@ -156,4 +173,38 @@ class Team
     {
         return $this->code;
     }
+
+    /**
+     * @return string
+     */
+    public function getCalendar()
+    {
+        return $this->calendar;
+    }
+
+    /**
+     * @param string $calendar
+     */
+    public function setCalendar($calendar)
+    {
+        $this->calendar = $calendar;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isGeneralCalendarEnabled()
+    {
+        return $this->isGeneralCalendarEnabled;
+    }
+
+    /**
+     * @param boolean $isGeneralCalendarEnabled
+     */
+    public function setIsGeneralCalendarEnabled($isGeneralCalendarEnabled)
+    {
+        $this->isGeneralCalendarEnabled = $isGeneralCalendarEnabled;
+    }
+
+
 }
