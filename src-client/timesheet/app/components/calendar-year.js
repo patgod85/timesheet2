@@ -22,7 +22,7 @@ export default Ember.Component.extend({
         return o.date;
     }),
 
-    events: Ember.computed('calendars', 'selectedDates', 'selectedYear', 'selectedMonth', function(){
+    events: Ember.computed('calendars', 'selectedDates', 'selectedYear', 'monthNumbers', function(){
 
         var calendars = this.get('calendars');
 
@@ -155,7 +155,6 @@ export default Ember.Component.extend({
         },
 
         setShift(selectedDates, eventId){
-console.log(this.get('events').events);
             this.updateDays(selectedDates, 's:' + eventId, this.get('model'), this.get('events'));
         },
 

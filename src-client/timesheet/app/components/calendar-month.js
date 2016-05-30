@@ -15,7 +15,7 @@ export default Ember.Component.extend({
         }
     },
 
-    monthName: Ember.computed(['m'], function () {
+    monthName: Ember.computed('m', function () {
 
         return moment().month(this.get('m') - 1).format('MMMM');
     }),
