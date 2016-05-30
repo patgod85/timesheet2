@@ -36,7 +36,9 @@ export function updateDays(iCalData, value, days, events){
                                 isFound = true;
                             }
                         }
-                        packageParts.unshift(value);
+                        if(!isFound){
+                            packageParts.unshift(value);
+                        }
                         vevents[i].updatePropertyWithValue('summary', 't2:' + packageParts.join(';'));
                     }
                 }

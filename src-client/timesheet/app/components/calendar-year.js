@@ -26,7 +26,7 @@ export default Ember.Component.extend({
 
         var calendars = this.get('calendars');
 
-        var eIndex = {events: [], diapasons: [], holidays: []};
+        var eIndex = {events: {}, diapasons: {}, holidays: {}};
 
         if(!calendars){
             return eIndex;
@@ -52,6 +52,7 @@ export default Ember.Component.extend({
             var dateRegExp = new RegExp(/d:(\d);/);
             var holidayRegExp = new RegExp(/n:(ph|we);/);
             var valueRegExp = new RegExp(/v:([^;]+);/);
+            var shiftRegExp = new RegExp(/s:([^;]+);/);
 
             var isHoliday = false;
             for(var i = 0; i < vevents.length; i++){
@@ -75,6 +76,11 @@ export default Ember.Component.extend({
                 match = summaryOrig.match(valueRegExp);
                 if(match && match.length > 1){
                     summary.v = match[1];
+                }
+
+                match = summaryOrig.match(shiftRegExp);
+                if(match && match.length > 1){
+                    summary.s = match[1];
                 }
 
                 var event = new ICAL.Event(vevents[i]);
@@ -146,6 +152,11 @@ export default Ember.Component.extend({
 
         setEvent(selectedDates, eventId){
             this.updateDays(selectedDates, 'd:' + eventId, this.get('model'), this.get('events'));
+        },
+
+        setShift(selectedDates, eventId){
+console.log(this.get('events').events);
+            this.updateDays(selectedDates, 's:' + eventId, this.get('model'), this.get('events'));
         },
 
         clearAll(selectedDates){

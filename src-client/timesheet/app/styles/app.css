@@ -28,7 +28,7 @@
     padding: 1px !important; }
     .calendar-month td div, .calendar-month th div {
       cursor: pointer;
-      padding: 7px; }
+      padding: 2px 14px 14px 2px; }
       .calendar-month td div:hover, .calendar-month th div:hover {
         background-color: lightyellow; }
     .calendar-month td.holiday, .calendar-month th.holiday {
@@ -60,6 +60,18 @@
   .event.event_ph, .event.event_we {
     background-color: red; }
 
+.event_shift_1 {
+  background-color: #07B37F;
+  color: white; }
+
+.event_shift_2 {
+  background-color: #9F07B3;
+  color: white; }
+
+.event_shift_3 {
+  background-color: #0763B3;
+  color: white; }
+
 .date_event_container {
   position: relative; }
   .date_event_container .event_value {
@@ -78,6 +90,14 @@
     height: 15px;
     font-size: 6pt;
     padding: 0; }
+  .date_event_container .event_shift {
+    position: absolute;
+    bottom: 1px;
+    left: 1px;
+    width: 20px;
+    height: 15px;
+    font-size: 6pt;
+    padding: 2px 8px; }
 
 table {
   border-collapse: collapse; }

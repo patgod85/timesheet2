@@ -21,12 +21,12 @@
                         {{#each day.events as |event|}}
                             {{#if event.summary.d }}
                                 <div class="event event_{{event.summary.d}}"></div>
-                            {{else if event.summary.n}}
-                            {{else}}
-                                &bull;
                             {{/if}}
                             {{#if event.summary.v }}
                                 <div class="event_value">{{event.summary.v}}</div>
+                            {{/if}}
+                            {{#if event.summary.s }}
+                                <div class="event_shift event_shift_{{event.summary.s}}">{{event.summary.s}}</div>
                             {{/if}}
                         {{/each}}
                     </div>

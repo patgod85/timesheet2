@@ -46,16 +46,24 @@
                     {{/if}}
                 </td>
                 <td>
-                    <label>
-                        {{input value=value type="text"}}
-                    </label>
-                    <br/>
-                    <button type="button" {{ action "setValue" selectedDates event.id on="click" }}>Apply</button>
-                    <br/>
-                    <i>Example: 1.25</i>
+                    {{#if showButtons}}
+                        <label>
+                            {{input value=value type="text"}}
+                        </label>
+                        <br/>
+                        <button type="button" {{ action "setValue" selectedDates event.id on="click" }}>Apply</button>
+                        <br/>
+                        <i>Example: 1.25</i>
+                    {{/if}}
                 </td>
                 <td>
-                    -|-
+                    {{#if showButtons}}
+                        <ul class="events_agenda">
+                            <li><div class="event event_shift event_shift_1">1</div> - <button type="button" {{ action "setShift" selectedDates 1 on="click" }}>Shift 1</button></li>
+                            <li><div class="event event_shift event_shift_2">2</div> - <button type="button" {{ action "setShift" selectedDates 2 on="click" }}>Shift 2</button></li>
+                            <li><div class="event event_shift event_shift_3">3</div> - <button type="button" {{ action "setShift" selectedDates 3 on="click" }}>Shift 3</button></li>
+                        </ul>
+                    {{/if}}
                 </td>
                 <td>
                     <ul class="events_agenda ">
