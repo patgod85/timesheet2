@@ -28,6 +28,7 @@ export default Ember.Route.extend({
             events: this.store.findAll('event')
         });
     },
+
     actions: {
         submit(model){
             model.save();
