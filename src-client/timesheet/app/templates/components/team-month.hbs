@@ -1,0 +1,17 @@
+{{yield}}
+
+<div class="calendar_options">
+    {{drop-down content=years onChange=(action "changeYear") selectedValue=selectedYear }}
+    {{drop-down content=months onChange=(action "changeMonth") selectedValue=selectedMonth  }}
+</div>
+
+
+{{horizontal-month month=selectedMonth year=selectedYear showNumbers=true calendars=team.calendars}}
+<div>
+    {{#each team.employees as |employee|}}
+        <div>
+            {{#link-to "employee" employee.id}}{{employee.name}} {{employee.surname}}{{/link-to}}
+            {{horizontal-month month=selectedMonth year=selectedYear showNumbers=false calendars=employee.calendars}}
+        </div>
+    {{/each}}
+</div>

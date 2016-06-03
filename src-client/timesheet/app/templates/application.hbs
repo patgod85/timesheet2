@@ -1,5 +1,18 @@
 You are logged in as <strong>{{ model.user.username }}</strong>
 
+<!--suppress CssUnusedSymbol -->
+<style type="text/css">
+    {{#each model.events as |event|}}
+        .event_{{event.id}} {
+            background-color: #{{ event.background_color }};
+            color: #{{ event.color }};
+        }
+        .event_{{event.id}}:before {
+            content: "{{ event.title }}";
+        }
+    {{/each}}
+</style>
+
 {{menu-bar}}
 
 {{outlet}}

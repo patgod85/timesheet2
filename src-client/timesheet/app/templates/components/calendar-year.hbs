@@ -10,20 +10,6 @@
 {{/each}}
 
 <div class="clearfix"></div>
-    {{#if showButtons}}
-        <!--suppress CssUnusedSymbol -->
-        <style type="text/css">
-            {{#each event_types as |event|}}
-                .event_{{event.id}} {
-                    background-color: #{{ event.background_color }};
-                    color: #{{ event.color }};
-                }
-                .event_{{event.id}}:before {
-                    content: "{{ event.title }}";
-                }
-            {{/each}}
-        </style>
-    {{/if}}
     <table>
         <thead>
             <tr>

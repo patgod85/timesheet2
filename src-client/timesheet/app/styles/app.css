@@ -34,11 +34,6 @@ ul {
       padding: 2px 14px 14px 2px; }
       .calendar-month td div:hover, .calendar-month th div:hover {
         background-color: lightyellow; }
-    .calendar-month td.holiday, .calendar-month th.holiday {
-      background-color: red;
-      color: yellow; }
-      .calendar-month td.holiday.bg-success, .calendar-month th.holiday.bg-success {
-        background-color: blue; }
 
 .clearfix {
   clear: both;
@@ -74,6 +69,12 @@ ul {
 .event_shift_3 {
   background-color: #0763B3;
   color: white; }
+
+td.holiday {
+  background-color: red;
+  color: yellow; }
+  td.holiday.bg-success {
+    background-color: blue; }
 
 .date_event_container {
   position: relative; }
@@ -145,5 +146,23 @@ table {
   clear: both;
   border: 1px solid #ddd;
   padding: 10px 30px; }
+
+.horizontal-month td {
+  width: 38px;
+  height: 35px;
+  padding: 0 2px; }
+  .horizontal-month td.isWeekend {
+    font-weight: bold; }
+  .horizontal-month td .date_event_container {
+    width: 100%;
+    height: 100%; }
+    .horizontal-month td .date_event_container .event {
+      width: 15px; }
+    .horizontal-month td .date_event_container .event_shift {
+      width: 15px;
+      padding: 0 2px;
+      border: 1px solid #ccc9c9; }
+    .horizontal-month td .date_event_container .event_value {
+      font-size: 6pt; }
 
 /*# sourceMappingURL=app.css.map */

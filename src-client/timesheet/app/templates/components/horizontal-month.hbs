@@ -1,0 +1,26 @@
+{{yield}}
+
+<table class="horizontal-month">
+    <tbody>
+        <tr>
+            {{#each days as |day|}}
+                <td class="{{if day.isWeekend "isWeekend"}} {{day.className}}">
+                    <div class="date_event_container">
+                        {{day.title}}
+                        {{#each day.events as |event|}}
+                            {{#if event.summary.d }}
+                                <div class="event event_{{event.summary.d}}"></div>
+                            {{/if}}
+                            {{#if event.summary.v }}
+                                <div class="event_value">{{event.summary.v}}</div>
+                            {{/if}}
+                            {{#if event.summary.s }}
+                                <div class="event_shift event_shift_{{event.summary.s}}">{{event.summary.s}}</div>
+                            {{/if}}
+                        {{/each}}
+                    </div>
+                </td>
+            {{/each}}
+        </tr>
+    </tbody>
+</table>

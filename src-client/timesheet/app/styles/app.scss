@@ -52,14 +52,6 @@ ul {
             }
         }
 
-        &.holiday {
-            background-color: red;
-            color: yellow;
-
-            &.bg-success {
-                background-color: blue;
-            }
-        }
     }
 }
 .clearfix {
@@ -103,9 +95,20 @@ ul {
     background-color: #0763B3;
     color: white;
 }
+td {
 
+    &.holiday {
+        background-color: red;
+        color: yellow;
+
+        &.bg-success {
+            background-color: blue;
+        }
+    }
+}
 .date_event_container{
     position: relative;
+
     .event_value {
         font-size: 8pt;
         color: black;
@@ -137,6 +140,7 @@ ul {
 
     }
 }
+
 
 table {
     border-collapse: collapse;
@@ -198,4 +202,35 @@ table {
         padding: 10px 30px;
     }
 
+}
+
+.horizontal-month{
+    td {
+        width: 38px;
+        height: 35px;
+        padding: 0 2px;
+
+        &.isWeekend {
+            font-weight: bold;
+        }
+
+        .date_event_container {
+            width: 100%;
+            height: 100%;
+
+            .event {
+                width: 15px;
+            }
+
+            .event_shift {
+                width: 15px;
+                padding: 0 2px;
+                border: 1px solid #ccc9c9;
+            }
+
+            .event_value {
+                font-size: 6pt;
+            }
+        }
+    }
 }
