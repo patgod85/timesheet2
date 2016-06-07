@@ -1,79 +1,19 @@
 import Ember from 'ember';
 
-import ical from '../utils/ical-wrapper';
 
-export default Ember.Component.extend({
+import CalendarWithActions from './calendar-with-actions';
 
-    selectedDates: [],
+export default CalendarWithActions.extend({
 
-    selectedYear: 0,
+    year: 0,
 
     monthNumbers: [1,2,3],
 
-    init() {
-        this._super(...arguments);
-        this.set('selectedYear', this.get('y'));
-    },
+    //init() {
+    //    this._super(...arguments);
+    //    this.set('year', this.get('year'));
+    //},
 
-    selectedDatesPlain: Ember.computed.map('selectedDates', function(o){
-        return o.date;
-    }),
-
-    events: Ember.computed('calendars', 'selectedDates', 'selectedYear', 'monthNumbers', function(){
-
-        var calendars = this.get('calendars');
-
-        return ical.getEventsIndex(calendars, this.get('selectedYear'));
-    }),
-
-    actions: {
-        selectDate(day){
-
-            var selectedDates = this.get('selectedDates');
-            var found = selectedDates.findBy('date', day.date);
-            if(!found){
-                selectedDates.pushObject(day);
-            }
-            else{
-                selectedDates.removeObject(found);
-            }
-        },
-
-        setValue(selectedDates){
-            var value = this.get('value');
-            this.updateDays(selectedDates, 'v:' + value, this.get('model'), this.get('events'));
-        },
-
-        setNonworkingDay(selectedDates, eventId){
-            this.updateDays(selectedDates, 'n:' + eventId, this.get('model'), this.get('events'));
-        },
-
-        setEvent(selectedDates, eventId){
-            this.updateDays(selectedDates, 'd:' + eventId, this.get('model'), this.get('events'));
-        },
-
-        setShift(selectedDates, eventId){
-            this.updateDays(selectedDates, 's:' + eventId, this.get('model'), this.get('events'));
-        },
-
-        clearAll(selectedDates){
-            if(confirm('All data in selected dates will be removed. Are you sure?')){
-                this.clearData(selectedDates, this.get('model'), this.get('events'));
-            }
-        },
-
-        unpickDates(){
-            this.set('selectedDates', []);
-        },
-
-        changeYear(selected){
-            this.set('selectedYear', selected.id);
-        },
-
-        changeMonth(selected){
-            this.set('monthNumbers', [selected.id, selected.id + 1, selected.id + 2]);
-        }
-    },
 
     months: Ember.computed(function(){
 
@@ -112,29 +52,14 @@ export default Ember.Component.extend({
         ];
     }),
 
-    updateDays(days, value, model, events){
-        var iCalData = model.get('calendar');
+    actions: {
 
-        var updatedCalendar = ical.updateDays(iCalData, value, days, events);
+        changeYear(selected){
+            this.set('year', selected.id);
+        },
 
-        model.set('calendar', updatedCalendar);
-
-        model.save().then(() => {
-            this.sendAction('refreshAction');
-        });
-    },
-
-    clearData(days, model, events){
-        var iCalData = model.get('calendar');
-
-        var updatedCalendar = ical.clearData(iCalData, days, events);
-
-        model.set('calendar', updatedCalendar);
-
-        model.save().then(() => {
-            this.sendAction('refreshAction');
-        });
+        changeMonth(selected){
+            this.set('monthNumbers', [selected.id, selected.id + 1, selected.id + 2]);
+        }
     }
-
-
 });

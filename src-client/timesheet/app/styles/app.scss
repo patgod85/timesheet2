@@ -117,6 +117,8 @@ td {
         position: absolute;
         right: 1px;
         top: 1px;
+        min-width: 20px;
+        text-align: center;
     }
 
     .event {
@@ -232,5 +234,33 @@ table {
                 font-size: 6pt;
             }
         }
+
+    }
+
+    &.calendar-body {
+        td {
+            cursor: pointer;
+        }
+    }
+
+    &.calendar-header {
+        td {
+            small {
+                color: grey;
+                font-size: 10pt;
+                display: block;
+                line-height: 12px;
+            }
+
+            &.holiday {
+                small {
+                    color: #efefef;
+                }
+            }
+            &.weekend {
+                font-weight: bold;
+            }
+        }
+
     }
 }

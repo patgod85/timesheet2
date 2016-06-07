@@ -115,13 +115,13 @@ export function getEventsIndex(calendars, year){
         var beginOfYear = moment().year(year).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
         var endOfYear = moment().year(year).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
 
-        var dateRegExp = new RegExp(/d:(\d);/);
+        var dateRegExp = new RegExp(/d:(\d{1,2});/);
         var holidayRegExp = new RegExp(/n:(ph|we);/);
         var valueRegExp = new RegExp(/v:([^;]+);/);
         var shiftRegExp = new RegExp(/s:([^;]+);/);
 
-        var isHoliday = false;
         for(var i = 0; i < vevents.length; i++){
+            var isHoliday = false;
 
             var isInstance = (i+1 === vevents.length);
 

@@ -1,9 +1,11 @@
 import Ember from 'ember';
 import moment from 'moment';
 
-export default Ember.Component.extend({
-    selectedYear: moment().year(),
-    selectedMonth: moment().month(),
+import CalendarWithActions from './calendar-with-actions';
+
+export default CalendarWithActions.extend({
+    year: moment().year(),
+    month: moment().month(0).month(),
 
     months: Ember.computed(function(){
 
@@ -30,11 +32,11 @@ export default Ember.Component.extend({
 
     actions: {
         changeYear(selected){
-            this.set('selectedYear', selected.id);
+            this.set('year', selected.id);
         },
 
         changeMonth(selected){
-            this.set('selectedMonth', selected.id);
+            this.set('month', selected.id);
         }
     }
 });

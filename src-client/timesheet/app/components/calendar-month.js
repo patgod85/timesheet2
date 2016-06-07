@@ -5,28 +5,29 @@ export default Ember.Component.extend({
 
     init() {
         this._super(...arguments);
-        if(this.get('m') === 0){
-            this.set('y', this.get('y') - 1);
-            this.set('m', 12);
+        if(this.get('month') === 0){
+            this.set('year', this.get('year') - 1);
+            this.set('month', 12);
         }
-        if(this.get('m') === 13){
-            this.set('y', this.get('y') + 1);
-            this.set('m', 1);
+        if(this.get('month') === 13){
+            this.set('year', this.get('year') + 1);
+            this.set('month', 1);
         }
     },
 
-    monthName: Ember.computed('m', function () {
+    monthName: Ember.computed('month', function () {
 
-        return moment().month(this.get('m') - 1).format('MMMM');
+        return moment().month(this.get('month') - 1).format('MMMM');
     }),
 
     clicked: 0,
 
-    weeks: Ember.computed('y', 'm', 'clicked', 'events', function () {
 
-        var firstDay = moment().year(this.get('y')).month(this.get('m') - 1).date(1);
-        var selectedDates = this.get('selectedDates') || [];
-        var events = this.get('events');
+    weeks: Ember.computed('year', 'month', 'clicked', 'events', 'checkedDates', function () {
+
+        var firstDay = moment().year(this.get('year')).month(this.get('month') - 1).date(1);
+        var checkedDates = this.get('checkedDates') || [];
+        //var events = this.get('events');
         var weeks = [];
 
         var isLastWeek = false;
@@ -41,29 +42,10 @@ export default Ember.Component.extend({
                 firstDay.weekday(d);
 
                 let date = firstDay.date();
-                let className = '';
-                var index = moment(firstDay).format('YYYY-MM-DD');
-                var isHoliday = events.holidays.hasOwnProperty(index) && events.holidays[index];
-
-                if(firstDay.month() + 1 !== this.get('m')){
-                    className += ' bg-danger';
-                }
-
-                if(isHoliday){
-//console.log(events.holidays, index);
-                    className += ' holiday';
-                }
-
-                if(selectedDates.indexOf(firstDay.format('YYYY-MM-DD')) !== -1){
-                    className += ' bg-success';
-                }
 
                 week.push({
-                    title: firstDay.format('DD'),
-                    isHoliday,
-                    className,
-                    date: index,
-                    events: events.events.hasOwnProperty(index) ? events.events[index] : []
+                    date: moment(firstDay),
+                    isChecked: checkedDates.indexOf(firstDay.format('YYYY-MM-DD')) > -1
                 });
 
                 if (w > 0 && date < prevDate) {
@@ -85,14 +67,6 @@ export default Ember.Component.extend({
         }
 
         return weeks;
-    }),
-
-    actions: {
-        click(day){
-            this.get('selectDateAction')(day);
-            this.set('clicked', (new Date()).getTime());
-        }
-
-    }
+    })
 
 });

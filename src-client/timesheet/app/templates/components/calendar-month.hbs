@@ -1,5 +1,5 @@
 <table class="table table-responsive table-bordered  table-striped calendar-month">
-    <caption>{{monthName}} <small>{{y}}</small></caption>
+    <caption>{{monthName}} <small>{{year}}</small></caption>
     <thead>
         <tr>
             <th>Mo</th>
@@ -15,22 +15,7 @@
     {{#each weeks as |week|}}
         <tr>
             {{#each week as |day|}}
-                <td class={{day.className}}>
-                    <div {{action "click" day}} class="date_event_container">
-                        {{day.title}}
-                        {{#each day.events as |event|}}
-                            {{#if event.summary.d }}
-                                <div class="event event_{{event.summary.d}}"></div>
-                            {{/if}}
-                            {{#if event.summary.v }}
-                                <div class="event_value">{{event.summary.v}}</div>
-                            {{/if}}
-                            {{#if event.summary.s }}
-                                <div class="event_shift event_shift_{{event.summary.s}}">{{event.summary.s}}</div>
-                            {{/if}}
-                        {{/each}}
-                    </div>
-                </td>
+                {{calendar-day date=day.date events=events month=month isChecked=day.isChecked checkDateAction=checkDateAction showNumbers=true nonWorkingOnly=nonWorkingOnly}}
             {{/each}}
         </tr>
     {{/each}}

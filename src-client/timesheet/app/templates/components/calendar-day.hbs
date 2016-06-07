@@ -1,0 +1,16 @@
+    <div {{action "click" date}} class="date_event_container">
+        {{title}}<small>{{dayOfWeek}}</small>
+        {{#unless isHeader}}
+            {{#each localEvents as |event|}}
+                {{#if event.summary.d }}
+                    <div class="event event_{{event.summary.d}}"></div>
+                {{/if}}
+                {{#if event.summary.v }}
+                    <div class="event_value">{{event.summary.v}}</div>
+                {{/if}}
+                {{#if event.summary.s }}
+                    <div class="event_shift event_shift_{{event.summary.s}}">{{event.summary.s}}</div>
+                {{/if}}
+            {{/each}}
+        {{/unless}}
+    </div>

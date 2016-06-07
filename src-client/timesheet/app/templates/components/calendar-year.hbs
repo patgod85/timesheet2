@@ -1,78 +1,14 @@
 <div class="calendar_options">
-    {{drop-down content=years onChange=(action "changeYear") selectedValue=selectedYear }}
+    {{drop-down content=years onChange=(action "changeYear") selectedValue=year }}
     {{drop-down content=months onChange=(action "changeMonth") }}
 </div>
 
 <div class="clearfix"></div>
 
 {{#each monthNumbers as |m|}}
-    {{calendar-month m=m y=selectedYear selectDateAction=(action 'selectDate') selectedDates=selectedDatesPlain events=events}}
+    {{calendar-month month=m year=year checkDateAction=(action 'checkDate') checkedDates=checkedDatesPlain events=events nonWorkingOnly=nonWorkingOnly}}
 {{/each}}
 
 <div class="clearfix"></div>
-    <table>
-        <thead>
-            <tr>
-                <th>Working days</th>
-                <th>Day value</th>
-                <th>Shifts</th>
-                <th>Nonworking days</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    {{#if showButtons}}
-                        <ul class="events_agenda">
-                            {{#each event_types as |event|}}
-                                <li><div class="event event_{{event.id}}"></div> - <button type="button" {{ action "setEvent" selectedDates event.id on="click" }}>{{event.name}}</button></li>
-                            {{/each}}
-                        </ul>
-                    {{/if}}
-                </td>
-                <td>
-                    {{#if showButtons}}
-                        <label>
-                            {{input value=value type="text"}}
-                        </label>
-                        <br/>
-                        <button type="button" {{ action "setValue" selectedDates event.id on="click" }}>Apply</button>
-                        <br/>
-                        <i>Example: 1.25</i>
-                    {{/if}}
-                </td>
-                <td>
-                    {{#if showButtons}}
-                        <ul class="events_agenda">
-                            <li><div class="event event_shift event_shift_1">1</div> - <button type="button" {{ action "setShift" selectedDates 1 on="click" }}>Shift 1</button></li>
-                            <li><div class="event event_shift event_shift_2">2</div> - <button type="button" {{ action "setShift" selectedDates 2 on="click" }}>Shift 2</button></li>
-                            <li><div class="event event_shift event_shift_3">3</div> - <button type="button" {{ action "setShift" selectedDates 3 on="click" }}>Shift 3</button></li>
-                        </ul>
-                    {{/if}}
-                </td>
-                <td>
-                    <ul class="events_agenda ">
-                        <li><div class="event event_we"></div> - <button type="button" {{ action "setNonworkingDay" selectedDates "we" on="click" }}>Weekend</button></li>
-                        <li><div class="event event_ph"></div> - <button type="button" {{ action "setNonworkingDay" selectedDates "ph" on="click" }}>Public holiday</button></li>
-                    </ul>
-                </td>
-                <td>
-                    <p>
-                        <button type="button" {{ action "unpickDates" selectedDates on="click" }}>Unpick dates</button>
-                    </p>
-                    <p>
-                        <button type="button" {{ action "clearAll" selectedDates on="click" }} class="danger_button">&otimes; Clear data</button>
-                    </p>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-<div>
-    <strong>Selected dates:</strong>
-    <ul>
-    {{#each selectedDates as |day|}}
-        <li>{{day.date}} - {{#each day.events as |event|}}{{json event.summary}}{{/each}}</li>
-    {{/each}}
-    </ul>
-</div>
+
+{{calendar-actions checkedDates=checkedDates events=events showButtons=showButtons model=model event_types=event_types}}

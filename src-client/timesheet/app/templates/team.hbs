@@ -9,11 +9,11 @@
     {{/tabs.tablist}}
 
     {{#tabs.tabpanel}}
-        {{team-month team=model.team events=model.events}}
+        {{team-month year=2016 calendars=model.team.calendars team=model.team showButtons=false event_types=model.events}}
     {{/tabs.tabpanel}}
 
     {{#tabs.tabpanel}}
-        {{calendar-year y=2016 calendars=model.team.calendars refreshAction="refresh" model=model.team showButtons=false event_types=model.events}}
+        {{calendar-year year=2016 calendars=model.team.calendars refreshAction="refresh" model=model.team showButtons=false event_types=model.events nonWorkingOnly=true}}
     {{/tabs.tabpanel}}
 
     {{#tabs.tabpanel}}

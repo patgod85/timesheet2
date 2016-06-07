@@ -85,7 +85,9 @@ td.holiday {
     border: 1px solid grey;
     position: absolute;
     right: 1px;
-    top: 1px; }
+    top: 1px;
+    min-width: 20px;
+    text-align: center; }
   .date_event_container .event {
     position: absolute;
     bottom: 1px;
@@ -164,5 +166,16 @@ table {
       border: 1px solid #ccc9c9; }
     .horizontal-month td .date_event_container .event_value {
       font-size: 6pt; }
+.horizontal-month.calendar-body td {
+  cursor: pointer; }
+.horizontal-month.calendar-header td small {
+  color: grey;
+  font-size: 10pt;
+  display: block;
+  line-height: 12px; }
+.horizontal-month.calendar-header td.holiday small {
+  color: #efefef; }
+.horizontal-month.calendar-header td.weekend {
+  font-weight: bold; }
 
 /*# sourceMappingURL=app.css.map */
