@@ -54,11 +54,14 @@ export default Ember.Component.extend({
     }),
 
     actions: {
-        click(day){
-            this.get('checkDateAction')({
-                date: day.format('YYYY-MM-DD'),
-                events: this.get('localEvents')
-            });
+        click(sectionId, day){
+            this.get('checkDateAction')(
+                sectionId,
+                {
+                    date: day.format('YYYY-MM-DD'),
+                    events: this.get('localEvents')
+                }
+            );
         }
 
     }

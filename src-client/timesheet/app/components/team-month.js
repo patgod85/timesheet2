@@ -7,6 +7,29 @@ export default CalendarWithActions.extend({
     year: moment().year(),
     month: moment().month(0).month(),
 
+    init() {
+        this._super(...arguments);
+
+        var monthSections = this.get('monthSections');
+
+        var month = this.get('month');
+        var employees = this.get('team').get('employees');
+
+        var sectionId = 0;
+        employees.forEach(employee => {
+
+            monthSections.pushObject(
+                Ember.Object.create({
+                    sectionId: sectionId++,
+                    month,
+                    days: [],
+                    model: employee
+                })
+            );
+        });
+
+    },
+
     months: Ember.computed(function(){
 
         var monthNames = ["January", "February", "March", "April", "May", "June",

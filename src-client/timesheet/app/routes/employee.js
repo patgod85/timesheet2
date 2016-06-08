@@ -25,7 +25,7 @@ export default Ember.Route.extend({
                 employee.set('calendars', calendars);
                 return employee;
             }),
-            events: this.store.findAll('event')
+            events: this.store.peekAll('event')
         });
     },
 

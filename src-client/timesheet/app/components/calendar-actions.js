@@ -4,56 +4,71 @@ import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
     actions: {
-        setValue(checkedDates){
+        setValue(){
             var value = this.get('value');
-            this.updateDays(checkedDates, 'v:' + value, this.get('model'), this.get('events'));
+            this.updateDays('v:' + value);
         },
 
-        setNonworkingDay(checkedDates, eventId){
-            this.updateDays(checkedDates, 'n:' + eventId, this.get('model'), this.get('events'));
+        setNonworkingDay(eventId){
+            this.updateDays('n:' + eventId);
         },
 
-        setEvent(checkedDates, eventId){
-            this.updateDays(checkedDates, 'd:' + eventId, this.get('model'), this.get('events'));
+        setEvent(eventId){
+            this.updateDays('d:' + eventId);
         },
 
-        setShift(checkedDates, eventId){
-            this.updateDays(checkedDates, 's:' + eventId, this.get('model'), this.get('events'));
+        setShift(eventId){
+            this.updateDays('s:' + eventId);
         },
 
-        clearAll(checkedDates){
+        clearAll(){
             if(confirm('All data in selected dates will be removed. Are you sure?')){
-                this.clearData(checkedDates, this.get('model'), this.get('events'));
+                this.clearData();
             }
         },
 
         unpickDates(){
-            this.set('checkedDates', []);
+            this.sendAction('onUncheck');
         }
     },
 
-    clearData(days, model, events){
+    clearData(days){
         var iCalData = model.get('calendar');
 
-        var updatedCalendar = ical.clearData(iCalData, days, events);
+        var updatedCalendar = ical.clearData(iCalData, days, this.get('events'));
 
         model.set('calendar', updatedCalendar);
 
         model.save().then(() => {
-            this.sendAction('refreshAction');
+            //this.sendAction('refreshAction');
         });
+
+        this.sendAction('onUpdate');
     },
 
-    updateDays(days, value, model, events){
-        var iCalData = model.get('calendar');
+    updateDays(value){
+        var sections = this.get('sections');
+        sections.forEach(section => {
 
-        var updatedCalendar = ical.updateDays(iCalData, value, days, events);
+            var model = section.model,
+                days = section.days.toArray();
 
-        model.set('calendar', updatedCalendar);
+            if(days.length){
 
-        model.save().then(() => {
-            this.sendAction('refreshAction');
+                var iCalData = model.get('calendar');
+
+                var updatedCalendar = ical.updateDays(iCalData, value, days.toArray(), this.get('events'));
+
+                model.set('calendar', updatedCalendar);
+
+                model.save().then(() => {
+                    //this.sendAction('refreshAction');
+                });
+            }
+
         });
+
+        this.sendAction('onUpdate');
     }
 
 });

@@ -28,7 +28,8 @@ ul {
     font-weight: bold;
     text-align: center; }
   .calendar-month td, .calendar-month th {
-    padding: 1px !important; }
+    padding: 1px !important;
+    color: gray; }
     .calendar-month td div, .calendar-month th div {
       cursor: pointer;
       padding: 2px 14px 14px 2px; }

@@ -3,11 +3,11 @@ import moment from 'moment';
 import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
-    days: Ember.computed('year', 'month', 'calendars', 'checkedDates', function(){
+    days: Ember.computed('year', 'month', 'calendars', 'checkedDates.[]', function(){
 
         var year = this.get('year');
         var month = this.get('month');
-        var checkedDates = this.get('checkedDates') || [];
+        var checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
         var days = [];
         for(var i = moment({year: year, month: month, date: 1}); i.month() === month; i.add(1, 'd')){
 

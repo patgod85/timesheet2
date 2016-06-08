@@ -4,13 +4,14 @@ import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
 
-    checkedDates: [],
+    monthSections: [],
 
-    checkedDatesPlain: Ember.computed.map('checkedDates', function(o){
-        return o.date;
-    }),
+    init() {
+        this._super(...arguments);
+        this.set('monthSections', []);
+    },
 
-    events: Ember.computed('calendars', 'checkedDates', 'year', 'month', 'monthNumbers', function(){
+    events: Ember.computed('calendars', 'year', 'month', 'monthNumbers', function(){
 
         var calendars = this.get('calendars');
 
@@ -18,22 +19,37 @@ export default Ember.Component.extend({
     }),
 
     actions: {
-        checkDate(day){
-            var checkedDates = this.get('checkedDates');
-            var found = checkedDates.findBy('date', day.date);
-            if(!found){
-                checkedDates.pushObject(day);
+        checkDate(sectionId, day){
+            var sections = this.get('monthSections');
+
+            var foundSection = sections.findBy('sectionId', sectionId);
+
+            if(!foundSection){
+                return;
+            }
+
+            var days = foundSection.get('days');
+            var foundDay = days.findBy('date', day.date);
+
+            if(foundDay){
+                days.removeObject(foundDay);
             }
             else{
-                checkedDates.removeObject(found);
+                days.pushObject(day);
             }
         },
 
 
-        unpickDates(){
-            this.set('checkedDates', []);
+        onUncheck(){
+            var sections = this.get('monthSections');
+            sections.forEach(section => {
+                section.set('days', []);
+            });
+        },
+
+        onUpdate(){
+            this.sendAction('refreshAction');
         }
     }
-
 
 });

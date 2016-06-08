@@ -5,10 +5,10 @@
 
 <div class="clearfix"></div>
 
-{{#each monthNumbers as |m|}}
-    {{calendar-month month=m year=year checkDateAction=(action 'checkDate') checkedDates=checkedDatesPlain events=events nonWorkingOnly=nonWorkingOnly}}
+{{#each monthSections as |m|}}
+    {{calendar-month month=m.month year=year checkDateAction=(action 'checkDate') checkedDates=m.days events=events nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
 {{/each}}
 
 <div class="clearfix"></div>
 
-{{calendar-actions checkedDates=checkedDates events=events showButtons=showButtons model=model event_types=event_types}}
+{{calendar-actions sections=monthSections events=events showButtons=showButtons event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}

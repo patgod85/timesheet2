@@ -7,12 +7,33 @@ export default CalendarWithActions.extend({
 
     year: 0,
 
-    monthNumbers: [1,2,3],
+    init() {
+        this._super(...arguments);
+        this.set('year', this.get('year'));
+        var monthSections = this.get('monthSections');
 
-    //init() {
-    //    this._super(...arguments);
-    //    this.set('year', this.get('year'));
-    //},
+        var model = this.get('model');
+        monthSections.pushObjects([
+            Ember.Object.create({
+                sectionId: 0,
+                month: 1,
+                days: [],
+                model
+            }),
+            Ember.Object.create({
+                sectionId: 1,
+                month: 2,
+                days: [],
+                model
+            }),
+            Ember.Object.create({
+                sectionId: 2,
+                month: 3,
+                days: [],
+                model
+            })
+        ]);
+    },
 
 
     months: Ember.computed(function(){
@@ -59,7 +80,30 @@ export default CalendarWithActions.extend({
         },
 
         changeMonth(selected){
-            this.set('monthNumbers', [selected.id, selected.id + 1, selected.id + 2]);
+            var model = this.get('model');
+            this.set('monthSections',
+                [
+                    Ember.Object.create({
+                        sectionId: 0,
+                        month: selected.id,
+                        days: [],
+                        model
+                    }),
+                    Ember.Object.create({
+                        sectionId: 1,
+                        month: selected.id + 1,
+                        days: [],
+                        model
+                    }),
+                    Ember.Object.create({
+                        sectionId: 2,
+                        month: selected.id + 2,
+                        days: [],
+                        model
+                    })
+                ]
+            );
         }
+
     }
 });

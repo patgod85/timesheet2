@@ -8,12 +8,18 @@
 
 {{horizontal-month month=month year=year showNumbers=true calendars=team.calendars events=events isHeader=true}}
 <div>
-    {{#each team.employees as |employee|}}
+    {{#each monthSections as |section|}}
+        <div>
+            {{#link-to "employee" section.model.id}}{{section.model.name}} {{section.model.surname}}{{/link-to}}
+            {{horizontal-month month=section.month year=year showNumbers=false calendars=section.model.calendars checkedDates=section.days checkDateAction=(action 'checkDate') model=section.model sectionId=section.sectionId}}
+        </div>
+    {{/each}}
+    {{!--#each team.employees as |employee|}}
         <div>
             {{#link-to "employee" employee.id}}{{employee.name}} {{employee.surname}}{{/link-to}}
             {{horizontal-month month=month year=year showNumbers=false calendars=employee.calendars  checkedDates=checkedDatesPlain checkDateAction=(action 'checkDate') model=employee }}
         </div>
-    {{/each}}
+    {{/each--}}
 </div>
 
-{{calendar-actions checkedDates=checkedDates events=events showButtons=true model=team event_types=event_types}}
+{{calendar-actions sections=monthSections checkedDates=checkedDates events=events showButtons=true model=team event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}

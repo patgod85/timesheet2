@@ -20,14 +20,10 @@ export default Ember.Component.extend({
         return moment().month(this.get('month') - 1).format('MMMM');
     }),
 
-    clicked: 0,
-
-
-    weeks: Ember.computed('year', 'month', 'clicked', 'events', 'checkedDates', function () {
+    weeks: Ember.computed('year', 'month', 'checkedDates.[]', 'events.events.[]', function () {
 
         var firstDay = moment().year(this.get('year')).month(this.get('month') - 1).date(1);
-        var checkedDates = this.get('checkedDates') || [];
-        //var events = this.get('events');
+        var checkedDates = this.get('checkedDates').map(o => o.date) || [];
         var weeks = [];
 
         var isLastWeek = false;

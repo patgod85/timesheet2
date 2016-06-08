@@ -16,7 +16,7 @@
             {{#if showButtons}}
                 <ul class="events_agenda">
                     {{#each event_types as |event|}}
-                        <li><div class="event event_{{event.id}}"></div> - <button type="button" {{ action "setEvent" checkedDates event.id on="click" }}>{{event.name}}</button></li>
+                        <li><div class="event event_{{event.id}}"></div> - <button type="button" {{ action "setEvent" event.id on="click" }}>{{event.name}}</button></li>
                     {{/each}}
                 </ul>
             {{/if}}
@@ -27,7 +27,7 @@
                     {{input value=value type="text"}}
                 </label>
                 <br/>
-                <button type="button" {{ action "setValue" checkedDates event.id on="click" }}>Apply</button>
+                <button type="button" {{ action "setValue" event.id on="click" }}>Apply</button>
                 <br/>
                 <i>Example: 1.25</i>
             {{/if}}
@@ -35,24 +35,24 @@
         <td>
             {{#if showButtons}}
                 <ul class="events_agenda">
-                    <li><div class="event event_shift event_shift_1">1</div> - <button type="button" {{ action "setShift" checkedDates 1 on="click" }}>Shift 1</button></li>
-                    <li><div class="event event_shift event_shift_2">2</div> - <button type="button" {{ action "setShift" checkedDates 2 on="click" }}>Shift 2</button></li>
-                    <li><div class="event event_shift event_shift_3">3</div> - <button type="button" {{ action "setShift" checkedDates 3 on="click" }}>Shift 3</button></li>
+                    <li><div class="event event_shift event_shift_1">1</div> - <button type="button" {{ action "setShift" 1 on="click" }}>Shift 1</button></li>
+                    <li><div class="event event_shift event_shift_2">2</div> - <button type="button" {{ action "setShift" 2 on="click" }}>Shift 2</button></li>
+                    <li><div class="event event_shift event_shift_3">3</div> - <button type="button" {{ action "setShift" 3 on="click" }}>Shift 3</button></li>
                 </ul>
             {{/if}}
         </td>
         <td>
             <ul class="events_agenda ">
-                <li><div class="event event_we"></div> - <button type="button" {{ action "setNonworkingDay" checkedDates "we" on="click" }}>Weekend</button></li>
-                <li><div class="event event_ph"></div> - <button type="button" {{ action "setNonworkingDay" checkedDates "ph" on="click" }}>Public holiday</button></li>
+                <li><div class="event event_we"></div> - <button type="button" {{ action "setNonworkingDay" "we" on="click" }}>Weekend</button></li>
+                <li><div class="event event_ph"></div> - <button type="button" {{ action "setNonworkingDay" "ph" on="click" }}>Public holiday</button></li>
             </ul>
         </td>
         <td>
             <p>
-                <button type="button" {{ action "unpickDates" checkedDates on="click" }}>Unpick dates</button>
+                <button type="button" {{ action "unpickDates" on="click" }}>Unpick dates</button>
             </p>
             <p>
-                <button type="button" {{ action "clearAll" checkedDates on="click" }} class="danger_button">&otimes; Clear data</button>
+                <button type="button" {{ action "clearAll" on="click" }} class="danger_button">&otimes; Clear data</button>
             </p>
         </td>
     </tr>
@@ -61,8 +61,11 @@
 <div>
     <strong>Checked dates:</strong>
     <ul>
-        {{#each checkedDates as |day|}}
-            <li>{{day.date}} - {{#each day.events as |event|}}{{json event.summary}}{{/each}}</li>
+        {{#each checkedDates as |sectionId section|}}
+            <li>Section: {{sectionId}}</li>
+            {{#each section as |day|}}
+                <li>{{day.date}} - {{#each day.events as |event|}}{{json event.summary}}{{/each}}</li>
+            {{/each}}
         {{/each}}
     </ul>
 </div>
