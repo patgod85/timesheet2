@@ -3,8 +3,16 @@ import moment from 'moment';
 
 export default Ember.Component.extend({
 
+    weeks: null,
+
     init() {
         this._super(...arguments);
+
+        this.constructor1();
+    },
+
+
+    constructor1(){
         if(this.get('month') === 0){
             this.set('year', this.get('year') - 1);
             this.set('month', 12);
@@ -13,18 +21,11 @@ export default Ember.Component.extend({
             this.set('year', this.get('year') + 1);
             this.set('month', 1);
         }
-    },
 
-    monthName: Ember.computed('month', function () {
-
-        return moment().month(this.get('month') - 1).format('MMMM');
-    }),
-
-    weeks: Ember.computed('year', 'month', 'checkedDates.[]', 'events.events.[]', function () {
+        this.set('weeks', []);
 
         var firstDay = moment().year(this.get('year')).month(this.get('month') - 1).date(1);
-        var checkedDates = this.get('checkedDates').map(o => o.date) || [];
-        var weeks = [];
+        var weeks = this.get('weeks');
 
         var isLastWeek = false;
         let prevDate = 0;
@@ -38,11 +39,14 @@ export default Ember.Component.extend({
                 firstDay.weekday(d);
 
                 let date = firstDay.date();
-
-                week.push({
-                    date: moment(firstDay),
-                    isChecked: checkedDates.indexOf(firstDay.format('YYYY-MM-DD')) > -1
-                });
+                let index = firstDay.format('YYYY-MM-DD');
+                week.pushObject(
+                    Ember.Object.create({
+                        date: moment(firstDay),
+                        index,
+                        isChecked: false
+                    })
+                );
 
                 if (w > 0 && date < prevDate) {
                     isLastWeek = true;
@@ -55,14 +59,41 @@ export default Ember.Component.extend({
                 prevDate = date;
             }
 
-            weeks.push(week);
+            weeks.pushObject(week);
 
             if (isLastWeek) {
                 break;
             }
         }
 
-        return weeks;
+    },
+
+    monthName: Ember.computed('month', function () {
+
+        return moment().month(this.get('month') - 1).format('MMMM');
+    }),
+
+    weeksObserver: Ember.observer('checkedDates.[]', function () {
+        var checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
+
+        var weeks = this.get('weeks');
+
+        weeks.forEach(days => {
+
+            var previouslyChecked = days.filterBy('isChecked', true);
+
+            previouslyChecked.forEach(day => {
+                day.set('isChecked', false);
+            });
+
+            checkedDates.forEach(date => {
+                var found = days.findBy('index', date);
+
+                if(found){
+                    found.set('isChecked', true);
+                }
+            });
+        });
     })
 
 });

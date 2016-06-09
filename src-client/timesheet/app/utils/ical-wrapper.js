@@ -102,7 +102,7 @@ export function getEventsIndex(calendars, year){
         calendars = [calendars];
     }
 
-    calendars.map(iCalData => {
+    calendars.map((iCalData, calendarIndex) => {
 
         var jCalData = ICAL.parse(iCalData);
 
@@ -123,7 +123,7 @@ export function getEventsIndex(calendars, year){
         for(var i = 0; i < vevents.length; i++){
             var isHoliday = false;
 
-            var isInstance = (i+1 === vevents.length);
+            var isInstance = (calendarIndex+1 === calendars.length);
 
             var summaryOrig = vevents[i].getFirstPropertyValue("summary");
             var summary = {};

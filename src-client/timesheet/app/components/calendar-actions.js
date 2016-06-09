@@ -32,15 +32,24 @@ export default Ember.Component.extend({
         }
     },
 
-    clearData(days){
-        var iCalData = model.get('calendar');
+    clearData(){
+        var sections = this.get('sections');
+        sections.forEach(section => {
 
-        var updatedCalendar = ical.clearData(iCalData, days, this.get('events'));
+            var model = section.model,
+                days = section.days.toArray();
 
-        model.set('calendar', updatedCalendar);
+            if(days.length) {
+                var iCalData = model.get('calendar');
 
-        model.save().then(() => {
-            //this.sendAction('refreshAction');
+                var updatedCalendar = ical.clearData(iCalData, days, this.get('events'));
+
+                model.set('calendar', updatedCalendar);
+
+                model.save().then(() => {
+                    //this.sendAction('refreshAction');
+                });
+            }
         });
 
         this.sendAction('onUpdate');
