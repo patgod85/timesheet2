@@ -7,18 +7,18 @@ export default Ember.Component.extend({
 
     classNameBindings: ['isHoliday:holiday', 'doesBelongToOtherMonth:bg-danger', 'isChecked:bg-success', 'isWeekend:weekend'],
 
-    isWeekend: Ember.computed(function(){
+    isWeekend: Ember.computed('date', function(){
         return this.get('isHeader') && [0,6].indexOf(this.get('date').day()) > -1;
     }),
 
-    isHoliday: Ember.computed(function(){
+    isHoliday: Ember.computed('date', 'events', function(){
         var index = moment(this.get('date')).format('YYYY-MM-DD');
         var events = this.get('events');
 
         return events.holidays.hasOwnProperty(index) && events.holidays[index];
     }),
 
-    doesBelongToOtherMonth: Ember.computed(function(){
+    doesBelongToOtherMonth: Ember.computed('date', function(){
         return !this.get('isSingleMonth') && this.get('date').month() + 1 !== this.get('month');
     }),
 
@@ -30,7 +30,7 @@ export default Ember.Component.extend({
         return this.get('isHeader') ? this.get('date').format('dd') : "";
     }),
 
-    localEvents: Ember.computed(function() {
+    localEvents: Ember.computed('events', function() {
         if (this.get('isHeader') || this.get('nonWorkingOnly')) {
             return [];
         }
@@ -55,6 +55,10 @@ export default Ember.Component.extend({
 
     actions: {
         click(sectionId, day){
+            if(this.get('isHeader')){
+                return;
+            }
+
             this.get('checkDateAction')(
                 sectionId,
                 {

@@ -10,14 +10,19 @@ export default CalendarWithActions.extend({
     init() {
         this._super(...arguments);
 
+        this.constructor1();
+    },
+
+    constructor1(){
+
         var monthSections = this.get('monthSections');
+        monthSections.clear();
 
         var month = this.get('month');
         var employees = this.get('team').get('employees');
 
-        var sectionId = 0;
+        var sectionId = 1;
         employees.forEach(employee => {
-
             monthSections.pushObject(
                 Ember.Object.create({
                     sectionId: sectionId++,
@@ -27,8 +32,11 @@ export default CalendarWithActions.extend({
                 })
             );
         });
-
     },
+
+    observeMonthChange: Ember.observer('month', 'year', function(){
+        this.constructor1();
+    }),
 
     months: Ember.computed(function(){
 
