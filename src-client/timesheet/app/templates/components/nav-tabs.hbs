@@ -1,0 +1,8 @@
+<ul class="nav nav-tabs">
+    {{#each localTabs as |tab|}}
+        <li role="presentation" class="{{tab.className}}" onclick={{action "transition"}}>
+            {{link-to tab.title tab.route tab.id}}
+        </li>
+    {{/each}}
+</ul>
+

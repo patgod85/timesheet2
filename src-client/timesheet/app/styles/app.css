@@ -179,4 +179,10 @@ table {
 .horizontal-month.calendar-header td.weekend {
   font-weight: bold; }
 
+.employee-report {
+  background-color: #fdffe2;
+  padding: 10px 40px; }
+  .employee-report .results {
+    font-family: "Courier New", serif; }
+
 /*# sourceMappingURL=app.css.map */

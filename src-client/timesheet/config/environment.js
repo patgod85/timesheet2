@@ -23,6 +23,7 @@ module.exports = function (environment) {
         enabled: false
     };
     ENV.ENABLE_DS_FILTER = true;
+    ENV.HELPER_PARAM_LOOKUPS = true;
 
     if (environment === 'development') {
         // ENV.APP.LOG_RESOLVER = true;

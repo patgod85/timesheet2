@@ -1,17 +1,21 @@
 {{yield}}
 
-Report from {{bootstrap-datepicker value=model.report_from format="yyyy-mm-dd" todayHighlight=false autoclose=true weekStart=1}}
-to {{bootstrap-datepicker value=model.report_to format="yyyy-mm-dd" todayHighlight=false autoclose=true weekStart=1}}
-<button type="button" class="btn btn-default" {{ action "getReport" employee events model.report_from model.report_to on="click" }}>Get report</button>
+<div class="employee-report">
 
-<div>
-    <ul>
+    Report from {{bootstrap-datepicker value=model.report_from format="yyyy-mm-dd" todayHighlight=false autoclose=true weekStart=1}}
+    to {{bootstrap-datepicker value=model.report_to format="yyyy-mm-dd" todayHighlight=false autoclose=true weekStart=1}}
+    <button type="button" class="btn btn-default" {{ action "getReport" employee events model.report_from model.report_to on="click" }}>Get report</button>
 
-        <li>Working days: {{report.w}};</li>
-        <li>Nonworking days: {{report.n}};</li>
-        <li>Otguls: {{report.ot}};</li>
-        {{#each report.other as |item|}}
-            <li>{{item.event.name}}: {{item.value}}</li>
-        {{/each}}
-    </ul>
+    <div class="results">
+        <ul>
+
+            <li>Working days: <strong>{{report.w}}</strong>;</li>
+            <li>Nonworking days: <strong>{{report.n}}</strong>;</li>
+            <li>Otguls: <strong>{{report.ot}}</strong>;</li>
+            {{#each report.other as |item|}}
+                <li>{{item.event.name}}: <strong>{{item.value}}</strong>;</li>
+            {{/each}}
+        </ul>
+    </div>
+
 </div>

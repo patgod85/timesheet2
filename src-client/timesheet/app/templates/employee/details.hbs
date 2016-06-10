@@ -1,0 +1,23 @@
+{{!bread-crumbs}}
+
+
+<div class="aright pull-right">
+    <button type="button" class="btn btn-success" {{ action "submit" model.employee on="click" }}>Save</button>
+</div>
+
+<ul>
+    <li>
+        Name: {{input value=model.employee.name}}
+    </li>
+    <li>
+        Surname: {{input value=model.employee.surname}}
+    </li>
+    <li>
+        Position: {{input value=model.employee.position}}
+    </li>
+    <li>
+        First working day: {{bootstrap-datepicker value=model.employee.work_start format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1}}
+    </li>
+</ul>
+
+{{outlet}}
