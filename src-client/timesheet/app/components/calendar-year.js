@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 
+import ical from '../utils/ical-wrapper';
 import CalendarWithActions from './calendar-with-actions';
 
 export default CalendarWithActions.extend({
@@ -9,10 +10,20 @@ export default CalendarWithActions.extend({
 
     init() {
         this._super(...arguments);
-        this.set('year', this.get('year'));
+
+        this.constructor1();
+    },
+
+    constructor1(){
+        var year = this.get('year');
+        this.set('year', year);
+        this.set('monthSections', []);
         var monthSections = this.get('monthSections');
 
         var model = this.get('model');
+
+        model.set('events', ical.getEventsIndex(model.calendars, year));
+
         monthSections.pushObjects([
             Ember.Object.create({
                 sectionId: 0,
@@ -33,8 +44,12 @@ export default CalendarWithActions.extend({
                 model
             })
         ]);
+
     },
 
+    calendarObserver: Ember.observer('model.calendars', function(){
+        this.constructor1();
+    }),
 
     months: Ember.computed(function(){
 
@@ -81,6 +96,9 @@ export default CalendarWithActions.extend({
 
         changeMonth(selected){
             var model = this.get('model');
+
+            model.set('events', ical.getEventsIndex(model.calendars, year));
+
             this.set('monthSections',
                 [
                     Ember.Object.create({

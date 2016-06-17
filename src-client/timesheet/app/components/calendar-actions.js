@@ -34,6 +34,12 @@ export default Ember.Component.extend({
 
     clearData(){
         var sections = this.get('sections');
+        var self = this;
+
+        var promises = [];
+//function ga(){
+//console.log('ga-ga');
+//}
         sections.forEach(section => {
 
             var model = section.model,
@@ -42,21 +48,28 @@ export default Ember.Component.extend({
             if(days.length) {
                 var iCalData = model.get('calendar');
 
-                var updatedCalendar = ical.clearData(iCalData, days, this.get('events'));
+                var updatedCalendar = ical.clearData(iCalData, days, model.events);
 
                 model.set('calendar', updatedCalendar);
 
-                model.save().then(() => {
-                    //this.sendAction('refreshAction');
-                });
+                promises.pushObject(model.save());
             }
         });
 
-        this.sendAction('onUpdate');
+
+        Ember.RSVP.hash(promises)
+            .then(() => {
+                self.sendAction('onUpdate');
+            })
+            .catch((err) => {
+            });
     },
 
     updateDays(value){
+        var self = this;
         var sections = this.get('sections');
+        var promises = [];
+
         sections.forEach(section => {
 
             var model = section.model,
@@ -66,18 +79,22 @@ export default Ember.Component.extend({
 
                 var iCalData = model.get('calendar');
 
-                var updatedCalendar = ical.updateDays(iCalData, value, days.toArray(), this.get('events'));
+                var updatedCalendar = ical.updateDays(iCalData, value, days.toArray(), model.events);
 
                 model.set('calendar', updatedCalendar);
 
-                model.save().then(() => {
-                    //this.sendAction('refreshAction');
-                });
+                promises.pushObject(model.save());
             }
 
         });
 
-        this.sendAction('onUpdate');
+        Ember.RSVP.hash(promises)
+            .then(() => {
+                self.sendAction('onUpdate');
+            })
+            .catch((err) => {
+console.log(err);
+            });
     }
 
 });

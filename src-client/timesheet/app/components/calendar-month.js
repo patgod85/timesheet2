@@ -73,6 +73,11 @@ export default Ember.Component.extend({
         return moment().month(this.get('month') - 1).format('MMMM');
     }),
 
+    eventsObserver: Ember.observer('model.events.events.[]', function () {
+
+        this.constructor1();
+    }),
+
     weeksObserver: Ember.observer('checkedDates.[]', function () {
         var checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
 

@@ -2,10 +2,6 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
 
-    beforeModel() {
-        this.transitionTo('employee.calendar.index');
-    },
-
     model(params) {
 
         return Ember.RSVP.hash({
@@ -16,5 +12,11 @@ export default Ember.Route.extend({
                 {route: 'employee.details', title: 'Details', id: params.employee_id}
             ]
         });
+    },
+
+    actions: {
+        refresh(){
+            this.refresh();
+        }
     }
 });

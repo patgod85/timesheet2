@@ -1,35 +1,5 @@
-{{bread-crumbs}}
+<h1>Team {{model.team.name}}</h1>
 
-{{#ivy-tabs on-select=(action (mut selectedIndex)) selected-index=selectedIndex as |tabs|}}
-    {{#tabs.tablist as |tablist|}}
-        {{#tablist.tab}}Employees{{/tablist.tab}}
-        {{#tablist.tab}}Calendar{{/tablist.tab}}
-        {{#tablist.tab}}Users{{/tablist.tab}}
-        {{#tablist.tab}}Details{{/tablist.tab}}
-    {{/tabs.tablist}}
+{{nav-tabs tabs=model.tabs}}
 
-    {{#tabs.tabpanel}}
-        {{team-month year=2016 calendars=model.team.calendars refreshAction="refresh" team=model.team showButtons=false event_types=model.events}}
-    {{/tabs.tabpanel}}
-
-    {{#tabs.tabpanel}}
-        {{calendar-year year=2016 calendars=model.team.calendars refreshAction="refresh" model=model.team showButtons=false event_types=model.events nonWorkingOnly=true}}
-    {{/tabs.tabpanel}}
-
-    {{#tabs.tabpanel}}
-        <ul>
-            {{#each model.team.users as |user|}}
-                <li>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</li>
-            {{/each}}
-        </ul>
-    {{/tabs.tabpanel}}
-
-    {{#tabs.tabpanel}}
-
-        <p>Name: {{input value=model.team.name}}</p>
-        <p>Code: {{input value=model.team.code}}</p>
-        <p>Is general calendar enabled: {{input type="checkbox" checked=model.team.is_general_calendar_enabled}}</p>
-
-    {{/tabs.tabpanel}}
-{{/ivy-tabs}}
-
+{{outlet}}

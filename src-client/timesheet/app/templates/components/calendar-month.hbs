@@ -15,7 +15,7 @@
     {{#each weeks as |week|}}
         <tr>
             {{#each week as |day|}}
-                {{calendar-day date=day.date events=events month=month isChecked=day.isChecked checkDateAction=checkDateAction showNumbers=true nonWorkingOnly=nonWorkingOnly sectionId=sectionId}}
+                {{calendar-day date=day.date events=model.events month=month isChecked=day.isChecked checkDateAction=checkDateAction showNumbers=true nonWorkingOnly=nonWorkingOnly sectionId=sectionId}}
             {{/each}}
         </tr>
     {{/each}}

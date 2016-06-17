@@ -14,7 +14,13 @@ Router.map(function () {
     this.route('user', {path: 'users/:user_id'});
 
     this.route('teams');
-    this.route('team', {path: 'teams/:team_id'});
+    this.route('team', {path: 'teams/:team_id'}, function() {
+
+        this.route('employees', {path: 'employees'});
+        this.route('calendar', {path: 'calendar'});
+        this.route('users', {path: 'users'});
+        this.route('details', {path: 'details'});
+    });
 
     this.route('employees', {path: "employees"});
     this.route('employee', {path: 'employees/:employee_id'}, function(){

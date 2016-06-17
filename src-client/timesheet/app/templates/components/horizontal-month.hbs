@@ -4,7 +4,7 @@
     <tbody>
         <tr>
             {{#each days as |day|}}
-                {{calendar-day date=day.date events=events month=month isSingleMonth=true isChecked=day.isChecked checkDateAction=checkDateAction showNumbers=showNumbers isHeader=isHeader sectionId=sectionId}}
+                {{calendar-day date=day.date events=model.events month=month isSingleMonth=true isChecked=day.isChecked checkDateAction=checkDateAction showNumbers=showNumbers isHeader=isHeader sectionId=sectionId}}
             {{/each}}
         </tr>
     </tbody>

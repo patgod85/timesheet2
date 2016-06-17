@@ -1,11 +1,15 @@
 import Ember from 'ember';
 import moment from 'moment';
 
+import ical from '../utils/ical-wrapper';
 import CalendarWithActions from './calendar-with-actions';
 
 export default CalendarWithActions.extend({
     year: moment().year(),
     month: moment().month(0).month(),
+    teamWithEvents: null,
+
+    crc: null,
 
     init() {
         this._super(...arguments);
@@ -18,21 +22,63 @@ export default CalendarWithActions.extend({
         var monthSections = this.get('monthSections');
         monthSections.clear();
 
+        var year = this.get('year');
         var month = this.get('month');
-        var employees = this.get('team').get('employees');
+        var team = this.get('team');
+        var employees = team.get('employees');
+
+        team.set('events', ical.getEventsIndex(team.calendars, year));
+
+        this.set('crc', []);
+        var crc = this.get('crc');
 
         var sectionId = 1;
         employees.forEach(employee => {
+
+            employee.set('events', ical.getEventsIndex(employee.calendars, year));
+
+            crc.pushObject(
+                Ember.Object.create({
+                    employee_id: employee.id,
+                    crc: employee.crc
+                })
+            );
+
             monthSections.pushObject(
                 Ember.Object.create({
                     sectionId: sectionId++,
                     month,
                     days: [],
-                    model: employee
+                    model: employee,
+                    employee_id: employee.id
                 })
             );
         });
     },
+
+    calendarObserver: Ember.observer('team.employeesCalendarsCrc', function(){
+        var crc = this.get('crc');
+
+        var year = this.get('year');
+        var team = this.get('team');
+        var employees = team.get('employees');
+
+        var monthSections = this.get('monthSections');
+
+        employees.forEach(employee => {
+
+            var found = monthSections.findBy('employee_id', employee.id);
+            var foundCrc = crc.findBy('employee_id', employee.id);
+
+            if(found && foundCrc){
+                var model = found.get('model');
+
+                if(model.get('crc') !== foundCrc.get('crc')){
+                    model.set('events', ical.getEventsIndex(employee.calendars, year));
+                }
+            }
+        });
+    }),
 
     observeMonthChange: Ember.observer('month', 'year', function(){
         this.constructor1();

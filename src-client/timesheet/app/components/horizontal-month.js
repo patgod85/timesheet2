@@ -1,11 +1,8 @@
 import Ember from 'ember';
 import moment from 'moment';
-import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
     days: null,
-
-    events: null,
 
     init() {
         this._super(...arguments);
@@ -30,14 +27,13 @@ export default Ember.Component.extend({
                 })
             );
         }
-
-        var calendars = this.get('calendars');
-
-        this.set('events', ical.getEventsIndex(calendars, this.get('year')));
-
     },
 
-    observeMonthChange: Ember.observer('month', 'year', 'calendars', function(){
+    calendarObserver: Ember.observer('model.events', function(){
+        this.constructor1();
+    }),
+
+    observeMonthChange: Ember.observer('month', 'year', function(){
         this.constructor1();
     }),
 

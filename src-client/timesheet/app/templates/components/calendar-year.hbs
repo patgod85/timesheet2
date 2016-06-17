@@ -6,9 +6,9 @@
 <div class="clearfix"></div>
 
 {{#each monthSections as |m|}}
-    {{calendar-month month=m.month year=year checkDateAction=(action 'checkDate') checkedDates=m.days events=events nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
+    {{calendar-month month=m.month year=year checkDateAction=(action 'checkDate') checkedDates=m.days model=model nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
 {{/each}}
 
 <div class="clearfix"></div>
 
-{{calendar-actions sections=monthSections events=events showButtons=showButtons event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
+{{calendar-actions sections=monthSections showButtons=showButtons event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
