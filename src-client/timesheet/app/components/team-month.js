@@ -4,7 +4,7 @@ import moment from 'moment';
 import ical from '../utils/ical-wrapper';
 import CalendarWithActions from './calendar-with-actions';
 
-export default CalendarWithActions.extend({
+export default Ember.Component.extend(CalendarWithActions, {
     year: moment().year(),
     month: moment().month(0).month(),
     teamWithEvents: null,
@@ -13,6 +13,8 @@ export default CalendarWithActions.extend({
 
     init() {
         this._super(...arguments);
+
+        this.set('monthSections', []);
 
         this.constructor1();
     },

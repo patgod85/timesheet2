@@ -11,12 +11,6 @@ export default Ember.Component.extend({
         return this.get('isHeader') && [0,6].indexOf(this.get('date').day()) > -1;
     }),
 
-    isHoliday: Ember.computed('date', 'events', function(){
-        var index = moment(this.get('date')).format('YYYY-MM-DD');
-        var events = this.get('events');
-
-        return events.holidays.hasOwnProperty(index) && events.holidays[index];
-    }),
 
     doesBelongToOtherMonth: Ember.computed('date', function(){
         return !this.get('isSingleMonth') && this.get('date').month() + 1 !== this.get('month');
@@ -30,28 +24,6 @@ export default Ember.Component.extend({
         return this.get('isHeader') ? this.get('date').format('dd') : "";
     }),
 
-    localEvents: Ember.computed('events', function() {
-        if (this.get('isHeader') || this.get('nonWorkingOnly')) {
-            return [];
-        }
-        var today = moment().hour(23).minute(59).second(59);
-        var date = this.get('date');
-        var index = moment(date).format('YYYY-MM-DD');
-        var events = this.get('events');
-
-        var localEvents = events.events.hasOwnProperty(index) ? events.events[index] : [];
-
-        if (localEvents.length === 0) {
-            if (date.isAfter(today)) {
-                //localEvents.push({summary: {v: "---"}});
-            }
-            else{
-                localEvents.push({summary: {v: 1}});
-            }
-        }
-
-        return localEvents;
-    }),
 
     actions: {
         click(sectionId, day){

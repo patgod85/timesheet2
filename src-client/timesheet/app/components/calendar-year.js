@@ -4,12 +4,14 @@ import Ember from 'ember';
 import ical from '../utils/ical-wrapper';
 import CalendarWithActions from './calendar-with-actions';
 
-export default CalendarWithActions.extend({
+export default Ember.Component.extend(CalendarWithActions, {
 
     year: 0,
 
     init() {
         this._super(...arguments);
+
+        this.set('monthSections', []);
 
         this.constructor1();
     },
@@ -48,7 +50,16 @@ export default CalendarWithActions.extend({
     },
 
     calendarObserver: Ember.observer('model.calendars', function(){
-        this.constructor1();
+        var year = this.get('year');
+        var monthSections = this.get('monthSections');
+
+        var model = this.get('model');
+
+        model.set('events', ical.getEventsIndex(model.calendars, year));
+
+        monthSections.map(section => {
+            section.set('model', model);
+        });
     }),
 
     months: Ember.computed(function(){

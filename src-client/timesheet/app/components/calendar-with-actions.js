@@ -2,14 +2,9 @@ import Ember from 'ember';
 
 import ical from '../utils/ical-wrapper';
 
-export default Ember.Component.extend({
+export default Ember.Mixin.create({
 
-    monthSections: [],
-
-    init() {
-        this._super(...arguments);
-        this.set('monthSections', []);
-    },
+    monthSections: null,
 
     events: Ember.computed('calendars', 'year', 'month', 'monthNumbers', function(){
 

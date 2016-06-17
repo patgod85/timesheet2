@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import moment from 'moment';
+import MonthEvents from './month-events';
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(MonthEvents, {
 
     weeks: null,
 
@@ -26,6 +27,9 @@ export default Ember.Component.extend({
 
         var firstDay = moment().year(this.get('year')).month(this.get('month') - 1).date(1);
         var weeks = this.get('weeks');
+        var self = this;
+
+        var events = this.get('model.events');
 
         var isLastWeek = false;
         let prevDate = 0;
@@ -40,11 +44,14 @@ export default Ember.Component.extend({
 
                 let date = firstDay.date();
                 let index = firstDay.format('YYYY-MM-DD');
+                var momentDate = moment(firstDay);
                 week.pushObject(
                     Ember.Object.create({
-                        date: moment(firstDay),
+                        date: momentDate,
                         index,
-                        isChecked: false
+                        isChecked: false,
+                        localEvents: self.getLocalEvents(momentDate, index, events),
+                        isHoliday: self.isHoliday(index, events)
                     })
                 );
 
@@ -73,9 +80,22 @@ export default Ember.Component.extend({
         return moment().month(this.get('month') - 1).format('MMMM');
     }),
 
-    eventsObserver: Ember.observer('model.events.events.[]', function () {
+    eventsObserver: Ember.observer('model.events', function () {
+        var weeks = this.get('weeks');
+        var events = this.get('model.events');
+        var self = this;
 
-        this.constructor1();
+        weeks.map(week => {
+            week.map(day => {
+                var index = day.get('index');
+                var localEvents = self.getLocalEvents(day.get('date'), index, events);
+                if(JSON.stringify(day.get('localEvents')) !== JSON.stringify(localEvents)){
+
+                    day.set('localEvents', localEvents);
+                    day.set('isHoliday', self.isHoliday(index, events));
+                }
+            });
+        });
     }),
 
     weeksObserver: Ember.observer('checkedDates.[]', function () {
