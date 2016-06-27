@@ -113,14 +113,17 @@ class UserRESTController extends VoryxController
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
             $form = $this->createForm(new UserType(), $entity, array("method" => $request->getMethod()));
+            $form->add('roles');
+
             $this->removeExtraFields($request, $form);
+
             $form->handleRequest($request);
+
             if ($form->isValid()) {
                 $em->flush();
 
                 return $entity;
             }
-
             return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
         } catch (\Exception $e) {
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);

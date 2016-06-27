@@ -77,6 +77,13 @@ class User extends BaseUser
     private $team;
 
     /**
+     * @var array
+     * @Serializer\Expose
+     * @Serializer\Type("array<string>")
+     */
+    protected $roles;
+
+    /**
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("username")
      * @return string
@@ -84,16 +91,6 @@ class User extends BaseUser
     public function getUsername()
     {
         return parent::getUsername();
-    }
-
-    /**
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("roles")
-     * @return array
-     */
-    public function getRoles()
-    {
-        return parent::getRoles();
     }
 
     /**

@@ -1,5 +1,25 @@
 {{bread-crumbs}}
 
-{{input value=model.name}}
-{{input value=model.surname}}
-<button type="button" {{ action "submit" model on="click" }}>Save</button>
+<form class="container">
+    <div class="form-group pull-right">
+        <button type="button" class="btn btn-success" {{ action "submit" model on="click" }}>Save</button>
+    </div>
+    <div class="form-group">
+        Name: {{input value=model.name}}
+    </div>
+    <div class="form-group">
+        Surname: {{input value=model.surname}}
+    </div>
+    <div class="form-group">
+        <h3>Roles:</h3>
+        <ul>
+        {{#each model.roles as |role|}}
+            <li>
+                {{role}}
+                <button type="button" class="btn btn-danger" {{ action "deleteRole" model role on="click" }}>Delete</button>
+            </li>
+        {{/each}}
+        </ul>
+        {{input value=new_role}}<button type="button" class="btn btn-default" {{ action "addRole" model new_role on="click" }}>Add new role</button>
+    </div>
+</form>

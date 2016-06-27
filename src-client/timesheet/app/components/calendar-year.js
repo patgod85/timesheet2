@@ -107,6 +107,7 @@ export default Ember.Component.extend(CalendarWithActions, {
 
         changeMonth(selected){
             var model = this.get('model');
+            var year = this.get('year');
 
             model.set('events', ical.getEventsIndex(model.calendars, year));
 
