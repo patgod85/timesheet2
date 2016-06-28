@@ -207,4 +207,12 @@ class User extends BaseUser
         return $this->teamId;
     }
 
+    /**
+     * @param Team $team
+     */
+    public function setTeam($team)
+    {
+        $this->team = $team;
+    }
+
 }

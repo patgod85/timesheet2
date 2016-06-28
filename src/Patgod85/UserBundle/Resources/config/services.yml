@@ -1,0 +1,16 @@
+services:
+    user.form.registration:
+        class: Patgod85\UserBundle\Form\RegistrationFormType
+        tags:
+            - { name: 'form.type', alias: 'patgod85_user_registration' }
+
+    user_pre_registration:
+        class: Patgod85\UserBundle\EventListener\RegistrationListener
+        tags:
+            - { name: 'kernel.event_listener', event: 'fos_user.registration.initialize' }
+
+    user.pre_persist:
+        class: Patgod85\UserBundle\EventListener\UserEventListener
+        arguments:  []
+        tags:
+            - { name: 'doctrine.event_listener', event: 'prePersist', connection: 'default' }

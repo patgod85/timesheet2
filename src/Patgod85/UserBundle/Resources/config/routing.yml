@@ -1,3 +1,7 @@
 patgod85_user_whoami:
     path:     /whoami
     defaults: { _controller: Patgod85UserBundle:Default:whoami }
+
+patgod85_user_register:
+    path:     /register/
+    defaults: { _controller: Patgod85UserBundle:Auth:register }

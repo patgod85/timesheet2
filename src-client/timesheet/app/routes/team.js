@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import Auth from './auth';
 
-export default Ember.Route.extend({
+export default Auth.extend({
 
     model(params) {
 

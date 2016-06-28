@@ -1,9 +1,12 @@
 import Ember from 'ember';
+import Auth from './auth';
 
-export default Ember.Route.extend({
+export default Auth.extend({
+
     model(params) {
         return this.store.findRecord('user', params.user_id);
     },
+
     actions: {
         submit(model){
             model.save();
