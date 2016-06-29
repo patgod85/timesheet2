@@ -1,5 +1,6 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
 
 moduleForComponent('team-month', 'Integration | Component | team month', {
     integration: true
@@ -11,7 +12,9 @@ test('it renders', function (assert) {
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.on('myAction', function(val) { ... });
 
-    this.render(hbs`{{team-month}}`);
+    this.set('team', Ember.Object.create({employees: [], events: {events: {}, diapasons: [], holidays: []}}));
+    this.render(hbs`{{team-month year=2016 calendars=[] team=team showButtons=false event_types=[]}}`);
 
-    assert.equal(strip(this.$().text()), '20142015201620172018JanuaryFebruaryMarchAprilMayJuneJulyAugustSeptemberOctoberNovemberDecember010203040506070809101112131415161718192021222324252627282930');
+    var expected = '20142015201620172018JanuaryFebruaryMarchAprilMayJuneJulyAugustSeptemberOctoberNovemberDecember01Fr02Sa03Su04Mo05Tu06We07Th08Fr09Sa10Su11Mo12Tu13We14Th15Fr16Sa17Su18Mo19Tu20We21Th22Fr23Sa24Su25Mo26Tu27We28Th29Fr30Sa31SuWorkingdaysDayvalueShiftsNonworkingdaysActionsApplyExample:1.251-Shift12-Shift23-Shift3-Weekend-PublicholidayUnpickdates⊗CleardataCheckeddates:';
+    assert.equal(strip(this.$().text()), expected);
 });

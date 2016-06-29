@@ -61,7 +61,7 @@ export default Ember.Component.extend({
             .then(() => {
                 self.sendAction('onUpdate');
             })
-            .catch((err) => {
+            .catch(() => {
             });
     },
 

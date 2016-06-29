@@ -2,23 +2,23 @@ import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
 moduleForComponent('calendar-day', 'Integration | Component | calendar day', {
-  integration: true
+    integration: true
 });
 
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+import strip from "../../helpers/strip";
+import moment from "moment";
 
-  this.render(hbs`{{calendar-day}}`);
+test('it renders', function (assert) {
+    this.render(hbs`
+01
+    `);
 
-  assert.equal(this.$().text().trim(), '');
+    var expected = strip(this.$().text());
 
-  // Template block usage:
-  this.render(hbs`
-    {{#calendar-day}}
-      template block text
-    {{/calendar-day}}
-  `);
+    this.set('localEvents', []);
+    this.set('date', moment().date(1).month(1));
+    this.set('month', 1);
+    this.render(hbs`{{calendar-day date=date isHoliday=false localEvents=day.localEvents month=month isChecked=false showNumbers=true sectionId=0}}`);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    assert.equal(strip(this.$().text()), expected);
 });

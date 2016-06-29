@@ -10,15 +10,17 @@ import strip from "../../helpers/strip";
 test('it renders', function (assert) {
 
     this.render(hbs`
-March2016MoTuWeThFrSaSu2901020304050607080910111213141516171819202122232425262728293031010203
+March2016MoTuWeThFrSaSu291011021031041051061071081091101111121131141151161171181191201211221231241251261271281291301311011021031
     `);
 
     var expected = strip(this.$().text());
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
 
-    this.set('events', {events: {}, diapasons: [], holidays: []});
-    this.render(hbs`{{calendar-month y=2016 m=3 events=events}}`);
+    this.set('month', 3);
+    this.set('year', 2016);
+    this.set('model', {events: {events: {}, diapasons: [], holidays: []}});
+    this.render(hbs`{{calendar-month month=month year=year checkedDates=[] model=model nonWorkingOnly=false sectionId=0}}`);
 
     assert.equal(strip(this.$().text()), expected);
 

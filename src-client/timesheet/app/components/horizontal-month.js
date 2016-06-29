@@ -38,7 +38,6 @@ export default Ember.Component.extend(MonthEvents, {
 
     calendarObserver: Ember.observer('model.events', function(){
         var self = this;
-        var year = this.get('year');
         var days = this.get('days');
         var model = this.get('model');
 

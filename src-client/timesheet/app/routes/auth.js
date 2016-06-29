@@ -1,14 +1,18 @@
 import Ember from 'ember';
-import {doesRouteAllowedForRole, getTheHeaviestRole} from '../utils/roles';
 
 export default Ember.Route.extend({
 
+    rolesService: Ember.inject.service('roles'),
+
     beforeModel: function () {
+
+        var rolesService = this.get('rolesService');
+
         var user = this.modelFor('application').user;
 
-        var theHeaviestRole = getTheHeaviestRole(user.roles);
+        var theHeaviestRole = rolesService.getTheHeaviestRole(user.roles);
 
-        if(!doesRouteAllowedForRole(this.get('routeName'), theHeaviestRole)) {
+        if(!rolesService.doesRouteAllowedForRole(this.get('routeName'), theHeaviestRole)) {
             this.transitionTo('unauthorized');
         }
     }

@@ -1,24 +1,33 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
 
-moduleForComponent('nav-tabs', 'Integration | Component | nav tabs', {
-  integration: true
+const routerStub = Ember.Service.extend({
+    currentPath: 'user',
+    url: '/users/1'
 });
 
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+moduleForComponent('nav-tabs', 'Integration | Component | nav tabs', {
+    integration: true,
+    beforeEach: function () {
+        this.register('service:router', routerStub);
+        this.inject.service('router', {as: 'router'});
+    }
+});
 
-  this.render(hbs`{{nav-tabs}}`);
+import strip from "../../helpers/strip";
 
-  assert.equal(this.$().text().trim(), '');
+test('it renders', function (assert) {
+    this.render(hbs`
+Calendar
+`);
+    var expected = strip(this.$().text());
 
-  // Template block usage:
-  this.render(hbs`
-    {{#nav-tabs}}
-      template block text
-    {{/nav-tabs}}
-  `);
+    this.set('tabs', [
+        {route: 'employee.calendar.index', title: 'Calendar', id: 1}
+    ]);
+    this.render(hbs`{{nav-tabs tabs=tabs currentPath='employee.calendar'}}`);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    assert.equal(strip(this.$().text().trim()), expected);
+
 });
