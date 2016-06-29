@@ -1,10 +1,11 @@
 import Ember from 'ember';
 import moment from 'moment';
 
-import ical from '../utils/ical-wrapper';
 import CalendarWithActions from './calendar-with-actions';
 
 export default Ember.Component.extend(CalendarWithActions, {
+    ical: Ember.inject.service('ical'),
+
     year: moment().year(),
     month: moment().month(0).month(),
     teamWithEvents: null,
@@ -21,6 +22,7 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     constructor1(){
 
+        var ical = this.get('ical');
         var monthSections = this.get('monthSections');
         monthSections.clear();
 
@@ -59,6 +61,7 @@ export default Ember.Component.extend(CalendarWithActions, {
     },
 
     calendarObserver: Ember.observer('team.employeesCalendarsCrc', function(){
+        var ical = this.get('ical');
         var crc = this.get('crc');
 
         var year = this.get('year');

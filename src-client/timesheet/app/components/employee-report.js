@@ -1,9 +1,10 @@
 import Ember from 'ember';
 
 import moment from 'npm:moment-timezone';
-import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
+    ical: Ember.inject.service('ical'),
+
     model: {
         report_from: moment({ year : 2016, month : 0, day : 2}).toDate(),
         report_to: moment({ year : 2016, month : 0, day : 18 }).toDate()
@@ -19,6 +20,7 @@ export default Ember.Component.extend({
     actions: {
 
         getReport(employee, events, reportFrom, reportTo){
+            var ical = this.get('ical');
             reportFrom = moment(reportFrom);
             reportTo = moment(reportTo);
             var today = moment();

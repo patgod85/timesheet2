@@ -1,10 +1,12 @@
 import Ember from 'ember';
-import {crc32} from '../../utils/crc';
 
 export default Ember.Route.extend({
+    crcService: Ember.inject.service('crc'),
+
     model() {
         var team = this.modelFor("team").team,
             self = this;
+        var crcService = this.get('crcService');
 
         return Ember.RSVP.hash({
             team:
@@ -35,7 +37,7 @@ export default Ember.Route.extend({
                                     _calendars.push(employee.get('calendar'));
                                     employee.set('calendars', _calendars);
 
-                                    var crc2 = crc32(employee.get('calendar'));
+                                    var crc2 = crcService.crc32(employee.get('calendar'));
                                     crc += '-' + crc2;
 
                                     employee.set('crc', crc2);

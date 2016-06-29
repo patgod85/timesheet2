@@ -1,8 +1,9 @@
 import Ember from 'ember';
 
-import ical from '../utils/ical-wrapper';
 
 export default Ember.Component.extend({
+    ical: Ember.inject.service('ical'),
+
     actions: {
         setValue(){
             var value = this.get('value');
@@ -35,6 +36,7 @@ export default Ember.Component.extend({
     clearData(){
         var sections = this.get('sections');
         var self = this;
+        var ical = this.get('ical');
 
         var promises = [];
 //function ga(){
@@ -66,6 +68,7 @@ export default Ember.Component.extend({
     },
 
     updateDays(value){
+        var ical = this.get('ical');
         var self = this;
         var sections = this.get('sections');
         var promises = [];
