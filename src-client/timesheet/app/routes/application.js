@@ -1,26 +1,49 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-    model() {
-        return Ember.RSVP.hash({
-            user: Ember.$.ajax({
-                url: '/whoami'
-            }).then(
-                (user) => {
-                    if (!user) {
-                        window.location.replace("/login");
-                    }
-                    else {
-                        return user;
-                    }
-                },
-                () => {
-                    window.location.replace("/login");
-                }
-            ),
-            events: this.store.findAll('event')
-        });
 
+    ajax: Ember.inject.service(),
+    rolesService: Ember.inject.service('roles'),
+
+    model() {
+        var self = this;
+
+        return Ember.RSVP.hash({
+
+            user:
+                this.get('ajax').request('/whoami')
+                .then(user => {
+                    if (!user || !user.username) {
+                        throw "Unauthenticated";
+                    }
+
+                    return user;
+                })
+                .then(user => {
+                    var rolesService = self.get('rolesService');
+
+                    user.theHeaviestRole = rolesService.getTheHeaviestRole(user.roles);
+                    user.menuItems = rolesService.getMenuItemsForRole(user.theHeaviestRole);
+
+                    return user;
+                })
+                .catch(err => {
+                    if(err !== 'Unauthenticated'){
+                        throw err;
+                    }
+                    window.location.replace("/login");
+                }),
+
+            events: this.store.findAll('event')
+        })
+        .catch(err => {
+            if(err.hasOwnProperty('errors') && err.errors.any(e => e.hasOwnProperty('status') && e.status >= 400 && e.status !== 403)){
+                alert("An error is caught during of loading. To avoid problems try to reload the page. \n " + err.message);
+            }
+            else{
+                console.log('Error on application load', err);
+            }
+        });
     }
 
 });

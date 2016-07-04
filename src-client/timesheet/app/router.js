@@ -35,6 +35,7 @@ Router.map(function () {
   this.route('events');
   this.route('event', {path: 'events/:event_id'});
   this.route('unauthorized');
+  this.route('my');
 });
 
 export default Router;

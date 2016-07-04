@@ -10,9 +10,7 @@ export default Ember.Route.extend({
 
         var user = this.modelFor('application').user;
 
-        var theHeaviestRole = rolesService.getTheHeaviestRole(user.roles);
-
-        if(!rolesService.doesRouteAllowedForRole(this.get('routeName'), theHeaviestRole)) {
+        if(!rolesService.doesRouteAllowedForRole(this.get('routeName'), user.theHeaviestRole)) {
             this.transitionTo('unauthorized');
         }
     }

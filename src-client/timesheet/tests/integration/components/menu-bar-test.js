@@ -11,25 +11,27 @@ test('it renders', function (assert) {
 
     this.render(hbs`
 <ul>
-    <li>Teams</li>
-    <li>Users</li>
+    <li>Timesheetv2(current)</li>
+    <li>My schedule</li>
     <li>Employees</li>
-    <li>Calendar</li>
-    <li>Events</li>
 </ul>
+<p>You are logged in as Vilenkin <a href="">logout</a></p>
     `);
 
     var expected = strip(this.$().text());
 
-    this.render(hbs`{{menu-bar}}`);
+    this.set(
+        'user',
+        {
+            username: 'Vilenkin',
+            menuItems: [
+                {route: 'my', title: 'My schedule'},
+                {route: 'employees', title: 'Employees'}
+            ]
+        }
+    );
+    this.render(hbs`{{menu-bar user=user}}`);
 
     assert.equal(strip(this.$().text()), expected);
 
-    // Template block usage:" + EOL +
-    this.render(hbs`
-{{#menu-bar}}
-    template block text
-{{/menu-bar}}
-`);
-    assert.equal(strip(this.$().text()), expected);
 });

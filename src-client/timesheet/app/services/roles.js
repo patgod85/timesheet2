@@ -33,5 +33,17 @@ export default Ember.Service.extend({
         }
 
         return false;
+    },
+
+    getMenuItemsForRole(_role){
+        var configuration = this.get('configuration');
+
+        var role = configuration.roles[_role];
+
+        if(role){
+            return role.menuItems;
+        }
+
+        return [];
     }
 });

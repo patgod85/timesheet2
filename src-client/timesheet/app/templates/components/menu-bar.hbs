@@ -1,10 +1,19 @@
 <div>
-    <ul class="menu">
-        <li>{{#link-to "teams"}}Teams{{/link-to}}</li>
-        <li>{{#link-to "users"}}Users{{/link-to}}</li>
-        <li>{{#link-to "employees"}}Employees{{/link-to}}</li>
-        <li>{{#link-to "calendar"}}Calendar{{/link-to}}</li>
-        <li>{{#link-to "events"}}Events{{/link-to}}</li>
-    </ul>
+
+    <nav class="navbar navbar-default">
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active">{{#link-to "index"}}Timesheet <small>v2</small> <span class="sr-only">(current)</span>{{/link-to}}</li>
+                {{#each user.menuItems as |menuItem|}}
+                    <li>{{#link-to menuItem.route}}{{menuItem.title}}{{/link-to}}</li>
+                {{/each}}
+            </ul>
+
+            <p class="navbar-text pull-right">
+                You are logged in as <strong>{{ user.username }} <a href="/logout">log out</a></strong>
+            </p>
+        </div>
+    </nav>
+
     <div class="clearfix"></div>
 </div>
