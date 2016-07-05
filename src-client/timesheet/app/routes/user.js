@@ -8,7 +8,10 @@ export default Auth.extend({
 
     actions: {
         submit(model){
-            model.save();
+            model.save()
+                .catch(err => {
+                    handleError(err);
+                });
         },
 
         addRole(model, newRole){
@@ -18,10 +21,7 @@ export default Auth.extend({
             model.set('roles', roles);
             model.save()
                 .catch(err => {
-                    if(err.hasOwnProperty('errors')){
-
-                        alert(err.errors.errors.join('; '));
-                    }
+                    handleError(err);
                     model.set('roles', previousRoles);
                 });
         },
@@ -32,12 +32,23 @@ export default Auth.extend({
             model.set('roles', roles.filter(role => role !== _role));
             model.save()
                 .catch(err => {
-                    if(err.hasOwnProperty('errors')){
-
-                        alert(err.errors.errors.join('; '));
-                    }
+                    handleError(err);
                     model.set('roles', previousRoles);
                 });
         }
     }
 });
+
+function handleError(err){
+    if(err.hasOwnProperty('errors')){
+        if(Array.isArray(err.errors)){
+            alert(err.errors[0].status + '. ' + err.errors[0].title);
+        }
+        else{
+            alert(err.errors.errors.join('; '));
+        }
+    }
+    else if(err.hasOwnProperty('error')){
+        alert(err.error.message);
+    }
+}

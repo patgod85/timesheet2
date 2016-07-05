@@ -17,6 +17,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 
 /**
@@ -25,6 +26,14 @@ use Voryx\RESTGeneratorBundle\Controller\VoryxController;
  */
 class UserRESTController extends VoryxController
 {
+    public function checkRights(User $user, User $entity)
+    {
+        if(!$user->isSuperAdmin() && $entity->getTeamId() != $user->getTeamId())
+        {
+            throw new AccessDeniedHttpException();
+        }
+    }
+
     /**
      * Get a User entity
      *
@@ -35,6 +44,8 @@ class UserRESTController extends VoryxController
      */
     public function getAction(User $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         return $entity;
     }
     /**
@@ -58,6 +69,14 @@ class UserRESTController extends VoryxController
             $limit = $paramFetcher->get('limit');
             $order_by = $paramFetcher->get('order_by');
             $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
+
+            /** @var User $user */
+            $user = $this->getUser();
+
+            if(!$user->isSuperAdmin())
+            {
+                $filters['teamId'] = $user->getTeamId();
+            }
 
             $em = $this->getDoctrine()->getManager();
             $entities = $em->getRepository('Patgod85UserBundle:User')->findBy($filters, $order_by, $limit, $offset);
@@ -109,6 +128,8 @@ class UserRESTController extends VoryxController
      */
     public function putAction(Request $request, User $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         try {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
@@ -156,6 +177,8 @@ class UserRESTController extends VoryxController
      */
     public function deleteAction(Request $request, User $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         try {
             $em = $this->getDoctrine()->getManager();
             $em->remove($entity);

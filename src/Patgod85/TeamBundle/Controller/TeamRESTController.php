@@ -18,6 +18,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 
 /**
@@ -26,6 +27,14 @@ use Voryx\RESTGeneratorBundle\Controller\VoryxController;
  */
 class TeamRESTController extends VoryxController
 {
+    public function checkRights(User $user, Team $entity)
+    {
+        if(!$user->isSuperAdmin() && $entity->getId() != $user->getTeamId())
+        {
+            throw new AccessDeniedHttpException();
+        }
+    }
+
     /**
      * Get a Team entity
      *
@@ -36,13 +45,7 @@ class TeamRESTController extends VoryxController
      */
     public function getAction(Team $entity)
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if(!$user->isSuperAdmin() && $entity->getId() != $user->getTeamId())
-        {
-            return new Response('Access denied', 403);
-        }
+        $this->checkRights($this->getUser(), $entity);
 
         return $entity;
     }
@@ -128,6 +131,8 @@ class TeamRESTController extends VoryxController
      */
     public function putAction(Request $request, Team $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         try {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
@@ -171,6 +176,8 @@ class TeamRESTController extends VoryxController
      */
     public function deleteAction(Request $request, Team $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         try {
             $em = $this->getDoctrine()->getManager();
             $em->remove($entity);

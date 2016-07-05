@@ -18,6 +18,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Voryx\RESTGeneratorBundle\Controller\VoryxController;
 
 /**
@@ -26,6 +27,14 @@ use Voryx\RESTGeneratorBundle\Controller\VoryxController;
  */
 class EmployeeRESTController extends VoryxController
 {
+    public function checkRights(User $user, Employee $entity)
+    {
+        if(!$user->isSuperAdmin() && $entity->getTeamId() != $user->getTeamId())
+        {
+            throw new AccessDeniedHttpException();
+        }
+    }
+
     /**
      * Get a Employee entity
      *
@@ -36,13 +45,7 @@ class EmployeeRESTController extends VoryxController
      */
     public function getAction(Employee $entity)
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if(!$user->isSuperAdmin() && $entity->getTeamId() != $user->getTeamId())
-        {
-            return new Response('Access denied', 403);
-        }
+        $this->checkRights($this->getUser(), $entity);
 
         return $entity;
     }
@@ -126,6 +129,8 @@ class EmployeeRESTController extends VoryxController
      */
     public function putAction(Request $request, Employee $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         try {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
@@ -169,6 +174,8 @@ class EmployeeRESTController extends VoryxController
      */
     public function deleteAction(Request $request, Employee $entity)
     {
+        $this->checkRights($this->getUser(), $entity);
+
         try {
             $em = $this->getDoctrine()->getManager();
             $em->remove($entity);
