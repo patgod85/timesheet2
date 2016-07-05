@@ -1,3 +1,0 @@
-patgod85_employee_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: Patgod85EmployeeBundle:Default:index }

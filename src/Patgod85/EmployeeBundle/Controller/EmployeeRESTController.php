@@ -11,6 +11,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View as FOSView;
+use Patgod85\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
@@ -35,6 +36,14 @@ class EmployeeRESTController extends VoryxController
      */
     public function getAction(Employee $entity)
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if(!$user->isSuperAdmin() && $entity->getTeamId() != $user->getTeamId())
+        {
+            return new Response('Access denied', 403);
+        }
+
         return $entity;
     }
     /**
@@ -58,6 +67,14 @@ class EmployeeRESTController extends VoryxController
             $limit = $paramFetcher->get('limit');
             $order_by = $paramFetcher->get('order_by');
             $filters = !is_null($paramFetcher->get('filters')) ? $paramFetcher->get('filters') : array();
+
+            /** @var User $user */
+            $user = $this->getUser();
+
+            if(!$user->isSuperAdmin())
+            {
+                $filters['teamId'] = $user->getTeamId();
+            }
 
             $em = $this->getDoctrine()->getManager();
             $entities = $em->getRepository('Patgod85EmployeeBundle:Employee')->findBy($filters, $order_by, $limit, $offset);

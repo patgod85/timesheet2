@@ -17,6 +17,8 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class User extends BaseUser
 {
+    const ROLE_DEFAULT = 'ROLE_DEFAULT';
+
     /**
      * @var integer
      *
@@ -78,6 +80,7 @@ class User extends BaseUser
 
     /**
      * @var array
+     * @Assert\Choice(choices = {"ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN"}, multiple=true, multipleMessage="Invalid role name")
      * @Serializer\Expose
      * @Serializer\Type("array<string>")
      */

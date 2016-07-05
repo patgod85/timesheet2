@@ -13,15 +13,31 @@ export default Auth.extend({
 
         addRole(model, newRole){
             var roles = model.get('roles');
+            var previousRoles = roles.slice();
             roles.push(newRole);
             model.set('roles', roles);
-            model.save();
+            model.save()
+                .catch(err => {
+                    if(err.hasOwnProperty('errors')){
+
+                        alert(err.errors.errors.join('; '));
+                    }
+                    model.set('roles', previousRoles);
+                });
         },
 
         deleteRole(model, _role){
             var roles = model.get('roles');
+            var previousRoles = roles.slice();
             model.set('roles', roles.filter(role => role !== _role));
-            model.save();
+            model.save()
+                .catch(err => {
+                    if(err.hasOwnProperty('errors')){
+
+                        alert(err.errors.errors.join('; '));
+                    }
+                    model.set('roles', previousRoles);
+                });
         }
     }
 });

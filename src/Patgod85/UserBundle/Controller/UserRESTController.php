@@ -112,12 +112,13 @@ class UserRESTController extends VoryxController
         try {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
-            $form = $this->createForm(new UserType(), $entity, array("method" => $request->getMethod()));
-            $form->add('roles');
+            $form = $this->createForm(new UserType(), $entity, ["method" => $request->getMethod()]);
 
             $this->removeExtraFields($request, $form);
 
             $form->handleRequest($request);
+
+            $entity->setRoles($request->request->get('roles'));
 
             if ($form->isValid()) {
                 $em->flush();

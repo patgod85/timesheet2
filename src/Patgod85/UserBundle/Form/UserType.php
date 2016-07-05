@@ -20,6 +20,7 @@ class UserType extends AbstractType
             ->add('name')
             ->add('surname')
             ->add('teamId')
+            ->add('roles', 'collection', ['type' => 'text', 'allow_extra_fields' => true])
         ;
     }
     
