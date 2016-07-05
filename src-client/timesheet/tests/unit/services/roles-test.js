@@ -60,3 +60,9 @@ test('Route is allowed for ROLE_USER', function (assert) {
     let result = service.doesRouteAllowedForRole('unauthorized', 'ROLE_USER');
     assert.equal(result, true);
 });
+
+test('Route "My" is allowed for ROLE_USER', function (assert) {
+    let service = this.subject();
+    let result = service.doesRouteAllowedForRole('my', 'ROLE_USER');
+    assert.equal(result, true);
+});

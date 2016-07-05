@@ -1,6 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
+
+    calendarService: Ember.inject.service('calendar'),
+
     model() {
         var parentModel = this.modelFor("employee"),
             employee = parentModel.employee;
@@ -15,12 +18,9 @@ export default Ember.Route.extend({
                     return self.store.findRecord('team', employee.get('team_id'));
                 })
                 .then(team => {
-                    var calendars = [team.get('calendar'), employee.get('calendar')];
-                    if(team.get('is_general_calendar_enabled')){
-                        calendars.unshift(generalCalendar.get('calendar'));
-                    }
-                    employee.set('calendars', calendars);
-                    return employee;
+                    var calendarService = self.get('calendarService');
+
+                    return calendarService.setupEmployee(employee, team, generalCalendar);
                 }),
             events: this.store.peekAll('event')
         });

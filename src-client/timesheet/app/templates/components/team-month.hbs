@@ -16,4 +16,6 @@
     {{/each}}
 </div>
 
-{{calendar-actions sections=monthSections checkedDates=checkedDates showButtons=true model=team event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
+{{#if showActions}}
+    {{calendar-actions sections=monthSections checkedDates=checkedDates showButtons=true model=team event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
+{{/if}}

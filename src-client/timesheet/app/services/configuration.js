@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Service.extend({
     roles: {
         ROLE_USER: {
-            pattern: '(unauthorized|about|contact)',
+            pattern: '(unauthorized|about|contact|my)',
             menuItems: [
                 {
                     route: 'my',
