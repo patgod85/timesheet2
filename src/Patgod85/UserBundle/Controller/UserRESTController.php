@@ -142,6 +142,8 @@ class UserRESTController extends VoryxController
 
         $form->handleRequest($request);
 
+        $this->checkRights($this->getUser(), $entity);
+
         if ($form->isValid())
         {
             $event = new FormEvent($form, $request);

@@ -16,9 +16,7 @@ export default Ember.Component.extend({
     init() {
         this._super(...arguments);
 
-        var store = this.get('store');
-
-        this.set('newUser', store.createRecord('user', {
+        this.set('newUser', Ember.Object.create({
             email: '',
             plainPassword: '',
             name: '',
@@ -37,15 +35,19 @@ export default Ember.Component.extend({
         submit(newUser){
             var self = this;
 
-            newUser.set('username', newUser.get('email'));
+            var store = this.get('store');
+            var user = store.createRecord('user', JSON.parse(JSON.stringify(newUser)));
 
-            newUser.save()
+            user.save()
                 .then(createdUser => {
+                    alert('The user successfully created');
                     var router = self.get('router');
-//console.log(createdUser);
-                    router.transitionTo('users.user', {id: createdUser.get('id')});
+                    router.transitionTo('users.user', createdUser);
                 })
-                .catch(this.get('error-handler').handle);
+                .catch(err => {
+                    user.deleteRecord();
+                    this.get('error-handler').handle(err);
+                });
         }
     }
 });

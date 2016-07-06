@@ -35,6 +35,17 @@ export default Auth.extend({
                     self.get('error-handler').handle(err);
                     model.set('roles', previousRoles);
                 });
+        },
+
+        deleteUser(model){
+            var self = this;
+            if(confirm('You try to completely remove the user. Are you sure?')){
+                model.destroyRecord()
+                    .then(() => {
+                        self.get('router').transitionTo('users');
+                    })
+                    .catch(this.get('error-handler').handle);
+            }
         }
     }
 });
