@@ -1,4 +1,4 @@
-import Auth from './auth';
+import Auth from '../auth';
 
 export default Auth.extend({
 
@@ -9,46 +9,33 @@ export default Auth.extend({
     actions: {
         submit(model){
             model.save()
-                .catch(err => {
-                    handleError(err);
-                });
+                .catch(this.get('error-handler').handle);
         },
 
         addRole(model, newRole){
+            var self = this;
             var roles = model.get('roles');
             var previousRoles = roles.slice();
             roles.push(newRole);
             model.set('roles', roles);
             model.save()
                 .catch(err => {
-                    handleError(err);
+                    self.get('error-handler').handle(err);
                     model.set('roles', previousRoles);
                 });
         },
 
         deleteRole(model, _role){
+            var self = this;
             var roles = model.get('roles');
             var previousRoles = roles.slice();
             model.set('roles', roles.filter(role => role !== _role));
             model.save()
                 .catch(err => {
-                    handleError(err);
+                    self.get('error-handler').handle(err);
                     model.set('roles', previousRoles);
                 });
         }
     }
 });
 
-function handleError(err){
-    if(err.hasOwnProperty('errors')){
-        if(Array.isArray(err.errors)){
-            alert(err.errors[0].status + '. ' + err.errors[0].title);
-        }
-        else{
-            alert(err.errors.errors.join('; '));
-        }
-    }
-    else if(err.hasOwnProperty('error')){
-        alert(err.error.message);
-    }
-}

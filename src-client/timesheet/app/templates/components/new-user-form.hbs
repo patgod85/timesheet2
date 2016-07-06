@@ -1,0 +1,32 @@
+{{yield}}
+
+<form class="container">
+    <div class="form-group pull-right">
+        <button type="button" class="btn btn-success" {{ action "submit" newUser on="click" }}>Create</button>
+    </div>
+    <div class="form-group">
+        Team: {{drop-down content=teamNames onChange=(action "changeTeam") selectedValue=newUser.teamId }}
+    </div>
+    <div class="form-group">
+        Email: {{input value=newUser.email}}
+    </div>
+    <div class="form-group">
+        Password: {{input value=newUser.plainPassword}}
+    </div>
+    <div class="form-group">
+        Name: {{input value=newUser.name}}
+    </div>
+    <div class="form-group">
+        Surname: {{input value=newUser.surname}}
+    </div>
+    <div class="form-group">
+        <h3>Roles:</h3>
+        <ul>
+            {{#each newUser.roles as |role|}}
+                <li>
+                    {{role}}
+                </li>
+            {{/each}}
+        </ul>
+    </div>
+</form>

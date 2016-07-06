@@ -15,7 +15,7 @@ export default Ember.Route.extend({
             employee: self.store.findRecord('calendar', 1)
                 .then(_generalCalendar => {
                     generalCalendar = _generalCalendar;
-                    return self.store.findRecord('team', employee.get('team_id'));
+                    return self.store.findRecord('team', employee.get('teamId'));
                 })
                 .then(team => {
                     var calendarService = self.get('calendarService');

@@ -10,7 +10,7 @@ export default Ember.Route.extend({
                 self.store.findRecord('calendar', 1)
                     .then(defaultCalendar => {
                         var calendars;
-                        if(team.get('is_general_calendar_enabled')){
+                        if(team.get('isGeneralCalendarEnabled')){
                             calendars = [defaultCalendar.get('calendar'), team.get('calendar')];
 
                         }

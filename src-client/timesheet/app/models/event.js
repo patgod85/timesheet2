@@ -5,6 +5,6 @@ export default DS.Model.extend({
     code: DS.attr(),
     title: DS.attr(),
     color: DS.attr(),
-    background_color: DS.attr()
+    backgroundColor: DS.attr()
 
 });

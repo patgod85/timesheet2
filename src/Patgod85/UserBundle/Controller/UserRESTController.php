@@ -2,7 +2,12 @@
 
 namespace Patgod85\UserBundle\Controller;
 
+use Doctrine\DBAL\Exception\ConstraintViolationException;
+use FOS\UserBundle\Event\FormEvent;
+use FOS\UserBundle\Event\GetResponseUserEvent;
+use FOS\UserBundle\FOSUserEvents;
 use Patgod85\UserBundle\Entity\User;
+use Patgod85\UserBundle\Form\RegistrationFormType;
 use Patgod85\UserBundle\Form\UserType;
 
 use FOS\RestBundle\Controller\Annotations\QueryParam;
@@ -14,6 +19,8 @@ use FOS\RestBundle\View\View as FOSView;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -101,21 +108,106 @@ class UserRESTController extends VoryxController
      */
     public function postAction(Request $request)
     {
-        $entity = new User();
-        $form = $this->createForm(new UserType(), $entity, array("method" => $request->getMethod()));
-        $this->removeExtraFields($request, $form);
+        /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+        $userManager = $this->get('fos_user.user_manager');
+        /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+        $formFactory = $this->get('fos_user.registration.form.factory');
+        /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+        $dispatcher = $this->get('event_dispatcher');
+
+        /** @var User $entity */
+        $entity = $userManager->createUser();
+        $entity->setEnabled(true);
+
+        $event = new GetResponseUserEvent($entity, $request);
+        $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
+
+        if (null !== $event->getResponse()) {
+            return $event->getResponse();
+        }
+
+        /** @var Form $form */
+        $form = $formFactory->createForm();
+        $form->add('teamId');
+        $form->add('roles');
+        $form->add('name');
+        $form->add('surname');
+        $form->setData($entity);
+
+        $entity->setUsername($entity->getEmail());
+        $entity->setName($request->get('name'));
+        $entity->setSurname($request->get('surname'));
+        $entity->setTeamId($request->get('teamId'));
+        $entity->setRoles($request->get('roles'));
+
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isValid())
+        {
+            $event = new FormEvent($form, $request);
+            $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
+
+            $userManager->updateUser($entity);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             return $entity;
         }
-
-        return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        else
+        {
+//var_dump($this->getErrorMessages($form));die;
+            return FOSView::create(
+                [
+                    'errors' => array_map(
+                        function($item){
+                            return ['detail' => $item];
+                        },
+                        $this->getErrorMessages($form)
+                    )
+                ],
+                Codes::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
     }
+
+    private function getErrorMessages(FormInterface $form)
+    {
+        $errors = array();
+
+        foreach ($form->getErrors() as $key => $error)
+        {
+            if ($form->isRoot())
+            {
+                $errors[] = '#: '.$error->getMessage();
+            }
+            else
+            {
+                $errors[] = $error->getMessage();
+            }
+        }
+
+        foreach ($form->all() as $child)
+        {
+            if (!$child->isValid())
+            {
+                $errorMessages = $this->getErrorMessages($child);
+
+                if(is_array($errorMessages))
+                {
+                    $errors = array_merge($errors, $errorMessages);
+                }
+                else
+                {
+                    $errors[] = $child->getName().': '.$errorMessages;
+                }
+            }
+        }
+
+        return $errors;
+    }
+
     /**
      * Update a User entity.
      *

@@ -1,6 +1,6 @@
 <ul>
     {{#each model.team.users as |user|}}
-        <li>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</li>
+        <li>{{#link-to "users.user" user.id}}{{user.username}}{{/link-to}}</li>
     {{/each}}
 </ul>
 

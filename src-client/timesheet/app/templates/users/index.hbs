@@ -5,7 +5,7 @@
 
     <tr>
         <td>{{sum id 1}}</td>
-        <td>{{#link-to "user" user.id}}{{user.username}}{{/link-to}}</td>
+        <td>{{#link-to "users.user" user.id}}{{user.username}}{{/link-to}}</td>
         <td>{{user.name}} {{user.surname}}</td>
         <td>
             {{#each user.roles as |role|}}
@@ -14,5 +14,9 @@
         </td>
     </tr>
 {{/filtered-list}}
+
+<p class="pull-right">
+    {{link-to "New user" "users.new" class="btn btn-primary"}}
+</p>
 
 {{outlet}}

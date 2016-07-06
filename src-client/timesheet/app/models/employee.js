@@ -4,10 +4,10 @@ import Ember from 'ember';
 export default DS.Model.extend({
     name: DS.attr(),
     surname: DS.attr(),
-    work_start: DS.attr('date'),
-    work_end: DS.attr(),
+    workStart: DS.attr('date'),
+    workEnd: DS.attr(),
     position: DS.attr(),
-    team_id: DS.attr('number'),
+    teamId: DS.attr('number'),
     team: DS.belongsTo('team', {inverse: 'employees'}),
     calendar: DS.attr(),
 

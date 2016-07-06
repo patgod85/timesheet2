@@ -14,11 +14,23 @@ class RegistrationListener
     {
         $request = $event->getRequest();
         $formFields = $request->get('fos_user_registration_form');
+
+        if(!$formFields)
+        {
+            $formFields['email'] = $request->get('email');
+            $formFields['name'] = $request->get('name');
+            $formFields['surname'] = $request->get('surname');
+            $formFields['teamId'] = $request->get('teamId');
+            $formFields['plainPassword'] = [
+                'first' => $request->get('plainPassword'),
+                'second' => $request->get('plainPassword'),
+            ];
+            $formFields['roles'] = $request->get('roles');
+        }
+
         $formFields['username'] = $formFields['email'];
 
-
-//print_r($formFields);die;
-
         $request->request->set('fos_user_registration_form', $formFields);
+//var_dump($request->get('fos_user_registration_form'));die;
     }
 }

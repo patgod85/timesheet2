@@ -10,7 +10,7 @@ export default Auth.extend({
             user = this.modelFor('application').user;
 
         return Ember.RSVP.hash({
-            team: this.store.findRecord('team', user.team_id)
+            team: this.store.findRecord('team', user.teamId)
                 .then((_team) => {
                     team = _team;
                     return this.store.findAll('employee');

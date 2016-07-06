@@ -32,7 +32,7 @@ class User extends BaseUser
 
     /**
      * @var string
-     * @Assert\NotBlank(message="Please enter your name.", groups={"Registration", "Profile"})
+     * @Assert\NotBlank(message="Please enter a name.", groups={"Registration", "Profile"})
      * @Assert\Length(
      *     min=3,
      *     max=255,
@@ -48,7 +48,7 @@ class User extends BaseUser
 
     /**
      * @var string
-     * @Assert\NotBlank(message="Please enter your name.", groups={"Registration", "Profile"})
+     * @Assert\NotBlank(message="Please enter a surname.", groups={"Registration", "Profile"})
      * @Assert\Length(
      *     min=3,
      *     max=255,
@@ -87,14 +87,12 @@ class User extends BaseUser
     protected $roles;
 
     /**
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("username")
-     * @return string
+     * @Assert\NotNull(message="Username cannot be null.", groups={"Registration", "Profile"})
+     * @Serializer\Expose
+     * @Serializer\Type("string")
+     * @var string
      */
-    public function getUsername()
-    {
-        return parent::getUsername();
-    }
+    protected $username;
 
     /**
      * @return Team

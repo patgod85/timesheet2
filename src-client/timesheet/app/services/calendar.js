@@ -10,7 +10,7 @@ export default Ember.Service.extend({
         var crc = '';
         var crcService = this.get('crcService');
 
-        if (team.get('is_general_calendar_enabled')) {
+        if (team.get('isGeneralCalendarEnabled')) {
             calendars = [generalCalendar.get('calendar'), team.get('calendar')];
         }
         else {
@@ -45,7 +45,7 @@ export default Ember.Service.extend({
     setupEmployee(employee, team, generalCalendar){
 
         var calendars = [team.get('calendar'), employee.get('calendar')];
-        if(team.get('is_general_calendar_enabled')){
+        if(team.get('isGeneralCalendarEnabled')){
             calendars.unshift(generalCalendar.get('calendar'));
         }
         employee.set('calendars', calendars);

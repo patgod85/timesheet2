@@ -42,12 +42,12 @@ test('it renders a table', function (assert) {
         Ember.Object.extend({
             name: Ember.computed(() => 'Anna'),
             surname: Ember.computed(() => 'Lee'),
-            team_id: Ember.computed(() => 1)
+            teamId: Ember.computed(() => 1)
         }).create(),
         Ember.Object.extend({
             name: Ember.computed(() => 'Derek'),
             surname: Ember.computed(() => 'Blue'),
-            team_id: Ember.computed(() => 2)
+            teamId: Ember.computed(() => 2)
         }).create()
     ]);
 
