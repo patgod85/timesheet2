@@ -17,10 +17,10 @@ export default Ember.Component.extend(CalendarWithActions, {
 
         this.set('monthSections', []);
 
-        this.constructor1();
+        this.initMonthSections();
     },
 
-    constructor1(){
+    initMonthSections(){
 
         var ical = this.get('ical');
         var monthSections = this.get('monthSections');
@@ -86,7 +86,7 @@ export default Ember.Component.extend(CalendarWithActions, {
     }),
 
     observeMonthChange: Ember.observer('month', 'year', function(){
-        this.constructor1();
+        this.initMonthSections();
     }),
 
     months: Ember.computed(function(){

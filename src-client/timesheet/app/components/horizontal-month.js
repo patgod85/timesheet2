@@ -8,10 +8,10 @@ export default Ember.Component.extend(MonthEvents, {
     init() {
         this._super(...arguments);
 
-        this.constructor1();
+        this.initDays();
     },
 
-    constructor1(){
+    initDays(){
         var self = this;
         var year = this.get('year');
         var month = this.get('month');
@@ -55,7 +55,7 @@ export default Ember.Component.extend(MonthEvents, {
     }),
 
     observeMonthChange: Ember.observer('month', 'year', function(){
-        this.constructor1();
+        this.initDays();
     }),
 
     observeCheckedDates: Ember.observer('checkedDates.[]', function () {

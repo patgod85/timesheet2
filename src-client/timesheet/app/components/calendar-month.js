@@ -9,11 +9,11 @@ export default Ember.Component.extend(MonthEvents, {
     init() {
         this._super(...arguments);
 
-        this.constructor1();
+        this.initWeeks();
     },
 
 
-    constructor1(){
+    initWeeks(){
         if(this.get('month') === 0){
             this.set('year', this.get('year') - 1);
             this.set('month', 12);

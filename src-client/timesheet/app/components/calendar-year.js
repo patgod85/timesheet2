@@ -14,10 +14,10 @@ export default Ember.Component.extend(CalendarWithActions, {
 
         this.set('monthSections', []);
 
-        this.constructor1();
+        this.initMonthSections();
     },
 
-    constructor1(){
+    initMonthSections(){
         var year = this.get('year');
         this.set('year', year);
         this.set('monthSections', []);
