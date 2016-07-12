@@ -9,5 +9,6 @@ export default DS.Model.extend({
     roles: DS.attr(),
     teamId: DS.attr('number'),
     team: DS.belongsTo('team', {inverse: 'users'}),
-    theHeaviestRole: DS.attr()
+    theHeaviestRole: DS.attr(),
+    enabled: DS.attr()
 });

@@ -1,0 +1,41 @@
+<form class="container">
+    <div class="form-group pull-right">
+        <button type="button" class="btn btn-success" {{ action "submit" user on="click" }}>Save</button>
+    </div>
+    <div class="form-group">
+        Name: {{input value=user.name}}
+    </div>
+    <div class="form-group">
+        Surname: {{input value=user.surname}}
+    </div>
+    <div class="form-group bg-info">
+        <fieldset>
+            <h3>Roles:</h3>
+            <ul>
+                {{#each user.roles as |role|}}
+                    <li>
+                        {{role}}
+                        <button type="button"
+                                class="btn btn-danger btn-xs" {{ action "deleteRole" user role on="click" }}>Delete
+                        </button>
+                    </li>
+                {{/each}}
+                <li>
+                    {{input value=new_role placeholder="ROLE NAME"}}
+                    <button type="button" class="btn btn-default btn-s" {{ action "addRole" user new_role on="click" }}>Add new
+                        role
+                    </button>
+                </li>
+            </ul>
+        </fieldset>
+    </div>
+    <div class="form-group">
+        Enabled: {{drop-down content=enabledDisabled selectedValue=user.enabled onChange=(action "changeStatus")}}
+
+    </div>
+
+    <p class="pull-right">
+        <button type="button" class="btn btn-danger" {{ action "deleteUser" user on="click" }}>Delete user</button>
+    </p>
+</form>
+{{yield}}

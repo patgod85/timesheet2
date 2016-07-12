@@ -29,7 +29,7 @@ export default Ember.Component.extend({
 
         var index = this.get('id');
         return this.get('items').filter(function(item) {
-            return item.get(index) == filterToken.id;// jshint ignore:line
+            return item.get(index) + '' === filterToken.id + '';
         });
 
     })

@@ -10,7 +10,7 @@ export default Ember.Component.extend({
         return {
             id: team.get('id'),
             title: team.get('name')
-        }
+        };
     }),
 
     init() {
@@ -23,7 +23,8 @@ export default Ember.Component.extend({
             surname: '',
             username: '',
             teamId: this.get('user').teamId,
-            roles: ['ROLE_USER']
+            roles: ['ROLE_USER'],
+            enabled: true
         }));
     },
 

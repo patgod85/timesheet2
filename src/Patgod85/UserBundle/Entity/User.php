@@ -95,6 +95,13 @@ class User extends BaseUser
     protected $username;
 
     /**
+     * @Serializer\Expose
+     * @Serializer\Type("boolean")
+     * @var bool
+     */
+    protected $enabled;
+
+    /**
      * @return Team
      */
     public function getTeam()

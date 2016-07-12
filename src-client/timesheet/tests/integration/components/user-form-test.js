@@ -1,7 +1,7 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('new-user-form', 'Integration | Component | new user form', {
+moduleForComponent('user-form', 'Integration | Component | user form', {
     integration: true
 });
 
@@ -9,20 +9,20 @@ import strip from "../../helpers/strip";
 
 test('it renders', function (assert) {
     this.render(hbs`
-templateblocktextCreateTeam:Email:Password:Name:Surname:Roles:ROLE_USER
-  `);
+SaveName:Surname:Roles:ROLE_ADMINDeleteROLE_PAVLINDeleteAddnewroleEnabled:DisabledEnabledDeleteusertemplateblocktext
+`);
 
     var expected = strip(this.$().text());
 
-    this.set('user', {teamId: 1});
-
+    this.set('user', {teamId: 1, name: "Mega", email: "qwe@qwe.qwe", roles: ['ROLE_ADMIN', 'ROLE_PAVLIN']});
 
     // Template block usage:
     this.render(hbs`
-    {{#new-user-form user=user}}
-      template block text
-    {{/new-user-form}}
+{{#user-form user=user}}
+    template block text
+{{/user-form}}
   `);
 
     assert.equal(strip(this.$().text()), expected);
 });
+
