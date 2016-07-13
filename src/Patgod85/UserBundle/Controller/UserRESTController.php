@@ -2,6 +2,7 @@
 
 namespace Patgod85\UserBundle\Controller;
 
+use AppBundle\Controller\ErrorsJsonizer;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
@@ -33,6 +34,8 @@ use Voryx\RESTGeneratorBundle\Controller\VoryxController;
  */
 class UserRESTController extends VoryxController
 {
+    use ErrorsJsonizer;
+
     public function checkRights(User $user, User $entity)
     {
         if(!$user->isSuperAdmin() && $entity->getTeamId() != $user->getTeamId())
@@ -172,42 +175,6 @@ class UserRESTController extends VoryxController
                 Codes::HTTP_UNPROCESSABLE_ENTITY
             );
         }
-    }
-
-    private function getErrorMessages(FormInterface $form)
-    {
-        $errors = array();
-
-        foreach ($form->getErrors() as $key => $error)
-        {
-            if ($form->isRoot())
-            {
-                $errors[] = '#: '.$error->getMessage();
-            }
-            else
-            {
-                $errors[] = $error->getMessage();
-            }
-        }
-
-        foreach ($form->all() as $child)
-        {
-            if (!$child->isValid())
-            {
-                $errorMessages = $this->getErrorMessages($child);
-
-                if(is_array($errorMessages))
-                {
-                    $errors = array_merge($errors, $errorMessages);
-                }
-                else
-                {
-                    $errors[] = $child->getName().': '.$errorMessages;
-                }
-            }
-        }
-
-        return $errors;
     }
 
     /**

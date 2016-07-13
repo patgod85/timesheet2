@@ -47,18 +47,18 @@ class Employee
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="work_start", type="datetime", nullable=true)
+     * @ORM\Column(name="work_start", type="date", nullable=true)
      * @Serializer\Expose
-     * @Serializer\Type("DateTime")
+     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     private $workStart;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="work_end", type="datetime", nullable=true)
+     * @ORM\Column(name="work_end", type="date", nullable=true)
      * @Serializer\Expose
-     * @Serializer\Type("DateTime")
+     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     private $workEnd;
 
@@ -270,6 +270,14 @@ class Employee
     public function setCalendar($calendar)
     {
         $this->calendar = $calendar;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
 }

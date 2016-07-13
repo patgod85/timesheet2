@@ -17,8 +17,18 @@ class EmployeeType extends AbstractType
         $builder
             ->add('name')
             ->add('surname')
-            ->add('workStart')
-            ->add('workEnd')
+            ->add('workStart', 'datetime', [
+                'format' => 'yyyy-MM-dd',
+                'widget' => 'single_text',
+                'model_timezone' => 'Europe/London',
+                'view_timezone' => 'Europe/London',
+            ])
+            ->add('workEnd', 'datetime', [
+                'format' => 'yyyy-MM-dd',
+                'widget' => 'single_text',
+                'model_timezone' => 'Europe/London',
+                'view_timezone' => 'Europe/London',
+            ])
             ->add('teamId')
             ->add('position')
             ->add('calendar')

@@ -4,8 +4,12 @@ import Ember from 'ember';
 export default DS.Model.extend({
     name: DS.attr(),
     surname: DS.attr(),
-    workStart: DS.attr('date'),
-    workEnd: DS.attr(),
+    workStart: DS.attr('datephp', {
+        defaultValue() { return null; }
+    }),
+    workEnd: DS.attr('datephp', {
+        defaultValue() { return null; }
+    }),
     position: DS.attr(),
     teamId: DS.attr('number'),
     team: DS.belongsTo('team', {inverse: 'employees'}),

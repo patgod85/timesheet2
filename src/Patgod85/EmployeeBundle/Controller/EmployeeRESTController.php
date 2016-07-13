@@ -2,6 +2,7 @@
 
 namespace Patgod85\EmployeeBundle\Controller;
 
+use AppBundle\Controller\ErrorsJsonizer;
 use Patgod85\EmployeeBundle\Entity\Employee;
 use Patgod85\EmployeeBundle\Form\EmployeeType;
 
@@ -27,6 +28,8 @@ use Voryx\RESTGeneratorBundle\Controller\VoryxController;
  */
 class EmployeeRESTController extends VoryxController
 {
+    use ErrorsJsonizer;
+
     public function checkRights(User $user, Employee $entity)
     {
         if(!$user->isSuperAdmin() && $entity->getTeamId() != $user->getTeamId())
@@ -117,34 +120,51 @@ class EmployeeRESTController extends VoryxController
 
         return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
     }
+
+
     /**
      * Update a Employee entity.
      *
      * @View(serializerEnableMaxDepthChecks=true)
-     *
      * @param Request $request
-     * @param $entity
-     *
+     * @param Employee $entity
      * @return Response
      */
     public function putAction(Request $request, Employee $entity)
     {
         $this->checkRights($this->getUser(), $entity);
 
-        try {
+        try
+        {
             $em = $this->getDoctrine()->getManager();
             $request->setMethod('PATCH'); //Treat all PUTs as PATCH
             $form = $this->createForm(new EmployeeType(), $entity, array("method" => $request->getMethod()));
             $this->removeExtraFields($request, $form);
             $form->handleRequest($request);
+
             if ($form->isValid()) {
                 $em->flush();
 
                 return $entity;
             }
+            else
+            {
+                return FOSView::create(
+                    [
+                        'errors' => array_map(
+                            function($item){
+                                return ['detail' => $item];
+                            },
+                            $this->getErrorMessages($form)
+                        )
+                    ],
+                    Codes::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
 
-            return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             return FOSView::create($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

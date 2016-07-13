@@ -1,0 +1,24 @@
+{{yield}}
+
+<div class="aright pull-right">
+    <button type="button" class="btn btn-success" {{ action "submit" employee on="click" }}>Save</button>
+</div>
+
+<ul>
+    <li>
+        Name: {{input value=employee.name}}
+    </li>
+    <li>
+        Surname: {{input value=employee.surname}}
+    </li>
+    <li>
+        Position: {{input value=employee.position}}
+    </li>
+    <li>
+        The first working day: {{bootstrap-datepicker value=employee.workStart format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1 forceParse=false}}
+    </li>
+    <li>
+        The last working day: {{bootstrap-datepicker value=employee.workEnd format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1  forceParse=false}}
+    </li>
+    {{workStartDate}}
+</ul>
