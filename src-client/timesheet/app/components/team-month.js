@@ -12,6 +12,8 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     crc: null,
 
+    emptyArray: [],
+
     init() {
         this._super(...arguments);
 
@@ -22,21 +24,21 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     initMonthSections(){
 
-        var ical = this.get('ical');
-        var monthSections = this.get('monthSections');
+        const ical = this.get('ical');
+        let monthSections = this.get('monthSections');
         monthSections.clear();
 
-        var year = this.get('year');
-        var month = this.get('month');
-        var team = this.get('team');
-        var employees = team.get('employees');
+        const year = this.get('year');
+        const month = this.get('month');
+        let team = this.get('team');
+        let employees = team.get('employees');
 
         team.set('events', ical.getEventsIndex(team.calendars, year));
 
         this.set('crc', []);
-        var crc = this.get('crc');
+        let crc = this.get('crc');
 
-        var sectionId = 1;
+        let sectionId = 1;
         employees.forEach(employee => {
 
             employee.set('events', ical.getEventsIndex(employee.calendars, year));
@@ -61,22 +63,22 @@ export default Ember.Component.extend(CalendarWithActions, {
     },
 
     calendarObserver: Ember.observer('team.employeesCalendarsCrc', function(){
-        var ical = this.get('ical');
-        var crc = this.get('crc');
+        const ical = this.get('ical');
+        const crc = this.get('crc');
 
-        var year = this.get('year');
-        var team = this.get('team');
-        var employees = team.get('employees');
+        const year = this.get('year');
+        const team = this.get('team');
+        const employees = team.get('employees');
 
-        var monthSections = this.get('monthSections');
+        const monthSections = this.get('monthSections');
 
         employees.forEach(employee => {
 
-            var found = monthSections.findBy('employee_id', employee.id);
-            var foundCrc = crc.findBy('employee_id', employee.id);
+            const found = monthSections.findBy('employee_id', employee.id);
+            const foundCrc = crc.findBy('employee_id', employee.id);
 
             if(found && foundCrc){
-                var model = found.get('model');
+                let model = found.get('model');
 
                 if(model.get('crc') !== foundCrc.get('crc')){
                     model.set('events', ical.getEventsIndex(employee.calendars, year));
@@ -91,11 +93,11 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     months: Ember.computed(function(){
 
-        var monthNames = ["January", "February", "March", "April", "May", "June",
+        const monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
 
-        var index = 0;
+        let index = 0;
 
         return monthNames.map(name => {
             return {id: index++, title: name};
