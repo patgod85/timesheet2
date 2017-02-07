@@ -17,33 +17,40 @@ export default Ember.Component.extend(CalendarWithActions, {
         this.initMonthSections();
     },
 
-    initMonthSections(){
-        var year = this.get('year');
-        this.set('year', year);
-        this.set('monthSections', []);
-        var monthSections = this.get('monthSections');
-        var ical = this.get('ical');
+    yearMonthObserver: Ember.observer('year', 'month', function() {
+        this.initMonthSections();
+    }),
 
-        var model = this.get('model');
+    initMonthSections(){
+
+
+        const year = parseInt(this.get('year'), 10);
+        const month = parseInt(this.get('month'), 10) - 1;
+
+        this.set('monthSections', []);
+        let monthSections = this.get('monthSections');
+        const ical = this.get('ical');
+
+        let model = this.get('model');
 
         model.set('events', ical.getEventsIndex(model.calendars, year));
 
         monthSections.pushObjects([
             Ember.Object.create({
                 sectionId: 0,
-                month: 1,
+                month: month,
                 days: [],
                 model
             }),
             Ember.Object.create({
                 sectionId: 1,
-                month: 2,
+                month: month + 1,
                 days: [],
                 model
             }),
             Ember.Object.create({
                 sectionId: 2,
-                month: 3,
+                month: month + 2,
                 days: [],
                 model
             })
@@ -52,11 +59,11 @@ export default Ember.Component.extend(CalendarWithActions, {
     },
 
     calendarObserver: Ember.observer('model.calendars', function(){
-        var year = this.get('year');
-        var monthSections = this.get('monthSections');
-        var ical = this.get('ical');
+        const year = this.get('year');
+        const monthSections = this.get('monthSections');
+        const ical = this.get('ical');
 
-        var model = this.get('model');
+        let model = this.get('model');
 
         model.set('events', ical.getEventsIndex(model.calendars, year));
 
@@ -65,9 +72,18 @@ export default Ember.Component.extend(CalendarWithActions, {
         });
     }),
 
+    selectedMonth: Ember.computed('month', function () {
+        const number = parseInt(this.get('month'), 10);
+        return number - 1;
+    }),
+
+    selectedYear: Ember.computed('year', function () {
+        return parseInt(this.get('year'), 10);
+    }),
+
     months: Ember.computed(function(){
 
-        var monthNames = ["January", "February", "March", "April", "May", "June",
+        const monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
         function getName(i){
@@ -80,9 +96,9 @@ export default Ember.Component.extend(CalendarWithActions, {
             return monthNames[i];
         }
 
-        var months = [];
+        let months = [];
 
-        for(var i = 0; i < 12; i++){
+        for(let i = 0; i < 12; i++){
             months.push({
                 id: i,
                 title: getName(i-1) + ' - ' + getName(i) + ' - ' + getName(i+1)
@@ -105,38 +121,15 @@ export default Ember.Component.extend(CalendarWithActions, {
     actions: {
 
         changeYear(selected){
-            this.set('year', selected.id);
+
+            const changeMonthAction = this.get('changeMonthAction');
+            changeMonthAction(selected.id, this.get('month'));
         },
 
         changeMonth(selected){
-            var model = this.get('model');
-            var year = this.get('year');
-            var ical = this.get('ical');
 
-            model.set('events', ical.getEventsIndex(model.calendars, year));
-
-            this.set('monthSections',
-                [
-                    Ember.Object.create({
-                        sectionId: 0,
-                        month: selected.id,
-                        days: [],
-                        model
-                    }),
-                    Ember.Object.create({
-                        sectionId: 1,
-                        month: selected.id + 1,
-                        days: [],
-                        model
-                    }),
-                    Ember.Object.create({
-                        sectionId: 2,
-                        month: selected.id + 2,
-                        days: [],
-                        model
-                    })
-                ]
-            );
+            const changeMonthAction = this.get('changeMonthAction');
+            changeMonthAction(this.get('year'), selected.id + 1);
         }
 
     }

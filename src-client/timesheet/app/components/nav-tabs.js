@@ -16,25 +16,29 @@ export default Ember.Component.extend({
 
     localTabs: Ember.computed('tabs', 'clicks', 'currentPath', function(){
 
-        var tabs = this.get('tabs');
-        var currentPath = this.get('currentPath');
+        const tabs = this.get('tabs');
+        const currentPath = this.get('currentPath');
+
+        if(!tabs){
+            return [];
+        }
 
         return tabs.map(t => {
-            var tab = Ember.Object.create(t);
+            let tab = Ember.Object.create(t);
             tab.set('className', tab.get('route') === currentPath ? 'active' : '');
             return tab;
         });
     }),
 
     actions: {
-        transition: function(){
-            var self = this;
-            var tryingCount = 0;
-            var interval;
+        onTransition: function(){
+            let self = this;
+            let tryingCount = 0;
+            let interval;
 
             function intervalFunction(){
-                var currentPath = self.get('currentPath');
-                var realPath = self.get('router').get('currentPath');
+                const currentPath = self.get('currentPath');
+                const realPath = self.get('router').get('currentPath');
                 if(currentPath !== realPath){
                     self.set('currentPath', realPath);
                     clearInterval(interval);

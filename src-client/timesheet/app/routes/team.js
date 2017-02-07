@@ -7,12 +7,12 @@ export default Auth.extend({
 
         return Ember.RSVP.hash({
             team: this.store.findRecord('team', params.team_id),
-            tabs: [
+            tabs: Ember.RSVP.resolve([
                 {route: 'team.employees', title: 'Employees', id: params.team_id},
                 {route: 'team.calendar', title: 'Calendar', id: params.team_id},
                 {route: 'team.users', title: 'Users', id: params.team_id},
                 {route: 'team.details', title: 'Details', id: params.team_id}
-            ]
+            ])
 
         });
     },
