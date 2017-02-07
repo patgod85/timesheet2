@@ -1,13 +1,10 @@
 import Ember from 'ember';
-import moment from 'moment';
 
 import CalendarWithActions from './calendar-with-actions';
 
 export default Ember.Component.extend(CalendarWithActions, {
     ical: Ember.inject.service('ical'),
 
-    year: moment().year(),
-    month: moment().month(0).month(),
     teamWithEvents: null,
 
     crc: null,
@@ -116,12 +113,25 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     actions: {
         changeYear(selected){
-            this.set('year', selected.id);
+
+            const changeMonthAction = this.get('changeMonthAction');
+            changeMonthAction(selected.id, this.get('month'));
         },
 
         changeMonth(selected){
-            this.set('month', selected.id);
+
+            const changeMonthAction = this.get('changeMonthAction');
+            changeMonthAction(this.get('year'), selected.id + 1);
         }
-    }
+    },
+
+    selectedMonth: Ember.computed('month', function () {
+        const number = parseInt(this.get('month'), 10);
+        return number - 1;
+    }),
+
+    selectedYear: Ember.computed('year', function () {
+        return parseInt(this.get('year'), 10);
+    }),
 });
 
