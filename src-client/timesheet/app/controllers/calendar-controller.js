@@ -50,5 +50,6 @@ export default Ember.Controller.extend({
             this.set('m', month);
             this.set('y', year);
         }
+
     }
 });

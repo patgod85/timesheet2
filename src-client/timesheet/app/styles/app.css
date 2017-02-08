@@ -121,10 +121,8 @@ table {
   background-color: #d0d0d0;
   padding: 4px 20px;
   min-height: 30px; }
-  .calendar_options div {
-    float: left; }
-    .calendar_options div select {
-      background-color: black; }
+  .calendar_options select {
+    background-color: black; }
 
 .ivy-tabs .ivy-tab-list {
   list-style-type: none; }

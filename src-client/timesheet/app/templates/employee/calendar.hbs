@@ -1,4 +1,7 @@
 {{outlet}}
 
-{{calendar-year year=year month=month changeMonthAction=(action "changeMonth") refreshAction="refresh" model=model.employee showButtons=true event_types=model.events}}
+{{calendar-year year=year month=month changeMonthAction=(action "changeMonth")
+                addDiapasonAction=(action "addDiapason")
+                removeDiapasonAction=(action "removeDiapason")
+                refreshAction="refresh" model=model.employee showButtons=true event_types=model.events showDiapasons=true}}
 

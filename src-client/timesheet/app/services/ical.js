@@ -6,33 +6,33 @@ import Ember from 'ember';
 export default Ember.Service.extend({
     updateDays(iCalData, value, days, events) {
 
-        var jCalData = ICAL.parse(iCalData);
+        const jCalData = ICAL.parse(iCalData);
 
-        var comp = new ICAL.Component(jCalData);
-        var vtz = comp.getFirstSubcomponent('vtimezone');
-        var tz = new ICAL.Timezone(vtz);
+        const comp = new ICAL.Component(jCalData);
+        const vtz = comp.getFirstSubcomponent('vtimezone');
+        const tz = new ICAL.Timezone(vtz);
 
-        var packageFormat = new RegExp(/t2:(.+)/);
-        var event;
+        const packageFormat = new RegExp(/t2:(.+)/);
+        let event;
 
         days.map(day => {
             if (events.events.hasOwnProperty(day.date) && events.events[day.date].some(item => item.isInstance)) {
 
-                var vevents = comp.getAllSubcomponents("vevent");
-                for (var i = 0; i < vevents.length; i++) {
+                let vevents = comp.getAllSubcomponents("vevent");
+                for (let i = 0; i < vevents.length; i++) {
                     event = new ICAL.Event(vevents[i]);
-                    var index1 = moment.tz(event.startDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
-                    var index2 = moment.tz(event.endDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                    const index1 = moment.tz(event.startDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                    const index2 = moment.tz(event.endDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
                     if (index1 === day.date && index2 === day.date) {
 
-                        var summary = vevents[i].getFirstPropertyValue("summary");
+                        const summary = vevents[i].getFirstPropertyValue("summary");
 
-                        var packageBody = summary.match(packageFormat);
+                        const packageBody = summary.match(packageFormat);
                         if (packageBody && packageBody.length === 2) {
-                            var packageParts = packageBody[1].split(';');
-                            var isFound = false;
+                            let packageParts = packageBody[1].split(';');
+                            let isFound = false;
 
-                            for (var j = 0; j < packageParts.length; j++) {
+                            for (let j = 0; j < packageParts.length; j++) {
                                 if (value.substring(0, 2) === packageParts[j].substring(0, 2)) {
                                     packageParts[j] = value;
                                     isFound = true;
@@ -47,7 +47,7 @@ export default Ember.Service.extend({
                 }
             }
             else {
-                var vevent = new ICAL.Component('vevent');
+                const vevent = new ICAL.Component('vevent');
 
                 event = new ICAL.Event(vevent);
 
@@ -62,24 +62,80 @@ export default Ember.Service.extend({
         return comp.toString();
     },
 
+    addDiapason(iCalData, events, begin, end, type) {
+        const value = 'd:' + type;
+
+        const jCalData = ICAL.parse(iCalData);
+
+        const comp = new ICAL.Component(jCalData);
+        const vtz = comp.getFirstSubcomponent('vtimezone');
+        const tz = new ICAL.Timezone(vtz);
+
+        const packageFormat = new RegExp(/t2:(.+)/);
+        let event;
+
+        if (events.events.hasOwnProperty(begin) && events.events[begin].some(item => item.isInstance)) {
+
+            let vevents = comp.getAllSubcomponents("vevent");
+            for (let i = 0; i < vevents.length; i++) {
+                event = new ICAL.Event(vevents[i]);
+                const index1 = moment.tz(event.startDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                if (index1 === begin) {
+
+                    const summary = vevents[i].getFirstPropertyValue("summary");
+
+                    const packageBody = summary.match(packageFormat);
+                    if (packageBody && packageBody.length === 2) {
+                        let packageParts = packageBody[1].split(';');
+                        let isFound = false;
+
+                        for (let j = 0; j < packageParts.length; j++) {
+                            if (value.substring(0, 2) === packageParts[j].substring(0, 2)) {
+                                packageParts[j] = value;
+                                isFound = true;
+                            }
+                        }
+                        if (!isFound) {
+                            packageParts.unshift(value);
+                        }
+                        vevents[i].updatePropertyWithValue('summary', 't2:' + packageParts.join(';'));
+                    }
+                }
+            }
+        }
+        else {
+            const vevent = new ICAL.Component('vevent');
+
+            event = new ICAL.Event(vevent);
+
+            event.summary = 't2:' + value + ';';
+            event.startDate = ICAL.Time.fromDateString(begin);
+            event.endDate = ICAL.Time.fromDateString(end);
+            comp.addSubcomponent(vevent);
+        }
+
+        return comp.toString();
+    },
+
+
     clearData(iCalData, days, events) {
 
-        var jCalData = ICAL.parse(iCalData);
+        const jCalData = ICAL.parse(iCalData);
 
-        var comp = new ICAL.Component(jCalData);
-        var vtz = comp.getFirstSubcomponent('vtimezone');
-        var tz = new ICAL.Timezone(vtz);
+        let comp = new ICAL.Component(jCalData);
+        const vtz = comp.getFirstSubcomponent('vtimezone');
+        const tz = new ICAL.Timezone(vtz);
 
-        var event;
+        let event;
 
         days.map(day => {
             if (events.events.hasOwnProperty(day.date) && events.events[day.date].some(item => item.isInstance)) {
 
-                var vevents = comp.getAllSubcomponents("vevent");
-                for (var i = 0; i < vevents.length; i++) {
+                const vevents = comp.getAllSubcomponents("vevent");
+                for (let i = 0; i < vevents.length; i++) {
                     event = new ICAL.Event(vevents[i]);
-                    var index1 = moment.tz(event.startDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
-                    var index2 = moment.tz(event.endDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                    const index1 = moment.tz(event.startDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                    const index2 = moment.tz(event.endDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
                     if (index1 === day.date && index2 === day.date) {
 
                         comp.removeSubcomponent(vevents[i]);
@@ -91,10 +147,38 @@ export default Ember.Service.extend({
         return comp.toString();
     },
 
+    removeDiapason(iCalData, events, begin, end) {
+
+        const jCalData = ICAL.parse(iCalData);
+
+        let comp = new ICAL.Component(jCalData);
+        const vtz = comp.getFirstSubcomponent('vtimezone');
+        const tz = new ICAL.Timezone(vtz);
+
+        let event;
+
+        if (events.events.hasOwnProperty(begin) && events.events[begin].some(item => item.isInstance)) {
+
+            const vevents = comp.getAllSubcomponents("vevent");
+            for (let i = 0; i < vevents.length; i++) {
+                event = new ICAL.Event(vevents[i]);
+                const index1 = moment.tz(event.startDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                const index2 = moment.tz(event.endDate.toJSDate(), tz.tzid).format('YYYY-MM-DD');
+                if (index1 === begin && index2 === end) {
+
+                    comp.removeSubcomponent(vevents[i]);
+                }
+            }
+        }
+
+        return comp.toString();
+    },
+
+
     //noinspection JSUnusedGlobalSymbols
     getEventsIndex(calendars, year) {
 
-        var eIndex = {events: {}, diapasons: {}, holidays: {}};
+        let eIndex = {events: {}, diapasons: [], holidays: {}};
 
         if (!calendars) {
             return eIndex;
@@ -106,31 +190,36 @@ export default Ember.Service.extend({
 
         calendars.map((iCalData, calendarIndex) => {
 
-            var jCalData = ICAL.parse(iCalData);
+            if(!iCalData){
+                console.log('Invalid calendar format');
+                return;
+            }
 
-            var comp = new ICAL.Component(jCalData);
-            var vevents = comp.getAllSubcomponents("vevent");
+            const jCalData = ICAL.parse(iCalData);
 
-            var vtz = comp.getFirstSubcomponent('vtimezone');
-            var tz = new ICAL.Timezone(vtz);
+            const comp = new ICAL.Component(jCalData);
+            const vevents = comp.getAllSubcomponents("vevent");
 
-            var beginOfYear = moment().year(year).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
-            var endOfYear = moment().year(year).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
+            const vtz = comp.getFirstSubcomponent('vtimezone');
+            const tz = new ICAL.Timezone(vtz);
 
-            var dateRegExp = new RegExp(/d:(\d{1,2});/);
-            var holidayRegExp = new RegExp(/n:(ph|we);/);
-            var valueRegExp = new RegExp(/v:([^;]+);/);
-            var shiftRegExp = new RegExp(/s:([^;]+);/);
+            const beginOfYear = moment().year(year).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
+            const endOfYear = moment().year(year).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
 
-            for (var i = 0; i < vevents.length; i++) {
-                var isHoliday = false;
+            const dateRegExp = new RegExp(/d:(\d{1,2});/);
+            const holidayRegExp = new RegExp(/n:(ph|we);/);
+            const valueRegExp = new RegExp(/v:([^;]+);/);
+            const shiftRegExp = new RegExp(/s:([^;]+);/);
 
-                var isInstance = (calendarIndex + 1 === calendars.length);
+            for (let i = 0; i < vevents.length; i++) {
+                let isHoliday = false;
 
-                var summaryOrig = vevents[i].getFirstPropertyValue("summary");
-                var summary = {};
+                let isInstance = (calendarIndex + 1 === calendars.length);
 
-                var match = summaryOrig.match(dateRegExp);
+                const summaryOrig = vevents[i].getFirstPropertyValue("summary");
+                let summary = {};
+
+                let match = summaryOrig.match(dateRegExp);
                 if (match && match.length > 1) {
                     summary.d = match[1];
                 }
@@ -151,9 +240,9 @@ export default Ember.Service.extend({
                     summary.s = match[1];
                 }
 
-                var event = new ICAL.Event(vevents[i]);
-                var eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
-                var eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
+                const event = new ICAL.Event(vevents[i]);
+                const eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
+                const eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
 
                 if (
                     (eBegin.isAfter(beginOfYear, 'day') || eBegin.isSame(beginOfYear, 'day')) &&
@@ -174,11 +263,14 @@ export default Ember.Service.extend({
                             end: eEnd.format('YYYY-MM-DD'),
                             summary
                         });
+
                         for (let d = eBegin; d.isBefore(eEnd, 'hour'); d.add(1, 'd')) {
-                            if (!eIndex.events.hasOwnProperty(index)) {
-                                eIndex.events[index] = [];
+                            let dIndex = eBegin.format('YYYY-MM-DD');
+
+                            if (!eIndex.events.hasOwnProperty(dIndex)) {
+                                eIndex.events[dIndex] = [];
                             }
-                            eIndex.events[index].push({isInstance, summary});
+                            eIndex.events[dIndex].push({isInstance, summary});
                         }
                     }
 

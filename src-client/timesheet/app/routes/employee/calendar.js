@@ -5,11 +5,11 @@ export default Ember.Route.extend({
     calendarService: Ember.inject.service('calendar'),
 
     model() {
-        var parentModel = this.modelFor("employee"),
+        const parentModel = this.modelFor("employee"),
             employee = parentModel.employee;
 
-        var generalCalendar,
-            self = this;
+        let generalCalendar;
+        const self = this;
 
         return Ember.RSVP.hash({
             employee: self.store.findRecord('calendar', 1)
@@ -18,7 +18,7 @@ export default Ember.Route.extend({
                     return self.store.findRecord('team', employee.get('teamId'));
                 })
                 .then(team => {
-                    var calendarService = self.get('calendarService');
+                    const calendarService = self.get('calendarService');
 
                     return calendarService.setupEmployee(employee, team, generalCalendar);
                 }),
