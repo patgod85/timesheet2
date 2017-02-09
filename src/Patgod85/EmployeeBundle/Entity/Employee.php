@@ -2,6 +2,7 @@
 
 namespace Patgod85\EmployeeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Patgod85\TeamBundle\Entity\Team;
 use JMS\Serializer\Annotation as Serializer;
@@ -93,6 +94,23 @@ class Employee
      * @Serializer\Type("string")
      */
     private $calendar;
+
+    /**
+     * @ORM\OneToMany(targetEntity="\Patgod85\EmployeeBundle\Entity\CompensatoryLeave", mappedBy="employee", cascade={"merge"})
+     * @ORM\OrderBy({"date" = "ASC"})
+     * @Serializer\Expose
+     * @Serializer\Type("Patgod85\EmployeeBundle\Entity\CompensatoryLeave")
+     */
+    private $compensatoryLeaves;
+
+    /**
+     * Employee constructor.
+     */
+    public function __construct()
+    {
+        $this->compensatoryLeaves = new ArrayCollection();
+    }
+
 
     /**
      * Get id
@@ -279,5 +297,22 @@ class Employee
     {
         $this->id = $id;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getCompensatoryLeaves()
+    {
+        return $this->compensatoryLeaves;
+    }
+
+    /**
+     * @param CompensatoryLeave $compensatoryLeave
+     */
+    public function addCompensatoryLeaves($compensatoryLeave)
+    {
+        $this->compensatoryLeaves->add($compensatoryLeave);
+    }
+
 
 }

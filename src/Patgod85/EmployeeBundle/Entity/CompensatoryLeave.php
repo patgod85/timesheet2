@@ -1,14 +1,16 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace Patgod85\EmployeeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * CompensatoryLeave
  *
  * @ORM\Table(name="compensatory_leave", uniqueConstraints={@ORM\UniqueConstraint(name="id", columns={"id"})})
  * @ORM\Entity
+ * @Serializer\ExclusionPolicy("all")
  */
 class CompensatoryLeave
 {
@@ -18,6 +20,8 @@ class CompensatoryLeave
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     private $id;
 
@@ -32,6 +36,8 @@ class CompensatoryLeave
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime", nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("DateTime")
      */
     private $date;
 
@@ -39,6 +45,8 @@ class CompensatoryLeave
      * @var string
      *
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     * @Serializer\Expose
+     * @Serializer\Type("string")
      */
     private $description;
 
@@ -46,10 +54,18 @@ class CompensatoryLeave
      * @var float
      *
      * @ORM\Column(name="value", type="float", precision=10, scale=0, nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("float")
      */
     private $value;
 
 
+    /**
+     * @var Employee
+     * @ORM\ManyToOne(targetEntity="\Patgod85\EmployeeBundle\Entity\Employee", inversedBy="compensatoryLeaves")
+     * @ORM\JoinColumn(name="employee_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $employee;
 
     /**
      * Get id
@@ -156,4 +172,22 @@ class CompensatoryLeave
     {
         return $this->value;
     }
+
+    /**
+     * @return Employee
+     */
+    public function getEmployee()
+    {
+        return $this->employee;
+    }
+
+    /**
+     * @param Employee $employee
+     */
+    public function setEmployee($employee)
+    {
+        $this->employee = $employee;
+    }
+
+
 }

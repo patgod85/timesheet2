@@ -1,0 +1,52 @@
+{{yield}}
+
+<div class="diapason-options">
+    {{#if hidden}}
+        <button {{ action "show" on="click" }}>Show diapasons options</button>
+    {{else}}
+        <button class="pull-right" {{ action "hide" on="click" }}>Hide</button>
+        <h1>
+            Diapasons
+        </h1>
+        <table>
+            <tbody>
+            {{#each diapasons as |diapason i|}}
+                <tr>
+                    <td>
+                        {{inc i}}
+                    </td>
+                    <td>
+                        {{diapason.begin}} &mdash; {{diapason.end}}
+                    </td>
+                    <td>
+                        <div class="event event_{{diapason.summary.d}}"></div>
+                    </td>
+                    <td>
+                        <button {{ action "removeDiapason" diapason.begin diapason.end on="click" }}>Remove</button>
+                    </td>
+                </tr>
+            {{else}}
+                <tr>
+                    <td colspan="4">No items found</td>
+                </tr>
+            {{/each}}
+            <tr>
+                <td>New</td>
+                <td>
+                    {{bootstrap-datepicker value=newBegin format="yyyy-mm-dd" todayHighlight=true
+                                           autoclose=true weekStart=1 forceParse=false}}
+                    {{bootstrap-datepicker value=newEnd format="yyyy-mm-dd" todayHighlight=true
+                                           autoclose=true weekStart=1 forceParse=false}}
+
+                </td>
+                <td>
+                    {{drop-down content=eventTypesNames onChange=(action "changeNewType") selectedValue=newType }}
+                </td>
+                <td>
+                    <button {{ action "addDiapason" on="click" }}>Add new diapason</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    {{/if}}
+</div>

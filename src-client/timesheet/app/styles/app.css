@@ -183,4 +183,8 @@ table {
   .employee-report .results {
     font-family: "Courier New", serif; }
 
+.diapason-options {
+  background-color: #b9b9b9;
+  padding: 5px 20px; }
+
 /*# sourceMappingURL=app.css.map */

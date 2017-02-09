@@ -12,39 +12,7 @@
 <div class="clearfix"></div>
 
 {{#if showDiapasons }}
-    <h1>Diapasons</h1>
-    <table>
-        <tbody>
-            {{#each model.events.diapasons as |diapason|}}
-                <tr>
-                    <td>
-                        {{diapason.begin}} &mdash; {{diapason.end}}
-                    </td>
-                    <td>
-                        <div class="event event_{{diapason.summary.d}}"></div>
-                    </td>
-                    <td>
-                        <button {{ action "removeDiapason" diapason.begin diapason.end on="click" }}>Remove</button>
-                    </td>
-                </tr>
-            {{/each}}
-            <tr>
-                <td>
-                    {{bootstrap-datepicker value=newBegin format="yyyy-mm-dd" todayHighlight=true
-                                           autoclose=true weekStart=1 forceParse=false}}
-                    {{bootstrap-datepicker value=newEnd format="yyyy-mm-dd" todayHighlight=true
-                                           autoclose=true weekStart=1 forceParse=false}}
-
-                </td>
-                <td>
-                    {{drop-down content=eventTypesNames onChange=(action "changeNewType") selectedValue=newType }}
-                </td>
-                <td>
-                    <button {{ action "addDiapason" on="click" }}>Add new diapason</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    {{calendar-diapasons event_types=event_types diapasons=model.events.diapasons addDiapasonAction=addDiapasonAction removeDiapasonAction=removeDiapasonAction}}
 {{/if}}
 
 {{calendar-actions sections=monthSections showButtons=showButtons event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
