@@ -98,10 +98,23 @@ class Employee
     /**
      * @ORM\OneToMany(targetEntity="\Patgod85\EmployeeBundle\Entity\CompensatoryLeave", mappedBy="employee", cascade={"merge"})
      * @ORM\OrderBy({"date" = "ASC"})
-     * @Serializer\Expose
-     * @Serializer\Type("Patgod85\EmployeeBundle\Entity\CompensatoryLeave")
      */
     private $compensatoryLeaves;
+
+    /**
+     * @return array
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("compensatoryLeaves")
+     */
+    public function getCompensatoryLeavesIds()
+    {
+        return array_map(
+            function(CompensatoryLeave $leave){
+                return $leave->getId();
+            },
+            $this->compensatoryLeaves->toArray()
+        );
+    }
 
     /**
      * Employee constructor.

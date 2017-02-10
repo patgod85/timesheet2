@@ -11,7 +11,8 @@ export default Auth.extend({
             tabs: [
                 {route: 'employee.calendar.index', title: 'Calendar', id: params.employee_id},
                 {route: 'employee.calendar.report', title: 'Report', id: params.employee_id},
-                {route: 'employee.details', title: 'Details', id: params.employee_id}
+                {route: 'employee.details', title: 'Details', id: params.employee_id},
+                {route: 'employee.compensatory-leaves', title: 'Extra compensatory leaves', id: params.employee_id}
             ]
         });
     },

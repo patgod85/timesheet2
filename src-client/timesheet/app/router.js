@@ -30,9 +30,10 @@ Router.map(function () {
 
         this.route('details', {path: 'details'});
         this.route('calendar', {path: 'calendar'}, function () {
-
             this.route('report', {path: 'report'});
         });
+        this.route('compensatory-leaves', {path: 'compensatory-leaves'});
+        this.route('compensatory-leave', {path: 'compensatory-leaves/:id'});
     });
 
     this.route('events');

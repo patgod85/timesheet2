@@ -11,7 +11,7 @@ import strip from "../../helpers/strip";
 test('it renders', function (assert) {
 
     this.render(hbs`
-HideDiapasons012016-02-02—2016-02-28RemoveNewMockedeventAddnewdiapason
+HideDiapasons12016-02-02—2016-02-28RemoveNewMockedeventAddnewdiapason
     `);
 
     const expected = strip(this.$().text());

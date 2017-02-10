@@ -1,3 +1,8 @@
+patgod85_employee_compensatory_leave_api:
+    resource: "@Patgod85EmployeeBundle/Controller/CompensatoryLeaveRESTController.php"
+    type:   rest
+    prefix:   /api
+
 patgod85_calendar_calendar_api:
     resource: "@Patgod85CalendarBundle/Controller/CalendarRESTController.php"
     type:   rest

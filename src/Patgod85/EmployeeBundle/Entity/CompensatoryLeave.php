@@ -29,6 +29,8 @@ class CompensatoryLeave
      * @var integer
      *
      * @ORM\Column(name="employee_id", type="integer", nullable=false)
+     * @Serializer\Expose
+     * @Serializer\Type("integer")
      */
     private $employeeId;
 

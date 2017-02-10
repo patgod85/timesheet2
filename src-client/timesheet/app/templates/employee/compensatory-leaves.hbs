@@ -1,0 +1,48 @@
+
+<h1>
+    Extra compensatory leaves
+</h1>
+<table>
+    <tbody>
+    {{#each model.employee.compensatoryLeaves as |leave i|}}
+        <tr>
+            <td>
+                {{inc i}}
+            </td>
+            <td>
+                {{leave.id}}: {{leave.date}}
+            </td>
+            <td>
+                {{leave.description}}
+            </td>
+            <td>
+                {{leave.value}}
+            </td>
+            <td>
+                <button {{ action "onRemove" leave on="click" }}>Remove</button>
+                {{link-to "edit" "employee.compensatory-leave" leave.id}}
+            </td>
+        </tr>
+    {{else}}
+        <tr>
+            <td colspan="5">No items found</td>
+        </tr>
+    {{/each}}
+    <tr>
+        <td>New</td>
+        <td>
+            {{bootstrap-datepicker value=newDate format="yyyy-mm-dd" todayHighlight=true
+                                   autoclose=true weekStart=1 forceParse=false}}
+        </td>
+        <td>
+            {{textarea value=newDescription}}
+        </td>
+        <td>
+            {{input type="text" value=newValue}}
+        </td>
+        <td>
+            <button {{ action "onAdd" on="click" }}>Add new diapason</button>
+        </td>
+    </tr>
+    </tbody>
+</table>

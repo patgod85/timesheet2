@@ -183,6 +183,7 @@ export default Ember.Service.extend({
         if (!calendars) {
             return eIndex;
         }
+        const time1 = new Date().getTime();
 
         if (!Array.isArray(calendars)) {
             calendars = [calendars];
@@ -284,6 +285,9 @@ export default Ember.Service.extend({
                 }
             }
         });
+
+        const time2 = new Date().getTime();
+        console.log('Calendar parsing time: ' + (time2-time1) + ' ms');
 
         return eIndex;
     }

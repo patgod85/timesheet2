@@ -17,5 +17,8 @@ export default DS.Model.extend({
 
     full_name: Ember.computed('name', 'surname', function(){
         return this.get('name')+' '+this.get('surname');
-    })
+    }),
+
+    compensatoryLeaves: DS.hasMany('compensatory-leave', {inverse: 'employee'}),
+
 });
