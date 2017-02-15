@@ -9,27 +9,13 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     year: 0,
 
-    init() {
-        this._super(...arguments);
-
-        this.set('monthSections', []);
-
-        this.initMonthSections();
-    },
-
-    yearMonthObserver: Ember.observer('year', 'month', function() {
-        this.initMonthSections();
-    }),
-
-    initMonthSections(){
+    monthSections: Ember.computed('model.calendars', 'year', 'month', function(){
 
 
         const year = parseInt(this.get('year'), 10);
-        const month = parseInt(this.get('month'), 10) - 1;
-
-        this.set('monthSections', []);
-        let monthSections = this.get('monthSections');
+        const monthSections = Ember.A([]);
         const ical = this.get('ical');
+        const month = parseInt(this.get('month'), 10) - 1;
 
         let model = this.get('model');
 
@@ -55,21 +41,10 @@ export default Ember.Component.extend(CalendarWithActions, {
                 model
             })
         ]);
-
-    },
-
-    calendarObserver: Ember.observer('model.calendars', function(){
-        const year = this.get('year');
-        const monthSections = this.get('monthSections');
-        const ical = this.get('ical');
-
-        let model = this.get('model');
-
-        model.set('events', ical.getEventsIndex(model.calendars, year));
-
-        monthSections.map(section => {
-            section.set('model', model);
-        });
+        // monthSections.map(section => {
+        //     section.set('model', model);
+        // });
+        return monthSections;
     }),
 
     selectedMonth: Ember.computed('month', function () {

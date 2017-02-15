@@ -12,18 +12,18 @@ export default Ember.Component.extend(MonthEvents, {
     },
 
     initDays(){
-        var self = this;
-        var year = this.get('year');
-        var month = this.get('month');
-        this.set('days', []);
-        var days = this.get('days');
-        var model = this.get('model');
+        const self = this;
+        const year = this.get('year');
+        const month = this.get('month');
+        this.set('days', Ember.A([]));
+        let days = this.get('days');
+        const model = this.get('model');
         days.clear();
 
-        for(var i = moment({year: year, month: month, date: 1}); i.month() === month; i.add(1, 'd')){
+        for(let i = moment({year: year, month: month, date: 1}); i.month() === month; i.add(1, 'd')){
 
-            var momentDate = moment(i);
-            var index = i.format('YYYY-MM-DD');
+            let momentDate = moment(i);
+            let index = i.format('YYYY-MM-DD');
             days.pushObject(
                 Ember.Object.create({
                     date: momentDate,
@@ -37,14 +37,14 @@ export default Ember.Component.extend(MonthEvents, {
     },
 
     calendarObserver: Ember.observer('model.events', function(){
-        var self = this;
-        var days = this.get('days');
-        var model = this.get('model');
+        const self = this;
+        const days = this.get('days');
+        const model = this.get('model');
 
         days.forEach(day => {
 
-            var index = day.get('index');
-            var localEvents = self.getLocalEvents(day.get('date'), index, model.events);
+            let index = day.get('index');
+            let localEvents = self.getLocalEvents(day.get('date'), index, model.events);
             if(JSON.stringify(day.get('localEvents')) !== JSON.stringify(localEvents)){
 
                 day.set('localEvents', localEvents);
@@ -59,18 +59,18 @@ export default Ember.Component.extend(MonthEvents, {
     }),
 
     observeCheckedDates: Ember.observer('checkedDates.[]', function () {
-        var checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
+        const checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
 
-        var days = this.get('days');
+        const days = this.get('days');
 
-        var previouslyChecked = days.filterBy('isChecked', true);
+        let previouslyChecked = days.filterBy('isChecked', true);
 
         previouslyChecked.forEach(day => {
             day.set('isChecked', false);
         });
 
         checkedDates.forEach(date => {
-            var found = days.findBy('index', date);
+            let found = days.findBy('index', date);
 
             if(found){
                 found.set('isChecked', true);

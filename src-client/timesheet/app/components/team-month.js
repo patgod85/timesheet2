@@ -7,6 +7,8 @@ export default Ember.Component.extend(CalendarWithActions, {
 
     teamWithEvents: null,
 
+    monthSections: null,
+
     crc: null,
 
     emptyArray: [],
@@ -14,7 +16,7 @@ export default Ember.Component.extend(CalendarWithActions, {
     init() {
         this._super(...arguments);
 
-        this.set('monthSections', []);
+        this.set('monthSections', Ember.A([]));
 
         this.initMonthSections();
     },

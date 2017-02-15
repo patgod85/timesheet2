@@ -204,8 +204,9 @@ export default Ember.Service.extend({
             const vtz = comp.getFirstSubcomponent('vtimezone');
             const tz = new ICAL.Timezone(vtz);
 
-            const beginOfYear = moment().year(year).month(0).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
-            const endOfYear = moment().year(year).month(11).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
+            // Month -1 and 12 used to count events for combinations like "Dec Jan Feb" or "Nov Dec Jan"
+            const beginOfYear = moment().year(year).month(-1).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
+            const endOfYear = moment().year(year).month(12).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
 
             const dateRegExp = new RegExp(/d:(\d{1,2});/);
             const holidayRegExp = new RegExp(/n:(ph|we);/);

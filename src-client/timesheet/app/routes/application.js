@@ -6,7 +6,7 @@ export default Ember.Route.extend({
     rolesService: Ember.inject.service('roles'),
 
     model() {
-        var self = this;
+        const self = this;
 
         return Ember.RSVP.hash({
 
@@ -20,7 +20,7 @@ export default Ember.Route.extend({
                     return user;
                 })
                 .then(user => {
-                    var rolesService = self.get('rolesService');
+                    const rolesService = self.get('rolesService');
 
                     user.theHeaviestRole = rolesService.getTheHeaviestRole(user.roles);
                     user.menuItems = rolesService.getMenuItemsForRole(user.theHeaviestRole);
@@ -38,7 +38,7 @@ export default Ember.Route.extend({
         })
         .catch(err => {
             if(err.hasOwnProperty('errors') && err.errors.any(e => e.hasOwnProperty('status') && e.status >= 400 && e.status !== 403)){
-                alert("An error is caught during of loading. To avoid problems try to reload the page. \n " + err.message);
+                console.log("An error is caught during of loading. To avoid problems try to reload the page. \n " + err.message);
             }
             else{
                 console.log('Error on application load', err);

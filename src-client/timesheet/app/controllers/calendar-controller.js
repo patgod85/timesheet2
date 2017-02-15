@@ -27,6 +27,10 @@ export default Ember.Controller.extend({
     }),
 
     month: Ember.computed('m', function(){
+        return this.getMonth();
+    }),
+
+    getMonth(){
         const previousOptions = this.get('localStorage').getCalendarOptions();
 
         let m = this.get('m');
@@ -40,7 +44,7 @@ export default Ember.Controller.extend({
         }
 
         return m;
-    }),
+    },
 
     actions: {
 

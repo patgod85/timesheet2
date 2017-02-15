@@ -4,8 +4,10 @@ export default Auth.extend({
 
     model() {
         return this.store.findRecord('calendar', 1)
-            .then(function(calendar){
-                return calendar;
+            .then(function(model){
+                model.set('calendars', [model.get('calendar')]);
+console.log('remodel');
+                return model;
             });
     },
 

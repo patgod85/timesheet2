@@ -4,7 +4,7 @@ export default Ember.Route.extend({
     calendarService: Ember.inject.service('calendar'),
 
     model() {
-        var team = this.modelFor("team").team,
+        const team = this.modelFor("team").team,
             self = this;
 
         return Ember.RSVP.hash({
@@ -14,7 +14,7 @@ export default Ember.Route.extend({
                         return self.store.findRecord('calendar', 1);
                     })
                     .then(defaultCalendar => {
-                        var calendarService = self.get('calendarService');
+                        const calendarService = self.get('calendarService');
 
                         return calendarService.setupTeam(team, defaultCalendar);
                     }),
