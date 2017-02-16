@@ -6,7 +6,7 @@
 <div class="clearfix"></div>
 
 {{#each monthSections as |m|}}
-    {{calendar-month month=m.month year=year checkDateAction=(action 'checkDate') checkedDates=m.days model=model nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
+    {{calendar-month month=m.month year=year onCheckDaysOfWeek=(action 'onCheckDaysOfWeek') checkDateAction=(action 'checkDate') checkedDates=m.days model=model nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
 {{/each}}
 
 <div class="clearfix"></div>

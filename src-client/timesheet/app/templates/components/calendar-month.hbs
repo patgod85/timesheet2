@@ -2,13 +2,9 @@
     <caption>{{monthName}} <small>{{year}}</small></caption>
     <thead>
         <tr>
-            <th>Mo</th>
-            <th>Tu</th>
-            <th>We</th>
-            <th>Th</th>
-            <th>Fr</th>
-            <th>Sa</th>
-            <th>Su</th>
+            {{#each daysOfWeek as |day|}}
+                <th {{action "onCheckDaysOfWeek" year sectionId day on "click"}}>{{day}}</th>
+            {{/each}}
         </tr>
     </thead>
     <tbody>

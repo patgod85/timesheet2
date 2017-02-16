@@ -5,10 +5,10 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function (defaults) {
     const app = new EmberApp(defaults, {
         minifyJS: {
-            enabled: true
+            enabled: false
         },
         minifyCSS: {
-            enabled: true
+            enabled: false
         }
     });
 

@@ -26,7 +26,8 @@ ul {
       color: grey; }
   .calendar-month th {
     font-weight: bold;
-    text-align: center; }
+    text-align: center;
+    cursor: pointer; }
   .calendar-month td, .calendar-month th {
     padding: 1px !important;
     color: gray; }
@@ -185,10 +186,6 @@ table {
 
 .diapason-options {
   background-color: #b9b9b9;
-  padding: 5px 20px; }
-
-.compensatory-leaves {
-  background-color: #b8b992;
   padding: 5px 20px; }
 
 /*# sourceMappingURL=app.css.map */

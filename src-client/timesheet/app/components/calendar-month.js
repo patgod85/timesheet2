@@ -12,6 +12,7 @@ export default Ember.Component.extend(MonthEvents, {
         this.initWeeks();
     },
 
+    daysOfWeek: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
 
     initWeeks(){
         if(this.get('month') === 0){
@@ -25,17 +26,17 @@ export default Ember.Component.extend(MonthEvents, {
 
         this.set('weeks', []);
 
-        var firstDay = moment().year(this.get('year')).month(this.get('month') - 1).date(1);
-        var weeks = this.get('weeks');
-        var self = this;
+        let firstDay = moment().year(this.get('year')).month(this.get('month') - 1).date(1);
+        let weeks = this.get('weeks');
+        const self = this;
 
-        var events = this.get('model.events');
+        const events = this.get('model.events');
 
-        var isLastWeek = false;
+        let isLastWeek = false;
         let prevDate = 0;
 
         first_level_loop:
-        for (var w = 0; w < 6; w++) {
+        for (let w = 0; w < 6; w++) {
 
             let week = [];
 
@@ -44,7 +45,7 @@ export default Ember.Component.extend(MonthEvents, {
 
                 let date = firstDay.date();
                 let index = firstDay.format('YYYY-MM-DD');
-                var momentDate = moment(firstDay);
+                const momentDate = moment(firstDay);
                 week.pushObject(
                     Ember.Object.create({
                         date: momentDate,
@@ -81,14 +82,14 @@ export default Ember.Component.extend(MonthEvents, {
     }),
 
     eventsObserver: Ember.observer('model.events', function () {
-        var weeks = this.get('weeks');
-        var events = this.get('model.events');
-        var self = this;
+        let weeks = this.get('weeks');
+        const events = this.get('model.events');
+        const self = this;
 
         weeks.map(week => {
             week.map(day => {
-                var index = day.get('index');
-                var localEvents = self.getLocalEvents(day.get('date'), index, events);
+                const index = day.get('index');
+                const localEvents = self.getLocalEvents(day.get('date'), index, events);
                 if(JSON.stringify(day.get('localEvents')) !== JSON.stringify(localEvents)){
 
                     day.set('localEvents', localEvents);
@@ -99,26 +100,31 @@ export default Ember.Component.extend(MonthEvents, {
     }),
 
     weeksObserver: Ember.observer('checkedDates.[]', function () {
-        var checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
+        let checkedDates = this.get('checkedDates') ? this.get('checkedDates').map(o => o.date) : [];
 
-        var weeks = this.get('weeks');
+        let weeks = this.get('weeks');
 
         weeks.forEach(days => {
 
-            var previouslyChecked = days.filterBy('isChecked', true);
+            let previouslyChecked = days.filterBy('isChecked', true);
 
             previouslyChecked.forEach(day => {
                 day.set('isChecked', false);
             });
 
             checkedDates.forEach(date => {
-                var found = days.findBy('index', date);
+                const found = days.findBy('index', date);
 
                 if(found){
                     found.set('isChecked', true);
                 }
             });
         });
-    })
+    }),
 
+    actions: {
+        onCheckDaysOfWeek(year, sectionId, day){
+            this.get('onCheckDaysOfWeek')(year, sectionId, day);
+        }
+    }
 });
