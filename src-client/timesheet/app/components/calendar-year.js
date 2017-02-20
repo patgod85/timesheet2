@@ -26,19 +26,22 @@ export default Ember.Component.extend(CalendarWithActions, {
                 sectionId: 0,
                 month: month,
                 days: [],
-                model
+                model,
+                year
             }),
             Ember.Object.create({
                 sectionId: 1,
                 month: month + 1,
                 days: [],
-                model
+                model,
+                year
             }),
             Ember.Object.create({
                 sectionId: 2,
                 month: month + 2,
                 days: [],
-                model
+                model,
+                year
             })
         ]);
         // monthSections.map(section => {

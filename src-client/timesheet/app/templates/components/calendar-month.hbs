@@ -3,7 +3,7 @@
     <thead>
         <tr>
             {{#each daysOfWeek as |day|}}
-                <th {{action "onCheckDaysOfWeek" year sectionId day on "click"}}>{{day}}</th>
+                <th {{action "onPickDaysOfWeek" year sectionId day on "click"}}>{{day}}</th>
             {{/each}}
         </tr>
     </thead>
@@ -11,7 +11,7 @@
     {{#each weeks as |week|}}
         <tr>
             {{#each week as |day|}}
-                {{calendar-day date=day.date isHoliday=day.isHoliday localEvents=day.localEvents month=month isChecked=day.isChecked checkDateAction=checkDateAction showNumbers=true sectionId=sectionId}}
+                {{calendar-day date=day.date isHoliday=day.isHoliday localEvents=day.localEvents month=month isChecked=day.isChecked onPickDate=onPickDate showNumbers=true sectionId=sectionId}}
             {{/each}}
         </tr>
     {{/each}}

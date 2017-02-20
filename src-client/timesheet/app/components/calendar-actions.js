@@ -4,9 +4,15 @@ import Ember from 'ember';
 export default Ember.Component.extend({
     ical: Ember.inject.service('ical'),
 
+    pickValue: 1,
+
+    pickGap: 1,
+
+    pickQuantity: 5,
+
     actions: {
         setValue(){
-            var value = this.get('value');
+            const value = this.get('value');
             this.updateDays('v:' + value);
         },
 
@@ -22,35 +28,43 @@ export default Ember.Component.extend({
             this.updateDays('s:' + eventId);
         },
 
-        clearAll(){
+        onClearAll(){
             if(confirm('All data in selected dates will be removed. Are you sure?')){
                 this.clearData();
             }
         },
 
-        unpickDates(){
-            this.sendAction('onUncheck');
+        onUnpick(){
+            this.sendAction('onUnpick');
+        },
+
+        onPickWithAlgorithm(){
+            this.get('onPickWithAlgorithm')(
+                this.get('pickValue'),
+                this.get('pickGap'),
+                this.get('pickQuantity')
+            );
         }
     },
 
     clearData(){
-        var sections = this.get('sections');
-        var self = this;
-        var ical = this.get('ical');
+        let sections = this.get('sections');
+        const self = this;
+        const ical = this.get('ical');
 
-        var promises = [];
+        let promises = [];
 //function ga(){
 //console.log('ga-ga');
 //}
         sections.forEach(section => {
 
-            var model = section.model,
+            const model = section.model,
                 days = section.days.toArray();
 
             if(days.length) {
-                var iCalData = model.get('calendar');
+                const iCalData = model.get('calendar');
 
-                var updatedCalendar = ical.clearData(iCalData, days, model.events);
+                const updatedCalendar = ical.clearData(iCalData, days, model.events);
 
                 model.set('calendar', updatedCalendar);
 
@@ -68,21 +82,21 @@ export default Ember.Component.extend({
     },
 
     updateDays(value){
-        var ical = this.get('ical');
-        var self = this;
-        var sections = this.get('sections');
-        var promises = [];
+        const ical = this.get('ical');
+        const self = this;
+        let sections = this.get('sections');
+        let promises = [];
 
         sections.forEach(section => {
 
-            var model = section.model,
+            const model = section.model,
                 days = section.days.toArray();
 
             if(days.length){
 
-                var iCalData = model.get('calendar');
+                const iCalData = model.get('calendar');
 
-                var updatedCalendar = ical.updateDays(iCalData, value, days.toArray(), model.events);
+                const updatedCalendar = ical.updateDays(iCalData, value, days.toArray(), model.events);
 
                 model.set('calendar', updatedCalendar);
 

@@ -55,7 +55,8 @@ export default Ember.Component.extend(CalendarWithActions, {
                     month,
                     days: [],
                     model: employee,
-                    employee_id: employee.id
+                    employee_id: employee.id,
+                    year
                 })
             );
         });

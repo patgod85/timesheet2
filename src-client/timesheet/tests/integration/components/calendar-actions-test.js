@@ -9,10 +9,10 @@ import strip from "../../helpers/strip";
 
 test('it renders', function (assert) {
     this.render(hbs`
-templateblocktextWorkingdaysDayvalueShiftsNonworkingdaysActions-Weekend-PublicholidayUnpickdates⊗CleardataCheckeddates:
+templateblocktextWorkingdaysDayvalueShiftsNonworkingdaysActions-Weekend-PublicholidayUnpickdates⊗CleardataPickdatesusinganalgorithm:per*PickdatesCheckeddates:
     `);
 
-    var expected = strip(this.$().text());
+    const expected = strip(this.$().text());
 
     // Template block usage:
     this.render(hbs`

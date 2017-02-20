@@ -14,7 +14,7 @@ export default Ember.Mixin.create({
     }),
 
     actions: {
-        checkDate(sectionId, day){
+        onPickDate(sectionId, day){
             const sections = this.get('monthSections');
 
             const foundSection = sections.findBy('sectionId', sectionId);
@@ -35,7 +35,7 @@ export default Ember.Mixin.create({
         },
 
 
-        onUncheck(){
+        onUnpick(){
             let sections = this.get('monthSections');
             sections.forEach(section => {
                 section.set('days', []);
@@ -46,7 +46,7 @@ export default Ember.Mixin.create({
             this.sendAction('refreshAction');
         },
 
-        onCheckDaysOfWeek(year, sectionId, dayNumber){
+        onPickDaysOfWeek(year, sectionId, dayNumber){
             const sections = this.get('monthSections');
 
             const foundSection = sections.findBy('sectionId', sectionId);
@@ -72,6 +72,60 @@ export default Ember.Mixin.create({
                 const format = monday.format('YYYY-MM-DD');
                 days.pushObject({date: format, events: {}});
                 monday.add(7,'d');
+            }
+        },
+
+        onPickWithAlgorithm(value, gap, quantity){
+            const sections = this.get('monthSections');
+
+            if(!sections){
+                return;
+            }
+
+            const selectedSection = sections[0];
+            let selectedSectionId = 0;
+            let selectedDays = selectedSection.get('days');
+            let lastPickedDay = moment()
+                .year(selectedSection.get('year'))
+                .month(selectedSection.get('month') - 1)
+                .startOf('month');
+
+            sections.map((section, sectionIndex) => {
+                const days = section.get('days');
+                if(days.length){
+                    const dates = days.map(d => d.date).sort();
+                    lastPickedDay = dates[dates.length - 1];
+                    selectedDays = days;
+                    selectedSectionId = sectionIndex;
+                }
+            });
+
+            if(!lastPickedDay){
+                return;
+            }
+
+            let lastPickedMoment = moment(lastPickedDay, 'YYYY-MM-DD');
+
+            first_level_loop:
+            for(let i = 0; i < quantity; i++){
+                for(let j = 0; j < value; j++){
+
+                    let sectionMonthNumber = sections[selectedSectionId].get('month') - 1;
+                    if(lastPickedMoment.month() > sectionMonthNumber){
+                        if(selectedSectionId >= sections.length - 1){
+                            break first_level_loop;
+                        }
+
+                        selectedSectionId++;
+                        selectedDays = sections[selectedSectionId].get('days');
+                    }
+
+                    const format = lastPickedMoment.format('YYYY-MM-DD');
+                    selectedDays.pushObject({date: format, events: {}});
+                    lastPickedMoment.add(1, 'd');
+                }
+
+                lastPickedMoment.add(gap, 'd');
             }
         }
     }

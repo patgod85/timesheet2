@@ -123,8 +123,8 @@ export default Ember.Component.extend(MonthEvents, {
     }),
 
     actions: {
-        onCheckDaysOfWeek(year, sectionId, day){
-            this.get('onCheckDaysOfWeek')(year, sectionId, day);
+        onPickDaysOfWeek(year, sectionId, day){
+            this.get('onPickDaysOfWeek')(year, sectionId, day);
         }
     }
 });

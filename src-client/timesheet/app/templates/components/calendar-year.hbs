@@ -5,9 +5,11 @@
 
 <div class="clearfix"></div>
 
-{{#each monthSections as |m|}}
-    {{calendar-month month=m.month year=year onCheckDaysOfWeek=(action 'onCheckDaysOfWeek') checkDateAction=(action 'checkDate') checkedDates=m.days model=model nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
-{{/each}}
+<div class="container">
+    {{#each monthSections as |m|}}
+        {{calendar-month month=m.month year=year onPickDaysOfWeek=(action 'onPickDaysOfWeek') onPickDate=(action 'onPickDate') checkedDates=m.days model=model nonWorkingOnly=nonWorkingOnly sectionId=m.sectionId}}
+    {{/each}}
+</div>
 
 <div class="clearfix"></div>
 
@@ -15,4 +17,4 @@
     {{calendar-diapasons event_types=event_types diapasons=model.events.diapasons addDiapasonAction=addDiapasonAction removeDiapasonAction=removeDiapasonAction}}
 {{/if}}
 
-{{calendar-actions sections=monthSections showButtons=showButtons event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
+{{calendar-actions sections=monthSections showButtons=showButtons event_types=event_types onUpdate=(action 'onUpdate') onUnpick=(action 'onUnpick') onPickWithAlgorithm=(action 'onPickWithAlgorithm')}}

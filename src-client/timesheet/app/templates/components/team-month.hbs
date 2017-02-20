@@ -11,11 +11,11 @@
     {{#each monthSections as |section|}}
         <div>
             {{#link-to "employee" section.model.id}}{{section.model.name}} {{section.model.surname}}{{/link-to}}
-            {{horizontal-month month=section.month year=year showNumbers=false checkedDates=section.days checkDateAction=(action 'checkDate') model=section.model sectionId=section.sectionId}}
+            {{horizontal-month month=section.month year=year showNumbers=false checkedDates=section.days onPickDate=(action 'onPickDate') model=section.model sectionId=section.sectionId}}
         </div>
     {{/each}}
 </div>
 
 {{#if showActions}}
-    {{calendar-actions sections=monthSections checkedDates=checkedDates showButtons=true model=team event_types=event_types onUpdate=(action 'onUpdate') onUncheck=(action 'onUncheck') }}
+    {{calendar-actions sections=monthSections checkedDates=checkedDates showButtons=true model=team event_types=event_types onUpdate=(action 'onUpdate') onUnpick=(action 'onUnpick')  onPickWithAlgorithm=(action 'onPickWithAlgorithm')}}
 {{/if}}

@@ -30,7 +30,7 @@ export default Ember.Component.extend({
                 return;
             }
 
-            this.get('checkDateAction')(
+            this.get('onPickDate')(
                 sectionId,
                 {
                     date: day.format('YYYY-MM-DD'),

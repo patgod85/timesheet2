@@ -1,6 +1,6 @@
 {{yield}}
 
-<table>
+<table class="table table-responsive table-bordered calendar-actions">
     <thead>
     <tr>
         <th>Working days</th>
@@ -49,10 +49,19 @@
         </td>
         <td>
             <p>
-                <button type="button" {{ action "unpickDates" on="click" }}>Unpick dates</button>
+                <button type="button" {{ action "onUnpick" on="click" }}>Unpick dates</button>
             </p>
             <p>
-                <button type="button" {{ action "clearAll" on="click" }} class="danger_button">&otimes; Clear data</button>
+                <button type="button" {{ action "onClearAll" on="click" }} class="danger_button">&otimes; Clear data</button>
+            </p>
+            <h4>Pick dates using an algorithm:</h4>
+            <p>
+                {{input value=pickValue type="number" class="short_input_70"}}
+                per
+                {{input value=pickGap type="number" class="short_input_70"}}
+                *
+                {{input value=pickQuantity type="number" class="short_input_70"}}
+                <button type="button" {{ action "onPickWithAlgorithm" on="click" }}>Pick dates</button>
             </p>
         </td>
     </tr>
@@ -61,10 +70,10 @@
 <div>
     <strong>Checked dates:</strong>
     <ul>
-        {{#each checkedDates as |sectionId section|}}
-            <li>Section: {{sectionId}}</li>
-            {{#each section as |day|}}
-                <li>{{day.date}} - {{#each day.events as |event|}}{{json event.summary}}{{/each}}</li>
+        {{#each sections as |section|}}
+            <li>Section: {{section.sectionId}}</li>
+            {{#each section.days as |day|}}
+                <li> - {{day.date}} - {{#each day.events as |event|}}{{json event.summary}}{{/each}}</li>
             {{/each}}
         {{/each}}
     </ul>
