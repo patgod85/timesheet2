@@ -3075,7 +3075,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+6a499488"});
+  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+f437241a"});
 }
 
 /* jshint ignore:end */
