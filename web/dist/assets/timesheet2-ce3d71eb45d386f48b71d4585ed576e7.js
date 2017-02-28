@@ -1535,7 +1535,7 @@ define('timesheet2/initializers/data-adapter', ['exports', 'ember'], function (e
   exports['default'] = {
     name: 'data-adapter',
     before: 'store',
-    initialize: _ember['default'].K
+    initialize: function initialize() {}
   };
 });
 define('timesheet2/initializers/ember-data', ['exports', 'ember-data/setup-container', 'ember-data/-private/core'], function (exports, _emberDataSetupContainer, _emberDataPrivateCore) {
@@ -1635,7 +1635,7 @@ define('timesheet2/initializers/injectStore', ['exports', 'ember'], function (ex
   exports['default'] = {
     name: 'injectStore',
     before: 'store',
-    initialize: _ember['default'].K
+    initialize: function initialize() {}
   };
 });
 define('timesheet2/initializers/store', ['exports', 'ember'], function (exports, _ember) {
@@ -1650,7 +1650,7 @@ define('timesheet2/initializers/store', ['exports', 'ember'], function (exports,
   exports['default'] = {
     name: 'store',
     after: 'ember-data',
-    initialize: _ember['default'].K
+    initialize: function initialize() {}
   };
 });
 define('timesheet2/initializers/transforms', ['exports', 'ember'], function (exports, _ember) {
@@ -1665,7 +1665,7 @@ define('timesheet2/initializers/transforms', ['exports', 'ember'], function (exp
   exports['default'] = {
     name: 'transforms',
     before: 'store',
-    initialize: _ember['default'].K
+    initialize: function initialize() {}
   };
 });
 define("timesheet2/instance-initializers/ember-data", ["exports", "ember-data/-private/instance-initializers/initialize-store-service"], function (exports, _emberDataPrivateInstanceInitializersInitializeStoreService) {
@@ -3075,7 +3075,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+f437241a"});
+  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+16b37302"});
 }
 
 /* jshint ignore:end */
