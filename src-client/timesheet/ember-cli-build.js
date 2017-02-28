@@ -11,6 +11,9 @@ module.exports = function (defaults) {
         },
         minifyCSS: {
             enabled: false
+        },
+        SRI: {
+            enabled: false
         }
     });
 
