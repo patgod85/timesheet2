@@ -10,7 +10,7 @@ import strip from "../../helpers/strip";
 test('it renders', function (assert) {
 
     this.render(hbs`
-templateblocktextSaveName:Surname:Position:Thefirstworkingday:Thelastworkingday:
+templateblocktextSaveName:Surname:Position:Thefirstworkingday:Thelastworkingday:Deletetheemployee
     `);
 
     var expected = strip(this.$().text());

@@ -6,11 +6,16 @@
     <tr>
         <td>{{sum id 1}}</td>
         <td>{{#link-to "employee" employee.id}}{{employee.name}} {{employee.surname}}{{/link-to}}</td>
+        <td>{{employee.team.name}}</td>
         <td>{{employee.position}}</td>
         <td>{{employee.workStart}}</td>
         <td>{{employee.workEnd}}</td>
     </tr>
 {{/filtered-list}}
+
+<p class="pull-right">
+    {{link-to "New employee" "employees.new" class="btn btn-primary"}}
+</p>
 
 {{outlet}}
 

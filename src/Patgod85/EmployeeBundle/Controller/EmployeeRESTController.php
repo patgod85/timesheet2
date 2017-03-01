@@ -105,20 +105,88 @@ class EmployeeRESTController extends VoryxController
      */
     public function postAction(Request $request)
     {
-        $entity = new Employee();
-        $form = $this->createForm(new EmployeeType(), $entity, array("method" => $request->getMethod()));
-        $this->removeExtraFields($request, $form);
-        $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        $entity = new Employee();
+
+        $form = $this->createForm(
+            new EmployeeType(),
+            $entity,
+            [
+                'method' => $request->getMethod(),
+                'allow_extra_fields' => true
+            ]
+        );
+
+//        $form->add('teamId');
+//        $form->add('name');
+//        $form->add('surname');
+//        $form->add('position');
+//        $form->add('workStart');
+//        $form->add('workEnd');
+//        $form->setData($entity);
+
+        $form->handleRequest($request);
+//
+        $team = $this->getDoctrine()->getManager()->getRepository('Patgod85TeamBundle:Team')->find($request->get('teamId'));
+//        $entity->setName($request->get('name'));
+//        $entity->setSurname($request->get('surname'));
+//        $entity->setPosition($request->get('position'));
+//        $entity->setTeamId($request->get('teamId'));
+//        $entity->setWorkStart($request->get('workStart'));
+//        $entity->setWorkEnd($request->get('workEnd'));
+        $entity->setTeam($team);
+
+        $defaultCalendar = <<<eot
+BEGIN:VCALENDAR
+PRODID:-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN
+VERSION:2.0
+METHOD:PUBLISH
+X-CALSTART:20151231T173000Z
+X-CALEND:20160205T000000
+X-WR-RELCALID:{0000002E-D841-8F49-253F-D866E67EFE6B}
+X-WR-CALNAME:default
+BEGIN:VTIMEZONE
+TZID:Europe/Moscow
+BEGIN:STANDARD
+DTSTART:16010101T000000
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0300
+END:STANDARD
+END:VTIMEZONE
+END:VCALENDAR
+eot;
+
+        if(!$entity->getCalendar())
+        {
+            $entity->setCalendar($defaultCalendar);
+        }
+
+
+        $this->checkRights($this->getUser(), $entity);
+
+        if ($form->isValid())
+        {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             return $entity;
         }
-
-        return FOSView::create(array('errors' => $form->getErrors()), Codes::HTTP_INTERNAL_SERVER_ERROR);
+        else
+        {
+//var_dump($this->getErrorMessages($form));die;
+            return FOSView::create(
+                [
+                    'errors' => array_map(
+                        function($item){
+                            return ['detail' => $item];
+                        },
+                        $this->getErrorMessages($form)
+                    )
+                ],
+                Codes::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
     }
 
 

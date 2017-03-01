@@ -20,5 +20,8 @@
     <li>
         The last working day: {{bootstrap-datepicker value=employee.workEnd format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1  forceParse=false}}
     </li>
-    {{workStartDate}}
 </ul>
+
+<p class="pull-right">
+    <button type="button" class="btn btn-danger" {{ action "deleteEmployee" employee on="click" }}>Delete the employee</button>
+</p>

@@ -7,9 +7,18 @@
 <table class="table">
     <thead>
     <tr>
-        {{#each headers as |header|}}
-            <th>{{header}}</th>
-        {{/each}}
+        {{#each-in headers as |token title|}}
+            <th {{action "sort" token on "click"}}>
+                {{title}}
+                {{#if (is-equal token sortToken)}}
+                    {{#if sortDirection}}
+                        &uparrow;
+                    {{else}}
+                        &downarrow;
+                    {{/if}}
+                {{/if}}
+            </th>
+        {{/each-in}}
     </tr>
     </thead>
     <tbody>

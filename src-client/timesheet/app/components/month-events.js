@@ -11,12 +11,14 @@ export default Ember.Mixin.create({
         if (this.get('isHeader') || this.get('nonWorkingOnly')) {
             return [];
         }
-        var today = moment().hour(23).minute(59).second(59);
+        const today = moment().hour(23).minute(59).second(59);
 
-        var localEvents = events.events.hasOwnProperty(index) ? events.events[index] : [];
+        let localEvents = events.events.hasOwnProperty(index) ? events.events[index] : [];
+
+        const workStartString = this.get('model').get('workStart');
 
         if (localEvents.length === 0) {
-            if (date.isAfter(today)) {
+            if (date.isAfter(today) || workStartString && date.isBefore(moment(workStartString, 'YYYY-MM-DD'))) {
                 //localEvents.push({summary: {v: "---"}});
             }
             else {

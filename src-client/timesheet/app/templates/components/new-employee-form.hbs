@@ -1,0 +1,27 @@
+
+<form class="container">
+    <div class="form-group pull-right">
+        <button type="button" class="btn btn-success" {{ action "submit" newEmployee on="click" }}>Create</button>
+    </div>
+    <div class="form-group">
+        Team: {{drop-down content=teamNames onChange=(action "changeTeam") selectedValue=newEmployee.teamId }}
+    </div>
+    <div class="form-group">
+        Name: {{input value=newEmployee.name}}
+    </div>
+    <div class="form-group">
+        Surname: {{input value=newEmployee.surname}}
+    </div>
+    <div class="form-group">
+        Position: {{input value=newEmployee.position}}
+    </div>
+    <div class="form-group">
+        The first working day: {{bootstrap-datepicker value=newEmployee.workStart format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1 forceParse=false}}
+    </div>
+
+    <div>
+        The last working day: {{bootstrap-datepicker value=newEmployee.workEnd format="yyyy-mm-dd" todayHighlight=true autoclose=true weekStart=1  forceParse=false}}
+    </div>
+
+</form>
+

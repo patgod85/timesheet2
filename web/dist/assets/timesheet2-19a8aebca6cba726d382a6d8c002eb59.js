@@ -644,6 +644,15 @@ define('timesheet2/components/employee-form', ['exports', 'ember'], function (ex
         actions: {
             submit: function submit(model) {
                 model.save()['catch'](this.get('error-handler').handle);
+            },
+
+            deleteEmployee: function deleteEmployee(model) {
+                var self = this;
+                if (confirm('You try to completely remove the employee. Are you sure?')) {
+                    model.destroyRecord().then(function () {
+                        self.get('router').transitionTo('employees');
+                    })['catch'](self.get('error-handler').handle);
+                }
             }
         }
     });
@@ -739,12 +748,24 @@ define('timesheet2/components/filtered-list', ['exports', 'ember'], function (ex
     exports['default'] = _ember['default'].Component.extend({
 
         filterToken: null,
+        sortToken: null,
+        sortDirection: true,
         items: [],
 
         actions: {
             select: function select(selected) {
 
                 this.set('filterToken', selected);
+            },
+
+            sort: function sort(selected) {
+                var previousValue = this.get('sortToken');
+
+                if (previousValue === selected) {
+                    this.set('sortDirection', !this.get('sortDirection'));
+                }
+
+                this.set('sortToken', selected);
             }
         },
 
@@ -756,18 +777,39 @@ define('timesheet2/components/filtered-list', ['exports', 'ember'], function (ex
             return filter;
         }),
 
-        filteredItems: _ember['default'].computed('filterToken', function () {
+        filteredItems: _ember['default'].computed('filterToken', 'sortToken', 'sortDirection', function () {
             var filterToken = this.get('filterToken');
+            var sortToken = this.get('sortToken');
 
-            if (!filterToken || filterToken.id === 'all') {
-                return this.get('items');
+            var items = this.get('items');
+
+            items = this.filterList(items, filterToken);
+
+            return this.sortList(items, sortToken);
+        }),
+
+        sortList: function sortList(a, token) {
+            if (!token) {
+                return a;
+            }
+            if (this.get('sortDirection')) {
+                return a.sortBy(token).reverseObjects();
+            }
+            return a.sortBy(token);
+        },
+
+        filterList: function filterList(a, token) {
+
+            if (!token || token.id === 'all') {
+                return a;
             }
 
             var index = this.get('id');
-            return this.get('items').filter(function (item) {
-                return item.get(index) + '' === filterToken.id + '';
+
+            return a.filter(function (item) {
+                return item.get(index) + '' === token.id + '';
             });
-        })
+        }
     });
 });
 define('timesheet2/components/horizontal-month', ['exports', 'ember', 'moment', 'timesheet2/components/month-events'], function (exports, _ember, _moment, _timesheet2ComponentsMonthEvents) {
@@ -897,8 +939,10 @@ define('timesheet2/components/month-events', ['exports', 'ember', 'moment'], fun
 
             var localEvents = events.events.hasOwnProperty(index) ? events.events[index] : [];
 
+            var workStartString = this.get('model').get('workStart');
+
             if (localEvents.length === 0) {
-                if (date.isAfter(today)) {
+                if (date.isAfter(today) || workStartString && date.isBefore((0, _moment['default'])(workStartString, 'YYYY-MM-DD'))) {
                     //localEvents.push({summary: {v: "---"}});
                 } else {
                         localEvents.push({ summary: { v: 1 } });
@@ -958,6 +1002,59 @@ define('timesheet2/components/nav-tabs', ['exports', 'ember'], function (exports
                 }
 
                 interval = setInterval(intervalFunction, 100);
+            }
+        }
+    });
+});
+define('timesheet2/components/new-employee-form', ['exports', 'ember'], function (exports, _ember) {
+    exports['default'] = _ember['default'].Component.extend({
+
+        newEmployee: null,
+
+        store: _ember['default'].inject.service('store'),
+
+        teamNames: _ember['default'].computed.map('teams', function (team) {
+            return {
+                id: team.get('id'),
+                title: team.get('name')
+            };
+        }),
+
+        init: function init() {
+            this._super.apply(this, arguments);
+
+            this.set('newEmployee', _ember['default'].Object.create({
+                name: '',
+                surname: '',
+                position: '',
+                calendar: '',
+                workStart: '',
+                workEnd: '',
+                teamId: this.get('user').teamId
+            }));
+        },
+
+        actions: {
+            changeTeam: function changeTeam(newValue) {
+                this.get('newEmployee').set('teamId', parseInt(newValue.id, 10));
+            },
+
+            submit: function submit(newEmployee) {
+                var _this = this;
+
+                var self = this;
+
+                var store = this.get('store');
+                var employee = store.createRecord('employee', JSON.parse(JSON.stringify(newEmployee)));
+
+                employee.save().then(function (createdEmployee) {
+                    alert('The employee successfully created');
+                    var router = self.get('router');
+                    router.transitionTo('employee.details', createdEmployee.id);
+                })['catch'](function (err) {
+                    employee.deleteRecord();
+                    _this.get('error-handler').handle(err);
+                });
             }
         }
     });
@@ -1184,7 +1281,7 @@ define('timesheet2/components/user-form', ['exports', 'ember'], function (export
                 if (confirm('You try to completely remove the user. Are you sure?')) {
                     model.destroyRecord().then(function () {
                         self.get('router').transitionTo('users');
-                    })['catch'](this.get('error-handler').handle);
+                    })['catch'](self.get('error-handler').handle);
                 }
             }
         } });
@@ -1927,7 +2024,9 @@ define('timesheet2/router', ['exports', 'ember', 'timesheet2/config/environment'
             this.route('details', { path: 'details' });
         });
 
-        this.route('employees', { path: "employees" });
+        this.route('employees', { path: "employees" }, function () {
+            this.route('new');
+        });
         this.route('employee', { path: 'employees/:employee_id' }, function () {
 
             this.route('details', { path: 'details' });
@@ -2145,9 +2244,28 @@ define('timesheet2/routes/employees', ['exports', 'ember', 'timesheet2/routes/au
                 teams: this.store.findAll('team').then(function (teams) {
                     return teams.map(prepareNames);
                 }),
-                headers: ['#', 'Name', 'Position', 'Work start', 'Work end']
+                headers: {
+                    id: '#',
+                    name: 'Name',
+                    teamId: 'Team',
+                    position: 'Position',
+                    workStart: 'Work start',
+                    workEnd: 'Work end'
+                }
             });
         }
+    });
+});
+define('timesheet2/routes/employees/new', ['exports', 'ember', 'timesheet2/routes/auth'], function (exports, _ember, _timesheet2RoutesAuth) {
+    exports['default'] = _timesheet2RoutesAuth['default'].extend({
+        model: function model() {
+
+            return _ember['default'].RSVP.hash({
+                teams: this.store.findAll('team'),
+                user: this.modelFor('application').user
+            });
+        }
+
     });
 });
 define('timesheet2/routes/event', ['exports', 'timesheet2/routes/auth'], function (exports, _timesheet2RoutesAuth) {
@@ -2336,7 +2454,12 @@ define('timesheet2/routes/users/index', ['exports', 'ember', 'timesheet2/routes/
                 teams: this.store.findAll('team').then(function (teams) {
                     return teams.map(prepareNames);
                 }),
-                headers: ['#', 'Username', 'Name', 'Roles']
+                headers: {
+                    id: '#',
+                    username: 'Username',
+                    name: 'Name',
+                    roles: 'Roles'
+                }
             });
         }
     });
@@ -2918,13 +3041,13 @@ define("timesheet2/templates/components/drop-down", ["exports"], function (expor
   exports["default"] = Ember.HTMLBars.template({ "id": "7P0BEnFT", "block": "{\"statements\":[[\"open-element\",\"select\",[]],[\"modifier\",[\"action\"],[[\"get\",[null]],\"change\"],[[\"on\"],[\"change\"]]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"content\"]]],[[\"key\"],[\"@index\"]],0],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"        \"],[\"open-element\",\"option\",[]],[\"dynamic-attr\",\"value\",[\"concat\",[[\"unknown\",[\"item\",\"id\"]]]]],[\"dynamic-attr\",\"selected\",[\"helper\",[\"is-selected\"],[[\"get\",[\"item\"]],[\"get\",[\"selectedValue\"]]],null],null],[\"flush-element\"],[\"text\",\"\\n            \"],[\"append\",[\"unknown\",[\"item\",\"title\"]],false],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"item\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/drop-down.hbs" } });
 });
 define("timesheet2/templates/components/employee-form", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "QhAlUj8Z", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"aright pull-right\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"btn btn-success\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"submit\",[\"get\",[\"employee\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Save\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        Name: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"employee\",\"name\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        Surname: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"employee\",\"surname\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        Position: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"employee\",\"position\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        The first working day: \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"employee\",\"workStart\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        The last working day: \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"employee\",\"workEnd\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"append\",[\"unknown\",[\"workStartDate\"]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/employee-form.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "1iGBQo2V", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"aright pull-right\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"btn btn-success\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"submit\",[\"get\",[\"employee\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Save\"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        Name: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"employee\",\"name\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        Surname: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"employee\",\"surname\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        Position: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"employee\",\"position\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        The first working day: \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"employee\",\"workStart\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n        The last working day: \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"employee\",\"workEnd\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"p\",[]],[\"static-attr\",\"class\",\"pull-right\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"btn btn-danger\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"deleteEmployee\",[\"get\",[\"employee\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Delete the employee\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/employee-form.hbs" } });
 });
 define("timesheet2/templates/components/employee-report", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "uqcyLEg4", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"employee-report\"],[\"flush-element\"],[\"text\",\"\\n\\n    Report from \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\"],[[\"get\",[\"model\",\"report_from\"]],\"yyyy-mm-dd\",false,true,1]]],false],[\"text\",\"\\n    to \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\"],[[\"get\",[\"model\",\"report_to\"]],\"yyyy-mm-dd\",false,true,1]]],false],[\"text\",\"\\n    \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"btn btn-default\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"getReport\",[\"get\",[\"employee\"]],[\"get\",[\"events\"]],[\"get\",[\"model\",\"report_from\"]],[\"get\",[\"model\",\"report_to\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Get report\"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"results\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Working days: \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"report\",\"w\"]],false],[\"close-element\"],[\"text\",\";\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Nonworking days: \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"report\",\"n\"]],false],[\"close-element\"],[\"text\",\";\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Otguls: \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"report\",\"ot\"]],false],[\"close-element\"],[\"text\",\";\"],[\"close-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"report\",\"other\"]]],null,0],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"item\",\"event\",\"name\"]],false],[\"text\",\": \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"item\",\"value\"]],false],[\"close-element\"],[\"text\",\";\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"item\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/employee-report.hbs" } });
 });
 define("timesheet2/templates/components/filtered-list", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "RBlADHvd", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n    Filter:\\n    \"],[\"append\",[\"helper\",[\"drop-down\"],null,[[\"content\",\"onChange\"],[[\"get\",[\"filterWithAll\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"select\"],null]]]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"table\",[]],[\"static-attr\",\"class\",\"table\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"thead\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"headers\"]]],null,1],[\"text\",\"    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"filteredItems\"]]],null,0],[\"text\",\"    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"        \"],[\"yield\",\"default\",[[\"get\",[\"item\"]],[\"get\",[\"id\"]]]],[\"text\",\"\\n\"]],\"locals\":[\"item\",\"id\"]},{\"statements\":[[\"text\",\"            \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"append\",[\"get\",[\"header\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"header\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/filtered-list.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "a98aXVI+", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n    Filter:\\n    \"],[\"append\",[\"helper\",[\"drop-down\"],null,[[\"content\",\"onChange\"],[[\"get\",[\"filterWithAll\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"select\"],null]]]],false],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"table\",[]],[\"static-attr\",\"class\",\"table\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"thead\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"helper\",[\"-each-in\"],[[\"get\",[\"headers\"]]],null]],null,4],[\"text\",\"    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"filteredItems\"]]],null,0],[\"text\",\"    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"        \"],[\"yield\",\"default\",[[\"get\",[\"item\"]],[\"get\",[\"id\"]]]],[\"text\",\"\\n\"]],\"locals\":[\"item\",\"id\"]},{\"statements\":[[\"text\",\"                        ↓\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                        ↑\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"sortDirection\"]]],null,2,1]],\"locals\":[]},{\"statements\":[[\"text\",\"            \"],[\"open-element\",\"th\",[]],[\"modifier\",[\"action\"],[[\"get\",[null]],\"sort\",[\"get\",[\"token\"]],[\"get\",[\"on\"]],\"click\"]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"append\",[\"get\",[\"title\"]],false],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"helper\",[\"is-equal\"],[[\"get\",[\"token\"]],[\"get\",[\"sortToken\"]]],null]],null,3],[\"text\",\"            \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"token\",\"title\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/filtered-list.hbs" } });
 });
 define("timesheet2/templates/components/horizontal-month", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "ABB/G1pj", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"table\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"horizontal-month \",[\"helper\",[\"if\"],[[\"get\",[\"showNumbers\"]],\"calendar-header\",\"calendar-body\"],null]]]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"days\"]]],null,0],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"append\",[\"helper\",[\"calendar-day\"],null,[[\"date\",\"isHoliday\",\"localEvents\",\"month\",\"isSingleMonth\",\"isChecked\",\"onPickDate\",\"showNumbers\",\"isHeader\",\"sectionId\"],[[\"get\",[\"day\",\"date\"]],[\"get\",[\"day\",\"isHoliday\"]],[\"get\",[\"day\",\"localEvents\"]],[\"get\",[\"month\"]],true,[\"get\",[\"day\",\"isChecked\"]],[\"get\",[\"onPickDate\"]],[\"get\",[\"showNumbers\"]],[\"get\",[\"isHeader\"]],[\"get\",[\"sectionId\"]]]]],false],[\"text\",\"\\n\"]],\"locals\":[\"day\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/horizontal-month.hbs" } });
@@ -2934,6 +3057,9 @@ define("timesheet2/templates/components/menu-bar", ["exports"], function (export
 });
 define("timesheet2/templates/components/nav-tabs", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "UATyZxrj", "block": "{\"statements\":[[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"nav nav-tabs\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"localTabs\"]]],null,1],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"append\",[\"unknown\",[\"tab\",\"title\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"        \"],[\"open-element\",\"li\",[]],[\"static-attr\",\"role\",\"presentation\"],[\"dynamic-attr\",\"class\",[\"concat\",[[\"unknown\",[\"tab\",\"className\"]]]]],[\"dynamic-attr\",\"onclick\",[\"helper\",[\"action\"],[[\"get\",[null]],\"onTransition\"],null],null],[\"flush-element\"],[\"text\",\"\\n            \"],[\"block\",[\"link-to\"],[[\"get\",[\"tab\",\"route\"]],[\"get\",[\"tab\",\"id\"]]],null,0],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"tab\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/nav-tabs.hbs" } });
+});
+define("timesheet2/templates/components/new-employee-form", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template({ "id": "OuC9BdMo", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"open-element\",\"form\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group pull-right\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"btn btn-success\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"submit\",[\"get\",[\"newEmployee\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Create\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Team: \"],[\"append\",[\"helper\",[\"drop-down\"],null,[[\"content\",\"onChange\",\"selectedValue\"],[[\"get\",[\"teamNames\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"changeTeam\"],null],[\"get\",[\"newEmployee\",\"teamId\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Name: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newEmployee\",\"name\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Surname: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newEmployee\",\"surname\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Position: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newEmployee\",\"position\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        The first working day: \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"newEmployee\",\"workStart\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n    \"],[\"open-element\",\"div\",[]],[\"flush-element\"],[\"text\",\"\\n        The last working day: \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"newEmployee\",\"workEnd\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/new-employee-form.hbs" } });
 });
 define("timesheet2/templates/components/new-user-form", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "sub5xZLt", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"form\",[]],[\"static-attr\",\"class\",\"container\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group pull-right\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"btn btn-success\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"submit\",[\"get\",[\"newUser\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Create\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Team: \"],[\"append\",[\"helper\",[\"drop-down\"],null,[[\"content\",\"onChange\",\"selectedValue\"],[[\"get\",[\"teamNames\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"changeTeam\"],null],[\"get\",[\"newUser\",\"teamId\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Email: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newUser\",\"email\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Password: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newUser\",\"plainPassword\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Name: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newUser\",\"name\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        Surname: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"newUser\",\"surname\"]]]]],false],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"form-group\"],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h3\",[]],[\"flush-element\"],[\"text\",\"Roles:\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"newUser\",\"roles\"]]],null,0],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"append\",[\"get\",[\"role\"]],false],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"role\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/new-user-form.hbs" } });
@@ -2968,8 +3094,11 @@ define("timesheet2/templates/employee/compensatory-leaves", ["exports"], functio
 define("timesheet2/templates/employee/details", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "mA4SdXsJ", "block": "{\"statements\":[[\"text\",\"\\n\"],[\"append\",[\"helper\",[\"employee-form\"],null,[[\"employee\"],[[\"get\",[\"model\",\"employee\"]]]]],false],[\"text\",\"\\n\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/employee/details.hbs" } });
 });
-define("timesheet2/templates/employees", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "Ip6YqTxa", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"bread-crumbs\"]],false],[\"text\",\"\\n\\n\\n\"],[\"block\",[\"filtered-list\"],null,[[\"items\",\"filter\",\"headers\",\"id\"],[[\"get\",[\"model\",\"employees\"]],[\"get\",[\"model\",\"teams\"]],[\"get\",[\"model\",\"headers\"]],\"teamId\"]],1],[\"text\",\"\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"append\",[\"unknown\",[\"employee\",\"name\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"employee\",\"surname\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"helper\",[\"sum\"],[[\"get\",[\"id\"]],1],null],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"employee\",[\"get\",[\"employee\",\"id\"]]],null,0],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"position\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"workStart\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"workEnd\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"employee\",\"id\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/employees.hbs" } });
+define("timesheet2/templates/employees/index", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template({ "id": "AhZKuqwg", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"bread-crumbs\"]],false],[\"text\",\"\\n\\n\\n\"],[\"block\",[\"filtered-list\"],null,[[\"items\",\"filter\",\"headers\",\"id\"],[[\"get\",[\"model\",\"employees\"]],[\"get\",[\"model\",\"teams\"]],[\"get\",[\"model\",\"headers\"]],\"teamId\"]],2],[\"text\",\"\\n\"],[\"open-element\",\"p\",[]],[\"static-attr\",\"class\",\"pull-right\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"block\",[\"link-to\"],[\"employees.new\"],[[\"class\"],[\"btn btn-primary\"]],0],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"append\",[\"unknown\",[\"outlet\"]],false],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"New employee\"]],\"locals\":[]},{\"statements\":[[\"append\",[\"unknown\",[\"employee\",\"name\"]],false],[\"text\",\" \"],[\"append\",[\"unknown\",[\"employee\",\"surname\"]],false]],\"locals\":[]},{\"statements\":[[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"helper\",[\"sum\"],[[\"get\",[\"id\"]],1],null],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"block\",[\"link-to\"],[\"employee\",[\"get\",[\"employee\",\"id\"]]],null,1],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"team\",\"name\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"position\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"workStart\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"employee\",\"workEnd\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"employee\",\"id\"]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/employees/index.hbs" } });
+});
+define("timesheet2/templates/employees/new", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template({ "id": "zsU/w7Kw", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"bread-crumbs\"]],false],[\"text\",\"\\n\\n\"],[\"append\",[\"helper\",[\"new-employee-form\"],null,[[\"teams\",\"user\"],[[\"get\",[\"model\",\"teams\"]],[\"get\",[\"model\",\"user\"]]]]],false],[\"text\",\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/employees/new.hbs" } });
 });
 define("timesheet2/templates/event", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "SdhZ+1jA", "block": "{\"statements\":[[\"append\",[\"unknown\",[\"bread-crumbs\"]],false],[\"text\",\"\\n\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"Name: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"model\",\"name\"]]]]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"Code: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"model\",\"code\"]]]]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"Color: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"model\",\"color\"]]]]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"Background color: \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\"],[[\"get\",[\"model\",\"backgroundColor\"]]]]],false],[\"close-element\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"submit\",[\"get\",[\"model\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Save\"],[\"close-element\"],[\"text\",\"\\n\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/event.hbs" } });
@@ -3075,7 +3204,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+7cde07e6"});
+  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+af999bea"});
 }
 
 /* jshint ignore:end */

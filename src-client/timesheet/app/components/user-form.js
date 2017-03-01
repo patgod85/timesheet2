@@ -17,9 +17,9 @@ export default Ember.Component.extend({
         },
 
         addRole(model, newRole){
-            var self = this;
-            var roles = model.get('roles');
-            var previousRoles = roles.slice();
+            const self = this;
+            const roles = model.get('roles');
+            const previousRoles = roles.slice();
             roles.push(newRole);
             model.set('roles', roles);
             model.save()
@@ -30,9 +30,9 @@ export default Ember.Component.extend({
         },
 
         deleteRole(model, _role){
-            var self = this;
-            var roles = model.get('roles');
-            var previousRoles = roles.slice();
+            const self = this;
+            const roles = model.get('roles');
+            const previousRoles = roles.slice();
             model.set('roles', roles.filter(role => role !== _role));
             model.save()
                 .catch(err => {
@@ -42,13 +42,13 @@ export default Ember.Component.extend({
         },
 
         deleteUser(model){
-            var self = this;
+            const self = this;
             if(confirm('You try to completely remove the user. Are you sure?')){
                 model.destroyRecord()
                     .then(() => {
                         self.get('router').transitionTo('users');
                     })
-                    .catch(this.get('error-handler').handle);
+                    .catch(self.get('error-handler').handle);
             }
         }
     }});

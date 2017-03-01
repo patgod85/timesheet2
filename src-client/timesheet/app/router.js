@@ -25,7 +25,9 @@ Router.map(function () {
         this.route('details', {path: 'details'});
     });
 
-    this.route('employees', {path: "employees"});
+    this.route('employees', {path: "employees"}, function() {
+      this.route('new');
+    });
     this.route('employee', {path: 'employees/:employee_id'}, function () {
 
         this.route('details', {path: 'details'});

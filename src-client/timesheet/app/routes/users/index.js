@@ -14,7 +14,12 @@ export default Auth.extend({
         return Ember.RSVP.hash({
             users: this.store.findAll('user'),
             teams: this.store.findAll('team').then(teams => teams.map(prepareNames)),
-            headers: ['#', 'Username', 'Name', 'Roles']
+            headers: {
+                id: '#',
+                username: 'Username',
+                name: 'Name',
+                roles: 'Roles'
+            }
         });
     }
 });

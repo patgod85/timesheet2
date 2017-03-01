@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
@@ -19,7 +20,16 @@ March2016MoTuWeThFrSaSu291011021031041051061071081091101111121131141151161171181
 
     this.set('month', 3);
     this.set('year', 2016);
-    this.set('model', {events: {events: {}, diapasons: [], holidays: []}});
+    this.set('model',
+        Ember.Object.extend({
+            events: {
+                events: {},
+                diapasons: [],
+                holidays: []
+            },
+            workStart: ''
+        }).create()
+    );
     this.set('checkedDates', []);
     this.render(hbs`{{calendar-month month=month year=year checkedDates=checkedDates model=model nonWorkingOnly=false sectionId=0}}`);
 

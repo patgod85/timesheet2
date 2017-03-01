@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Patgod85\TeamBundle\Entity\Team;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Employee
@@ -31,6 +32,13 @@ class Employee
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Please enter a name.")
+     * @Assert\Length(
+     *     min=1,
+     *     max=255,
+     *     minMessage="The name is too short.",
+     *     maxMessage="The name is too long."
+     * )
      * @Serializer\Expose
      * @Serializer\Type("string")
      */
@@ -40,6 +48,13 @@ class Employee
      * @var string
      *
      * @ORM\Column(name="surname", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Please enter a surname.")
+     * @Assert\Length(
+     *     min=1,
+     *     max=255,
+     *     minMessage="The name is too short.",
+     *     maxMessage="The name is too long."
+     * )
      * @Serializer\Expose
      * @Serializer\Type("string")
      */
@@ -325,6 +340,14 @@ class Employee
     public function addCompensatoryLeaves($compensatoryLeave)
     {
         $this->compensatoryLeaves->add($compensatoryLeave);
+    }
+
+    /**
+     * @param Team $team
+     */
+    public function setTeam($team)
+    {
+        $this->team = $team;
     }
 
 
