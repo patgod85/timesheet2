@@ -17,15 +17,21 @@ module.exports = function (defaults) {
         }
     });
 
-    const extraAssets = new Funnel('bower_components', {
+    const bootstrapCss = new Funnel('bower_components', {
         srcDir: 'bootstrap/dist/css',
         files: ['bootstrap.css'],
         destDir: 'assets'
+    });
+
+    const githubImage = new Funnel('public', {
+        srcDir: 'assets/images',
+        files: ['github.png'],
+        destDir: 'assets/images'
     });
 
     app.import('bower_components/bootstrap/dist/js/bootstrap.js');
     app.import('bower_components/bootstrap/dist/css/bootstrap.css');
 
 
-    return new BroccoliMergeTrees([app.toTree(), extraAssets]);
+    return new BroccoliMergeTrees([app.toTree(), bootstrapCss, githubImage]);
 };
