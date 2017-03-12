@@ -26,7 +26,7 @@ module.exports = function (defaults) {
     const githubImage = new Funnel('public', {
         srcDir: 'assets/images',
         files: ['github.png'],
-        destDir: 'assets/images'
+        destDir: 'assets'
     });
 
     app.import('bower_components/bootstrap/dist/js/bootstrap.js');

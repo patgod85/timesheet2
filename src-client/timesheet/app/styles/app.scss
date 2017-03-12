@@ -121,6 +121,7 @@ td {
         top: 1px;
         min-width: 20px;
         text-align: center;
+        display: none;
     }
 
     .event {
@@ -131,6 +132,7 @@ td {
         height: 15px;
         font-size: 6pt;
         padding: 0;
+        display: none;
     }
 
     .event_shift {
@@ -141,7 +143,24 @@ td {
         height: 15px;
         font-size: 6pt;
         padding: 2px 8px;
+        display: none;
+    }
 
+}
+
+.hasDayType {
+    .event {
+        display: block;
+    }
+}
+.hasShift {
+    .event_shift {
+        display: block;
+    }
+}
+.hasValue {
+    .event_value {
+        display: block;
     }
 }
 

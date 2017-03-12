@@ -12,6 +12,8 @@ export default Ember.Component.extend(MonthEvents, {
     },
 
     initDays(){
+        const initDaysStart = new Date().getTime();
+
         const self = this;
         const year = this.get('year');
         const month = this.get('month');
@@ -34,6 +36,10 @@ export default Ember.Component.extend(MonthEvents, {
                 })
             );
         }
+
+        const initDaysEnd = new Date().getTime();
+console.log('Init days: ' + (initDaysEnd-initDaysStart) + ' ms');
+
     },
 
     calendarObserver: Ember.observer('model.events', function(){

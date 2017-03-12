@@ -181,7 +181,7 @@ define('timesheet2/components/calendar-day', ['exports', 'ember'], function (exp
     exports['default'] = _ember['default'].Component.extend({
         tagName: 'td',
 
-        classNameBindings: ['isHoliday:holiday', 'doesBelongToOtherMonth:bg-danger', 'isChecked:bg-success', 'isWeekend:weekend'],
+        classNameBindings: ['isHoliday:holiday', 'doesBelongToOtherMonth:bg-danger', 'isChecked:bg-success', 'isWeekend:weekend', 'value:hasValue', 'shift:hasShift', 'dayType:hasDayType'],
 
         isWeekend: _ember['default'].computed('date', function () {
             return this.get('isHeader') && [0, 6].indexOf(this.get('date').day()) > -1;
@@ -197,6 +197,55 @@ define('timesheet2/components/calendar-day', ['exports', 'ember'], function (exp
 
         dayOfWeek: _ember['default'].computed('date', function () {
             return this.get('isHeader') ? this.get('date').format('dd') : "";
+        }),
+
+        value: _ember['default'].computed('localEvents', function () {
+            var v = '';
+
+            if (this.get('isHeader')) {
+                return v;
+            }
+
+            var event = this.get('localEvents').find(function (event) {
+                return !!event.summary.v;
+            });
+
+            if (event) {
+                v = event.summary.v;
+            }
+            return v;
+        }),
+        shift: _ember['default'].computed('localEvents', function () {
+            var s = '';
+
+            if (this.get('isHeader')) {
+                return s;
+            }
+
+            var event = this.get('localEvents').find(function (event) {
+                return !!event.summary.s;
+            });
+
+            if (event) {
+                s = event.summary.s;
+            }
+            return s;
+        }),
+        dayType: _ember['default'].computed('localEvents', function () {
+            var d = '';
+
+            if (this.get('isHeader')) {
+                return d;
+            }
+
+            var event = this.get('localEvents').find(function (event) {
+                return !!event.summary.d;
+            });
+
+            if (event) {
+                d = event.summary.d;
+            }
+            return d;
         }),
 
         actions: {
@@ -279,6 +328,8 @@ define('timesheet2/components/calendar-month', ['exports', 'ember', 'moment', 't
         daysOfWeek: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
 
         initWeeks: function initWeeks() {
+            var initWeeksStart = new Date().getTime();
+
             if (this.get('month') === 0) {
                 this.set('year', this.get('year') - 1);
                 this.set('month', 12);
@@ -334,6 +385,9 @@ define('timesheet2/components/calendar-month', ['exports', 'ember', 'moment', 't
                     break;
                 }
             }
+
+            var initWeeksEnd = new Date().getTime();
+            console.log('Init weeks time: ' + (initWeeksEnd - initWeeksStart) + ' ms');
         },
 
         monthName: _ember['default'].computed('month', function () {
@@ -823,6 +877,8 @@ define('timesheet2/components/horizontal-month', ['exports', 'ember', 'moment', 
         },
 
         initDays: function initDays() {
+            var initDaysStart = new Date().getTime();
+
             var self = this;
             var year = this.get('year');
             var month = this.get('month');
@@ -843,6 +899,9 @@ define('timesheet2/components/horizontal-month', ['exports', 'ember', 'moment', 
                     isHoliday: self.isHoliday(index, model.get('events'))
                 }));
             }
+
+            var initDaysEnd = new Date().getTime();
+            console.log('Init days: ' + (initDaysEnd - initDaysStart) + ' ms');
         },
 
         calendarObserver: _ember['default'].observer('model.events', function () {
@@ -938,6 +997,12 @@ define('timesheet2/components/month-events', ['exports', 'ember', 'moment'], fun
             var today = (0, _moment['default'])().hour(23).minute(59).second(59);
 
             var localEvents = events.events.hasOwnProperty(index) ? events.events[index] : [];
+
+            events.diapasons.map(function (diapason) {
+                if (index >= diapason.begin && index <= diapason.end) {
+                    localEvents.push({ summary: diapason.summary });
+                }
+            });
 
             var workStartString = this.get('model').get('workStart');
 
@@ -1450,10 +1515,10 @@ define('timesheet2/controllers/employee/compensatory-leaves', ['exports', 'ember
         }
     });
 });
-define('timesheet2/controllers/my', ['exports', 'timesheet2/controllers/calendar-controller'], function (exports, _timesheet2ControllersCalendarController) {
+define('timesheet2/controllers/my', ['exports', 'ember', 'timesheet2/controllers/calendar-controller'], function (exports, _ember, _timesheet2ControllersCalendarController) {
     exports['default'] = _timesheet2ControllersCalendarController['default'].extend({
 
-        selectedMonth: Ember.computed('month', function () {
+        selectedMonth: _ember['default'].computed('month', function () {
             var number = parseInt(this.get('month'), 10);
             return number - 1;
         })
@@ -2841,8 +2906,8 @@ define('timesheet2/services/ical', ['exports', 'npm:ical.js', 'npm:moment-timezo
                 var tz = new _npmIcalJs['default'].Timezone(vtz);
 
                 // Month -1 and 12 used to count events for combinations like "Dec Jan Feb" or "Nov Dec Jan"
-                var beginOfYear = (0, _npmMomentTimezone['default'])().year(year).month(-1).date(1).set({ hour: 0, minute: 0, second: 0 }).tz(tz.tzid);
-                var endOfYear = (0, _npmMomentTimezone['default'])().year(year).month(12).date(31).set({ hour: 23, minute: 59, second: 59 }).tz(tz.tzid);
+                var beginOfYear = (0, _npmMomentTimezone['default'])().year(year).month(-1).date(1).set({ hour: 0, minute: 0, second: 0 }).tz(tz.tzid).format('YYYY-MM-DD');
+                var endOfYear = (0, _npmMomentTimezone['default'])().year(year).month(12).date(31).set({ hour: 23, minute: 59, second: 59 }).tz(tz.tzid).format('YYYY-MM-DD');
 
                 var dateRegExp = new RegExp(/d:(\d{1,2});/);
                 var holidayRegExp = new RegExp(/n:(ph|we);/);
@@ -2879,31 +2944,36 @@ define('timesheet2/services/ical', ['exports', 'npm:ical.js', 'npm:moment-timezo
                     }
 
                     var _event = new _npmIcalJs['default'].Event(vevents[i]);
-                    var eBegin = _npmMomentTimezone['default'].tz(_event.startDate.toJSDate(), tz.tzid);
-                    var eEnd = _npmMomentTimezone['default'].tz(_event.endDate.toJSDate(), tz.tzid);
+                    var eBegin = _event.startDate.toString();
+                    var eEnd = _event.endDate.toString();
 
-                    if ((eBegin.isAfter(beginOfYear, 'day') || eBegin.isSame(beginOfYear, 'day')) && (eBegin.isBefore(endOfYear, 'day') || eBegin.isSame(endOfYear, 'day')) || eEnd.isAfter(beginOfYear, 'day') && (eEnd.isBefore(endOfYear, 'day') || eEnd.isSame(endOfYear, 'day'))) {
-                        var index = eBegin.format('YYYY-MM-DD');
-                        if (eBegin.isSame(eEnd, 'day') || _event.duration.toICALString() === 'P1D' && eBegin.format('HHmm') === '0000') {
-                            if (!eIndex.events.hasOwnProperty(index)) {
-                                eIndex.events[index] = [];
-                            }
-                            eIndex.events[index].push({ isInstance: isInstance, summary: summary });
-                        } else {
+                    // const eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
+                    // const eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
+
+                    if (eBegin >= beginOfYear && eBegin <= endOfYear || eEnd > beginOfYear && eEnd <= endOfYear) {
+                        var index = eBegin;
+                        if (eBegin === eEnd || _event.duration.toICALString() === 'P1D' /*&& eBegin.format('HHmm') === '0000'*/) {
+                                if (!eIndex.events.hasOwnProperty(index)) {
+                                    eIndex.events[index] = [];
+                                }
+                                eIndex.events[index].push({ isInstance: isInstance, summary: summary });
+                            } else {
                             eIndex.diapasons.push({
-                                begin: eBegin.format('YYYY-MM-DD'),
-                                end: eEnd.format('YYYY-MM-DD'),
+                                begin: eBegin,
+                                end: eEnd,
                                 summary: summary
                             });
-
-                            for (var d = eBegin; d.isBefore(eEnd, 'hour'); d.add(1, 'd')) {
-                                var dIndex = eBegin.format('YYYY-MM-DD');
-
-                                if (!eIndex.events.hasOwnProperty(dIndex)) {
-                                    eIndex.events[dIndex] = [];
-                                }
-                                eIndex.events[dIndex].push({ isInstance: isInstance, summary: summary });
-                            }
+                            /*
+                                                    let momentEnd = moment(eEnd);
+                                                    for (let d = moment(eBegin); d.isBefore(momentEnd, 'hour'); d.add(1, 'd')) {
+                                                        let dIndex = eBegin;
+                            
+                                                        if (!eIndex.events.hasOwnProperty(dIndex)) {
+                                                            eIndex.events[dIndex] = [];
+                                                        }
+                                                        eIndex.events[dIndex].push({isInstance, summary});
+                                                    }
+                                                    */
                         }
 
                         if (isHoliday) {
@@ -3030,7 +3100,7 @@ define("timesheet2/templates/components/calendar-actions", ["exports"], function
   exports["default"] = Ember.HTMLBars.template({ "id": "rpQf5mx3", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"table\",[]],[\"static-attr\",\"class\",\"table table-responsive table-bordered calendar-actions\"],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"thead\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Working days\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Day value\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Shifts\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Nonworking days\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"th\",[]],[\"flush-element\"],[\"text\",\"Actions\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"showButtons\"]]],null,6],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"showButtons\"]]],null,4],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"showButtons\"]]],null,3],[\"text\",\"        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"events_agenda \"],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event event_we\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" - \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setNonworkingDay\",\"we\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Weekend\"],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event event_ph\"],[\"flush-element\"],[\"close-element\"],[\"text\",\" - \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setNonworkingDay\",\"ph\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Public holiday\"],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"onUnpick\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Unpick dates\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"static-attr\",\"class\",\"danger_button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"onClearAll\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"⊗ Clear data\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"h4\",[]],[\"flush-element\"],[\"text\",\"Pick dates using an algorithm:\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"p\",[]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\",\"type\",\"class\"],[[\"get\",[\"pickValue\"]],\"number\",\"short_input_70\"]]],false],[\"text\",\"\\n                per\\n                \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\",\"type\",\"class\"],[[\"get\",[\"pickGap\"]],\"number\",\"short_input_70\"]]],false],[\"text\",\"\\n                *\\n                \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\",\"type\",\"class\"],[[\"get\",[\"pickQuantity\"]],\"number\",\"short_input_70\"]]],false],[\"text\",\"\\n                \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"onPickWithAlgorithm\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Pick dates\"],[\"close-element\"],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"],[\"open-element\",\"div\",[]],[\"flush-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"strong\",[]],[\"flush-element\"],[\"text\",\"Checked dates:\"],[\"close-element\"],[\"text\",\"\\n    \"],[\"open-element\",\"ul\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"sections\"]]],null,2],[\"text\",\"    \"],[\"close-element\"],[\"text\",\"\\n\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"append\",[\"helper\",[\"json\"],[[\"get\",[\"event\",\"summary\"]]],null],false]],\"locals\":[\"event\"]},{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\" - \"],[\"append\",[\"unknown\",[\"day\",\"date\"]],false],[\"text\",\" - \"],[\"block\",[\"each\"],[[\"get\",[\"day\",\"events\"]]],null,0],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"day\"]},{\"statements\":[[\"text\",\"            \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"text\",\"Section: \"],[\"append\",[\"unknown\",[\"section\",\"sectionId\"]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"section\",\"days\"]]],null,1]],\"locals\":[\"section\"]},{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"events_agenda\"],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event event_shift event_shift_1\"],[\"flush-element\"],[\"text\",\"1\"],[\"close-element\"],[\"text\",\" - \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setShift\",1],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Shift 1\"],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event event_shift event_shift_2\"],[\"flush-element\"],[\"text\",\"2\"],[\"close-element\"],[\"text\",\" - \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setShift\",2],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Shift 2\"],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event event_shift event_shift_3\"],[\"flush-element\"],[\"text\",\"3\"],[\"close-element\"],[\"text\",\" - \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setShift\",3],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Shift 3\"],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"label\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"append\",[\"helper\",[\"input\"],null,[[\"value\",\"type\"],[[\"get\",[\"value\"]],\"text\"]]],false],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setValue\",[\"get\",[\"event\",\"id\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Apply\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"br\",[]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"i\",[]],[\"flush-element\"],[\"text\",\"Example: 1.25\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                        \"],[\"open-element\",\"li\",[]],[\"flush-element\"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"event event_\",[\"unknown\",[\"event\",\"id\"]]]]],[\"flush-element\"],[\"close-element\"],[\"text\",\" - \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"type\",\"button\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"setEvent\",[\"get\",[\"event\",\"id\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"append\",[\"unknown\",[\"event\",\"name\"]],false],[\"close-element\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"event\"]},{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"ul\",[]],[\"static-attr\",\"class\",\"events_agenda\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"event_types\"]]],null,5],[\"text\",\"                \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/calendar-actions.hbs" } });
 });
 define("timesheet2/templates/components/calendar-day", ["exports"], function (exports) {
-  exports["default"] = Ember.HTMLBars.template({ "id": "YMb5p6bU", "block": "{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"date_event_container\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"click\",[\"get\",[\"sectionId\"]],[\"get\",[\"date\"]]]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"append\",[\"unknown\",[\"title\"]],false],[\"open-element\",\"small\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"dayOfWeek\"]],false],[\"close-element\"],[\"text\",\"\\n\"],[\"block\",[\"unless\"],[[\"get\",[\"isHeader\"]]],null,4],[\"text\",\"    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"event_shift event_shift_\",[\"unknown\",[\"event\",\"summary\",\"s\"]]]]],[\"flush-element\"],[\"append\",[\"unknown\",[\"event\",\"summary\",\"s\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event_value\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"event\",\"summary\",\"v\"]],false],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                    \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"event event_\",[\"unknown\",[\"event\",\"summary\",\"d\"]]]]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"block\",[\"if\"],[[\"get\",[\"event\",\"summary\",\"d\"]]],null,2],[\"block\",[\"if\"],[[\"get\",[\"event\",\"summary\",\"v\"]]],null,1],[\"block\",[\"if\"],[[\"get\",[\"event\",\"summary\",\"s\"]]],null,0]],\"locals\":[\"event\"]},{\"statements\":[[\"block\",[\"each\"],[[\"get\",[\"localEvents\"]]],null,3]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/calendar-day.hbs" } });
+  exports["default"] = Ember.HTMLBars.template({ "id": "iH9tHyTA", "block": "{\"statements\":[[\"text\",\"    \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"date_event_container\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"click\",[\"get\",[\"sectionId\"]],[\"get\",[\"date\"]]]],[\"flush-element\"],[\"text\",\"\\n        \"],[\"append\",[\"unknown\",[\"title\"]],false],[\"open-element\",\"small\",[]],[\"flush-element\"],[\"append\",[\"unknown\",[\"dayOfWeek\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"event event_\",[\"unknown\",[\"dayType\"]]]]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"event_value\"],[\"flush-element\"],[\"append\",[\"unknown\",[\"value\"]],false],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"event_shift event_shift_\",[\"unknown\",[\"shift\"]]]]],[\"flush-element\"],[\"append\",[\"unknown\",[\"shift\"]],false],[\"close-element\"],[\"text\",\"\\n    \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"blocks\":[],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/calendar-day.hbs" } });
 });
 define("timesheet2/templates/components/calendar-diapasons", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template({ "id": "LSZfklm8", "block": "{\"statements\":[[\"yield\",\"default\"],[\"text\",\"\\n\\n\"],[\"open-element\",\"div\",[]],[\"static-attr\",\"class\",\"diapason-options\"],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"if\"],[[\"get\",[\"hidden\"]]],null,3,2],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"blocks\":[{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"td\",[]],[\"static-attr\",\"colspan\",\"4\"],[\"flush-element\"],[\"text\",\"No items found\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"                \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                        \"],[\"append\",[\"helper\",[\"inc\"],[[\"get\",[\"i\"]]],null],false],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                        \"],[\"append\",[\"unknown\",[\"diapason\",\"begin\"]],false],[\"text\",\" — \"],[\"append\",[\"unknown\",[\"diapason\",\"end\"]],false],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                        \"],[\"open-element\",\"div\",[]],[\"dynamic-attr\",\"class\",[\"concat\",[\"event event_\",[\"unknown\",[\"diapason\",\"summary\",\"d\"]]]]],[\"flush-element\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                        \"],[\"open-element\",\"button\",[]],[\"modifier\",[\"action\"],[[\"get\",[null]],\"removeDiapason\",[\"get\",[\"diapason\",\"begin\"]],[\"get\",[\"diapason\",\"end\"]]],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Remove\"],[\"close-element\"],[\"text\",\"\\n                    \"],[\"close-element\"],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[\"diapason\",\"i\"]},{\"statements\":[[\"text\",\"        \"],[\"open-element\",\"button\",[]],[\"static-attr\",\"class\",\"pull-right\"],[\"modifier\",[\"action\"],[[\"get\",[null]],\"hide\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Hide\"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"h1\",[]],[\"flush-element\"],[\"text\",\"\\n            Diapasons\\n        \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"open-element\",\"table\",[]],[\"flush-element\"],[\"text\",\"\\n            \"],[\"open-element\",\"tbody\",[]],[\"flush-element\"],[\"text\",\"\\n\"],[\"block\",[\"each\"],[[\"get\",[\"diapasons\"]]],null,1,0],[\"text\",\"            \"],[\"open-element\",\"tr\",[]],[\"flush-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"New\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"newBegin\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n                    \"],[\"append\",[\"helper\",[\"bootstrap-datepicker\"],null,[[\"value\",\"format\",\"todayHighlight\",\"autoclose\",\"weekStart\",\"forceParse\"],[[\"get\",[\"newEnd\"]],\"yyyy-mm-dd\",true,true,1,false]]],false],[\"text\",\"\\n\\n                \"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"append\",[\"helper\",[\"drop-down\"],null,[[\"content\",\"onChange\",\"selectedValue\"],[[\"get\",[\"eventTypesNames\"]],[\"helper\",[\"action\"],[[\"get\",[null]],\"changeNewType\"],null],[\"get\",[\"newType\"]]]]],false],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n                \"],[\"open-element\",\"td\",[]],[\"flush-element\"],[\"text\",\"\\n                    \"],[\"open-element\",\"button\",[]],[\"modifier\",[\"action\"],[[\"get\",[null]],\"addDiapason\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Add new diapason\"],[\"close-element\"],[\"text\",\"\\n                \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n            \"],[\"close-element\"],[\"text\",\"\\n        \"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]},{\"statements\":[[\"text\",\"        \"],[\"open-element\",\"button\",[]],[\"modifier\",[\"action\"],[[\"get\",[null]],\"show\"],[[\"on\"],[\"click\"]]],[\"flush-element\"],[\"text\",\"Show diapasons options\"],[\"close-element\"],[\"text\",\"\\n\"]],\"locals\":[]}],\"hasPartials\":false}", "meta": { "moduleName": "timesheet2/templates/components/calendar-diapasons.hbs" } });
@@ -3211,7 +3281,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+89ce1b5e"});
+  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+bb493b37"});
 }
 
 /* jshint ignore:end */

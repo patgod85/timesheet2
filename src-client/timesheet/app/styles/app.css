@@ -89,7 +89,8 @@ td.holiday {
     right: 1px;
     top: 1px;
     min-width: 20px;
-    text-align: center; }
+    text-align: center;
+    display: none; }
   .date_event_container .event {
     position: absolute;
     bottom: 1px;
@@ -97,7 +98,8 @@ td.holiday {
     width: 20px;
     height: 15px;
     font-size: 6pt;
-    padding: 0; }
+    padding: 0;
+    display: none; }
   .date_event_container .event_shift {
     position: absolute;
     bottom: 1px;
@@ -105,7 +107,17 @@ td.holiday {
     width: 20px;
     height: 15px;
     font-size: 6pt;
-    padding: 2px 8px; }
+    padding: 2px 8px;
+    display: none; }
+
+.hasDayType .event {
+  display: block; }
+
+.hasShift .event_shift {
+  display: block; }
+
+.hasValue .event_value {
+  display: block; }
 
 table {
   border-collapse: collapse; }

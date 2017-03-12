@@ -205,8 +205,8 @@ export default Ember.Service.extend({
             const tz = new ICAL.Timezone(vtz);
 
             // Month -1 and 12 used to count events for combinations like "Dec Jan Feb" or "Nov Dec Jan"
-            const beginOfYear = moment().year(year).month(-1).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid);
-            const endOfYear = moment().year(year).month(12).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid);
+            const beginOfYear = moment().year(year).month(-1).date(1).set({hour: 0, minute: 0, second: 0}).tz(tz.tzid).format('YYYY-MM-DD');
+            const endOfYear = moment().year(year).month(12).date(31).set({hour: 23, minute: 59, second: 59}).tz(tz.tzid).format('YYYY-MM-DD');
 
             const dateRegExp = new RegExp(/d:(\d{1,2});/);
             const holidayRegExp = new RegExp(/n:(ph|we);/);
@@ -243,17 +243,20 @@ export default Ember.Service.extend({
                 }
 
                 const event = new ICAL.Event(vevents[i]);
-                const eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
-                const eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
+                const eBegin = event.startDate.toString();
+                const eEnd = event.endDate.toString();
+
+                // const eBegin = moment.tz(event.startDate.toJSDate(), tz.tzid);
+                // const eEnd = moment.tz(event.endDate.toJSDate(), tz.tzid);
 
                 if (
-                    (eBegin.isAfter(beginOfYear, 'day') || eBegin.isSame(beginOfYear, 'day')) &&
-                    (eBegin.isBefore(endOfYear, 'day') || eBegin.isSame(endOfYear, 'day')) ||
-                    (eEnd.isAfter(beginOfYear, 'day')) &&
-                    (eEnd.isBefore(endOfYear, 'day') || eEnd.isSame(endOfYear, 'day'))
+                    (eBegin >= beginOfYear) &&
+                    (eBegin <= endOfYear) ||
+                    (eEnd > beginOfYear) &&
+                    (eEnd <= endOfYear)
                 ) {
-                    let index = eBegin.format('YYYY-MM-DD');
-                    if (eBegin.isSame(eEnd, 'day') || event.duration.toICALString() === 'P1D' && eBegin.format('HHmm') === '0000') {
+                    let index = eBegin;
+                    if (eBegin === eEnd || event.duration.toICALString() === 'P1D' /*&& eBegin.format('HHmm') === '0000'*/) {
                         if (!eIndex.events.hasOwnProperty(index)) {
                             eIndex.events[index] = [];
                         }
@@ -261,19 +264,21 @@ export default Ember.Service.extend({
                     }
                     else {
                         eIndex.diapasons.push({
-                            begin: eBegin.format('YYYY-MM-DD'),
-                            end: eEnd.format('YYYY-MM-DD'),
+                            begin: eBegin,
+                            end: eEnd,
                             summary
                         });
-
-                        for (let d = eBegin; d.isBefore(eEnd, 'hour'); d.add(1, 'd')) {
-                            let dIndex = eBegin.format('YYYY-MM-DD');
+/*
+                        let momentEnd = moment(eEnd);
+                        for (let d = moment(eBegin); d.isBefore(momentEnd, 'hour'); d.add(1, 'd')) {
+                            let dIndex = eBegin;
 
                             if (!eIndex.events.hasOwnProperty(dIndex)) {
                                 eIndex.events[dIndex] = [];
                             }
                             eIndex.events[dIndex].push({isInstance, summary});
                         }
+                        */
                     }
 
                     if (isHoliday) {

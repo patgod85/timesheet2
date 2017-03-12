@@ -15,6 +15,12 @@ export default Ember.Mixin.create({
 
         let localEvents = events.events.hasOwnProperty(index) ? events.events[index] : [];
 
+        events.diapasons.map(diapason => {
+            if(index >= diapason.begin && index <= diapason.end){
+                localEvents.push({summary: diapason.summary});
+            }
+        });
+
         const workStartString = this.get('model').get('workStart');
 
         if (localEvents.length === 0) {

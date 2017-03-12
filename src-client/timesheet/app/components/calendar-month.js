@@ -15,6 +15,8 @@ export default Ember.Component.extend(MonthEvents, {
     daysOfWeek: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
 
     initWeeks(){
+        const initWeeksStart = new Date().getTime();
+
         if(this.get('month') === 0){
             this.set('year', this.get('year') - 1);
             this.set('month', 12);
@@ -74,6 +76,8 @@ export default Ember.Component.extend(MonthEvents, {
             }
         }
 
+        const initWeeksEnd = new Date().getTime();
+console.log('Init weeks time: ' + (initWeeksEnd-initWeeksStart) + ' ms');
     },
 
     monthName: Ember.computed('month', function () {
