@@ -6,3 +6,10 @@ For server side I use IIS with [web/web.config](web/web.config). In config I use
 The working copy of site available on my machine at http://timesheet2.local
 
 [User guide](doc/index.md)
+
+[Live demo](http://timesheet.patgod.ru)
+
+Use username and password:
+
+- anton@net.sky
+- anton@net.sky
