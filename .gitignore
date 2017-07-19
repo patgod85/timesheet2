@@ -12,3 +12,5 @@
 /composer.phar
 /.idea/
 /web/config.php
+tags
+*.swp

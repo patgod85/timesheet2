@@ -1,5 +1,7 @@
 {
   "name": "timesheet2",
   "dependencies": {
+       "bootstrap": "^3.3.6",
+       "bootstrap-datepicker": "^1.6.0"
   }
 }

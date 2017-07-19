@@ -206,5 +206,9 @@ class Team
         $this->isGeneralCalendarEnabled = $isGeneralCalendarEnabled;
     }
 
+    public function __toString()
+    {
+        return $this->name;
+    }
 
 }

@@ -48,6 +48,10 @@ DirectoryIndex app.php
 #    RewriteCond %{ENV:REDIRECT_STATUS} ^$
 #    RewriteRule ^app\.php(/(.*)|$) $1 [R=301,L]
 
+    RewriteCond %{HTTP_HOST} ^.*\.local$
+    RewriteCond %{REQUEST_URI} ^/(login|login_check|register(/.*)?|logout|welcome|whoami|profile(/.*)?|resetting(/.*)?|api/.*|cal/.*)$
+    RewriteRule ^(.*)$ /app_dev\.php/$1 [L]
+
     RewriteCond %{REQUEST_URI} ^/(login|login_check|register(/.*)?|logout|welcome|whoami|profile(/.*)?|resetting(/.*)?|api/.*|cal/.*)$
     RewriteRule ^(.*)$ /app\.php/$1 [L]
 

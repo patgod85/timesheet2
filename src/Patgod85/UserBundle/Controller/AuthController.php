@@ -22,7 +22,7 @@ class AuthController extends RegistrationController
         $dispatcher = $this->get('event_dispatcher');
 
         $user = $userManager->createUser();
-        $user->setEnabled(true);
+        $user->setEnabled(false);
 
         $event = new GetResponseUserEvent($user, $request);
         $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
@@ -32,7 +32,10 @@ class AuthController extends RegistrationController
         }
 
         $form = $formFactory->createForm();
-        $form->add('teamId');
+        $form->add('team', 'entity', [
+            'class' => 'Patgod85TeamBundle:Team',
+        //    'choise_label' => 'name'
+        ]);
         $form->setData($user);
 
         $form->handleRequest($request);

@@ -1537,11 +1537,21 @@ define('timesheet2/controllers/team/employees', ['exports', 'ember', 'timesheet2
 
     });
 });
-define('timesheet2/helpers/app-version', ['exports', 'ember', 'timesheet2/config/environment'], function (exports, _ember, _timesheet2ConfigEnvironment) {
+define('timesheet2/helpers/app-version', ['exports', 'ember', 'timesheet2/config/environment', 'ember-cli-app-version/utils/regexp'], function (exports, _ember, _timesheet2ConfigEnvironment, _emberCliAppVersionUtilsRegexp) {
   exports.appVersion = appVersion;
   var version = _timesheet2ConfigEnvironment['default'].APP.version;
 
-  function appVersion() {
+  function appVersion(_) {
+    var hash = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+    if (hash.hideSha) {
+      return version.match(_emberCliAppVersionUtilsRegexp.versionRegExp)[0];
+    }
+
+    if (hash.hideVersion) {
+      return version.match(_emberCliAppVersionUtilsRegexp.shaRegExp)[0];
+    }
+
     return version;
   }
 
@@ -1693,8 +1703,7 @@ define('timesheet2/initializers/container-debug-adapter', ['exports', 'ember-res
     }
   };
 });
-define('timesheet2/initializers/data-adapter', ['exports', 'ember'], function (exports, _ember) {
-
+define('timesheet2/initializers/data-adapter', ['exports'], function (exports) {
   /*
     This initializer is here to keep backwards compatibility with code depending
     on the `data-adapter` initializer (before Ember Data was an addon).
@@ -1708,7 +1717,7 @@ define('timesheet2/initializers/data-adapter', ['exports', 'ember'], function (e
     initialize: function initialize() {}
   };
 });
-define('timesheet2/initializers/ember-data', ['exports', 'ember-data/setup-container', 'ember-data/-private/core'], function (exports, _emberDataSetupContainer, _emberDataPrivateCore) {
+define('timesheet2/initializers/ember-data', ['exports', 'ember-data/setup-container', 'ember-data/index'], function (exports, _emberDataSetupContainer, _emberDataIndex) {
 
   /*
   
@@ -1793,8 +1802,7 @@ define('timesheet2/initializers/export-application-global', ['exports', 'ember',
     initialize: initialize
   };
 });
-define('timesheet2/initializers/injectStore', ['exports', 'ember'], function (exports, _ember) {
-
+define('timesheet2/initializers/injectStore', ['exports'], function (exports) {
   /*
     This initializer is here to keep backwards compatibility with code depending
     on the `injectStore` initializer (before Ember Data was an addon).
@@ -1808,8 +1816,7 @@ define('timesheet2/initializers/injectStore', ['exports', 'ember'], function (ex
     initialize: function initialize() {}
   };
 });
-define('timesheet2/initializers/store', ['exports', 'ember'], function (exports, _ember) {
-
+define('timesheet2/initializers/store', ['exports'], function (exports) {
   /*
     This initializer is here to keep backwards compatibility with code depending
     on the `store` initializer (before Ember Data was an addon).
@@ -1823,8 +1830,7 @@ define('timesheet2/initializers/store', ['exports', 'ember'], function (exports,
     initialize: function initialize() {}
   };
 });
-define('timesheet2/initializers/transforms', ['exports', 'ember'], function (exports, _ember) {
-
+define('timesheet2/initializers/transforms', ['exports'], function (exports) {
   /*
     This initializer is here to keep backwards compatibility with code depending
     on the `transforms` initializer (before Ember Data was an addon).
@@ -1838,10 +1844,10 @@ define('timesheet2/initializers/transforms', ['exports', 'ember'], function (exp
     initialize: function initialize() {}
   };
 });
-define("timesheet2/instance-initializers/ember-data", ["exports", "ember-data/-private/instance-initializers/initialize-store-service"], function (exports, _emberDataPrivateInstanceInitializersInitializeStoreService) {
+define("timesheet2/instance-initializers/ember-data", ["exports", "ember-data/instance-initializers/initialize-store-service"], function (exports, _emberDataInstanceInitializersInitializeStoreService) {
   exports["default"] = {
     name: "ember-data",
-    initialize: _emberDataPrivateInstanceInitializersInitializeStoreService["default"]
+    initialize: _emberDataInstanceInitializersInitializeStoreService["default"]
   };
 });
 define('timesheet2/mirage/config', ['exports'], function (exports) {
@@ -3281,7 +3287,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+bb493b37"});
+  require("timesheet2/app")["default"].create({"name":"timesheet2","version":"0.0.1+e7a8d32e"});
 }
 
 /* jshint ignore:end */
